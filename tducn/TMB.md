@@ -170,3 +170,9 @@ Tuân thủ triệt để nguyên lý Ponytail (chống phình code, 0 rác):
     - Chạy `npm test`: **5/5 Test Files Passed, 23/23 Tests Passed**.
     - Build tĩnh `npm run build`: **10/10 pages built, 0 error, 0 warning**.
     - Kiểm chứng Chrome DevTools MCP: Test live DOM, ScrollSpy, Reading Progress, Theme Toggle, Mobile Drawer, và 0 console errors.
+- [x] **Step 18 (GitHub Deployment & Version Control)**:
+  - Khởi tạo Git repository tại `/home/pro/Downloads/blog` trên nhánh `main`.
+  - Cấu hình tác giả Git: `Nguyen Tam Duc <duc.nguyen240205@vnuk.edu.vn>`.
+  - Xây dựng `.gitignore` chuẩn hóa, loại bỏ hoàn toàn `node_modules/`, `dist/`, `.astro/` và cache.
+  - Soạn thảo tài liệu trung tâm [README.md](file:///home/pro/Downloads/blog/README.md) hướng dẫn kiến trúc, cài đặt, test và deploy (Vercel / Cloudflare Pages).
+  - Khởi tạo và đẩy mã nguồn lên GitHub repository công khai: [`tducn110/blog`](https://github.com/tducn110/blog).
