@@ -1,0 +1,47 @@
+---
+// ponytail: Reusable semantic Breadcrumbs navigation component with optional back link
+interface BreadcrumbItem {
+  label: string;
+  href?: string;
+  current?: boolean;
+}
+
+interface Props {
+  items: BreadcrumbItem[];
+  backLink?: {
+    label: string;
+    href: string;
+  };
+  class?: string;
+}
+
+const { items, backLink, class: className = '' } = Astro.props;
+---
+
+<nav aria-label="Breadcrumb" class={`flex items-center justify-between text-xs text-text-muted font-mono ${className}`}>
+  <ol class="flex items-center space-x-2">
+    {items.map((item, index) => {
+      const isLast = index === items.length - 1;
+      return (
+        <li class="flex items-center space-x-2">
+          {item.href && !isLast ? (
+            <a href={item.href} class="hover:text-accent-primary dark:hover:text-accent-primaryDark transition-colors">
+              {item.label}
+            </a>
+          ) : (
+            <span class={isLast ? "text-slate-900 dark:text-slate-200 font-medium truncate max-w-[200px] sm:max-w-none" : ""}>
+              {item.label}
+            </span>
+          )}
+          {!isLast && <span class="text-slate-400 select-none">/</span>}
+        </li>
+      );
+    })}
+  </ol>
+
+  {backLink && (
+    <a href={backLink.href} class="hover:underline flex items-center gap-1">
+      &larr; {backLink.label}
+    </a>
+  )}
+</nav>

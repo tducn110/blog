@@ -1,0 +1,30 @@
+---
+// ponytail: Clean minimalist 404 page, zero extra dependencies
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="404 - Không tìm thấy trang">
+  <div class="min-h-[60vh] flex flex-col items-center justify-center text-center space-y-6 px-4">
+    <div class="w-16 h-16 rounded-2xl bg-accent-primary/10 border border-accent-primary/20 flex items-center justify-center text-accent-primary dark:text-accent-primaryDark font-mono font-bold text-2xl shadow-inner">
+      404
+    </div>
+
+    <div class="space-y-2 max-w-md">
+      <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
+        Trang không tồn tại
+      </h1>
+      <p class="text-sm text-text-muted leading-relaxed">
+        Đường dẫn bạn đang tìm kiếm có thể đã được chuyển dời, đổi tên hoặc chưa từng được xuất bản.
+      </p>
+    </div>
+
+    <div class="flex items-center space-x-3 pt-2">
+      <a href="/" class="btn-primary">
+        &larr; Về trang chủ
+      </a>
+      <button onclick="window.openSearchModal?.()" class="btn-secondary">
+        Tìm bài viết (⌘K)
+      </button>
+    </div>
+  </div>
+</BaseLayout>

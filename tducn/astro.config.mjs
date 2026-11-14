@@ -1,0 +1,18 @@
+// ponytail: Minimalist Astro config with native KaTeX & Shiki, zero unnecessary plugins
+import { defineConfig } from 'astro/config';
+import tailwind from '@astrojs/tailwind';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+
+export default defineConfig({
+  site: 'https://tducn.dev',
+  integrations: [tailwind()],
+  markdown: {
+    remarkPlugins: [remarkMath],
+    rehypePlugins: [rehypeKatex],
+    shikiConfig: {
+      theme: 'github-dark-dimmed',
+      wrap: true
+    }
+  }
+});

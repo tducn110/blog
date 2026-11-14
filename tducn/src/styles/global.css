@@ -1,0 +1,506 @@
+@import "katex/dist/katex.min.css";
+@import url("https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=STIX+Two+Text:ital,wght@0,400;0,600;0,700;1,400&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ponytail: Clean design tokens matching 60-30-10 & strict 4*x rhythm */
+:root {
+  --bg-canvas: #f8fafc;
+  --surface-card: #ffffff;
+  --border-subtle: #e2e8f0;
+  --text-main: #0f172a;
+  --text-muted: #475569;
+  --accent-color: #991b1b;
+}
+
+.dark {
+  --bg-canvas: #0c0d10;
+  --surface-card: #15161b;
+  --border-subtle: #262832;
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --accent-color: #f87171;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg-canvas);
+  color: var(--text-main);
+  font-family: 'Be Vietnam Pro', sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  letter-spacing: normal !important;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Accessibility Focus Ring (Senior UX Standard) */
+:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+/* Skip to Content for Screen Readers & Keyboard Navigation */
+.skip-to-content {
+  position: fixed;
+  top: -100px;
+  left: 1.5rem;
+  padding: 0.5rem 1rem;
+  background-color: var(--text-main);
+  color: var(--bg-canvas) !important;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 0.5rem;
+  z-index: 9999;
+  transition: top 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  text-decoration: none;
+}
+
+.skip-to-content:focus {
+  top: 1rem;
+}
+
+/* Reading Progress Bar (Fixed Top) */
+#reading-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-color), #f97316);
+  z-index: 100;
+  width: 0%;
+  transition: width 0.08s linear;
+  box-shadow: 0 1px 4px rgba(248, 113, 113, 0.4);
+}
+
+/* Floating Back to Top Button */
+.back-to-top-btn {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 40;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px) scale(0.95);
+  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), 
+              transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), 
+              visibility 0.25s;
+}
+
+.back-to-top-btn.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+/* ========================================================
+   REUSABLE SEMANTIC UI COMPONENTS (Senior Zero-Bloat)
+   Gom các nút định dạng & khung giao diện dùng chung
+   ======================================================== */
+@layer components {
+  /* Khung thẻ bề mặt chuẩn 60-30-10 (Card Surface) */
+  .card-surface {
+    background-color: var(--surface-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  /* Viền tinh tế hairline đồng bộ */
+  .border-subtle {
+    border-color: var(--border-subtle);
+  }
+
+  /* Nút bấm điều khiển hệ thống (Search, Theme, Font, Share, Controls) */
+  .btn-control {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.25rem; /* 36px = 4*9 */
+    padding: 0 0.625rem; /* 10px */
+    border-radius: 0.5rem; /* 8px */
+    border: 1px solid var(--border-subtle);
+    background-color: transparent;
+    color: var(--text-muted);
+    font-size: 0.75rem; /* 12px */
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .btn-control:hover {
+    background-color: rgba(148, 163, 184, 0.1);
+    color: var(--text-main);
+    border-color: rgba(148, 163, 184, 0.35);
+  }
+
+  .dark .btn-control:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  /* Nút icon vuông (Theme toggle, X, FB, LinkedIn) */
+  .btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem; /* 36px */
+    height: 2.25rem;
+    padding: 0;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-subtle);
+    background-color: transparent;
+    color: var(--text-muted);
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    cursor: pointer;
+  }
+
+  .btn-icon:hover {
+    background-color: rgba(148, 163, 184, 0.1);
+    color: var(--text-main);
+    border-color: rgba(148, 163, 184, 0.35);
+  }
+
+  .dark .btn-icon:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+  }
+
+  /* Nút lọc chuyên mục (Category Tab Pill) */
+  .btn-tab {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.375rem 0.875rem; /* 6px 14px */
+    border-radius: 9999px;
+    font-size: 0.75rem; /* 12px */
+    font-weight: 600;
+    border: 1px solid var(--border-subtle);
+    background-color: var(--surface-card);
+    color: var(--text-muted);
+    transition: all 0.15s ease;
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .btn-tab:hover {
+    color: var(--text-main);
+    border-color: rgba(148, 163, 184, 0.45);
+  }
+
+  /* Trạng thái Active cho Tab Pill */
+  .btn-tab-active {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.375rem 0.875rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border: 1px solid transparent;
+    background-color: var(--text-main);
+    color: var(--bg-canvas) !important;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  /* Nút hành động chính (Primary Action Button) */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.5rem; /* 40px */
+    padding: 0 1.25rem; /* 20px */
+    border-radius: 0.75rem;
+    background-color: var(--text-main);
+    color: var(--bg-canvas) !important;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 1px solid transparent;
+    transition: opacity 0.15s ease;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .btn-primary:hover {
+    opacity: 0.9;
+  }
+
+  /* Nút hành động phụ (Secondary Action Button) */
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.5rem;
+    padding: 0 1.25rem;
+    border-radius: 0.75rem;
+    background-color: transparent;
+    color: var(--text-main);
+    font-size: 0.75rem;
+    font-weight: 500;
+    border: 1px solid var(--border-subtle);
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .btn-secondary:hover {
+    background-color: rgba(148, 163, 184, 0.1);
+  }
+
+  .dark .btn-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+
+  /* Nút Copy Code trong khối Shiki */
+  .copy-code-btn {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.25rem 0.625rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6875rem; /* 11px */
+    border-radius: 0.5rem;
+    background-color: rgba(30, 41, 59, 0.85);
+    color: #cbd5e1;
+    border: 1px solid rgba(71, 85, 105, 0.6);
+    opacity: 0;
+    transition: opacity 0.2s ease, background-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+    cursor: pointer;
+    user-select: none;
+    z-index: 10;
+  }
+
+  .copy-code-btn:hover {
+    background-color: rgba(51, 65, 85, 0.95);
+    color: #ffffff;
+    transform: scale(1.02);
+  }
+
+  .copy-code-btn:active {
+    transform: scale(0.98);
+  }
+
+  .prose pre:hover .copy-code-btn {
+    opacity: 1;
+  }
+
+  /* Support mobile touch devices where hover is absent */
+  @media (hover: none) {
+    .copy-code-btn {
+      opacity: 0.85;
+    }
+  }
+
+  /* Language badge for code blocks */
+  .code-lang-badge {
+    position: absolute;
+    top: 0.75rem;
+    left: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  /* Table of Contents Active ScrollSpy & Smooth Highlight */
+  .toc-link {
+    display: block;
+    transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+    border-left: 2px solid transparent;
+    padding-left: 0.25rem;
+    line-height: 1.5;
+  }
+
+  .toc-link:hover {
+    color: var(--accent-color);
+  }
+
+  .toc-link.active {
+    color: var(--accent-color) !important;
+    font-weight: 600;
+    border-left-color: var(--accent-color);
+    padding-left: 0.625rem;
+  }
+}
+
+/* Highlight for Search Match & Reading Focus */
+mark {
+  background-color: rgba(245, 158, 11, 0.22);
+  color: inherit;
+  padding: 0.1em 0.3em;
+  border-radius: 0.25rem;
+  font-weight: 600;
+}
+
+.dark mark {
+  background-color: rgba(251, 191, 36, 0.28);
+  color: #fef08a;
+}
+
+/* VIETNAMESE TYPOGRAPHY SAFEGUARDS: Chống vỡ dấu tiếng Việt */
+.article-title {
+  font-size: clamp(1.65rem, 3.2vw, 2.25rem) !important;
+  line-height: 1.4 !important;
+  letter-spacing: 0 !important;
+  text-wrap: balance;
+}
+
+.article-body-p {
+  font-size: 1.0625rem !important; /* 17px */
+  line-height: 1.85 !important;
+  letter-spacing: 0 !important;
+  text-wrap: pretty;
+  margin-bottom: 1.25rem;
+}
+
+/* ========================================================
+   SECTION SPACING & NHỊP THỞ BỐ CỤC (Senior Visual Rhythm)
+   Kéo giãn khoáng đạt theo chuẩn 4*x px
+   ======================================================== */
+.prose h2 {
+  font-size: 1.625rem !important; /* 26px */
+  font-weight: 700 !important;
+  line-height: 1.4 !important;
+  letter-spacing: normal !important;
+  scroll-margin-top: 6rem !important; /* Prevents sticky navbar from covering headings */
+  margin-top: 4.5rem !important; /* 72px = 4*18: Khoảng thở cực rộng giữa các phần */
+  margin-bottom: 1.5rem !important; /* 24px = 4*6 */
+  padding-bottom: 0.75rem !important;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-main) !important;
+}
+
+.prose h3 {
+  font-size: 1.3125rem !important; /* 21px */
+  font-weight: 600 !important;
+  line-height: 1.45 !important;
+  letter-spacing: normal !important;
+  scroll-margin-top: 6rem !important;
+  margin-top: 3.25rem !important; /* 52px = 4*13 */
+  margin-bottom: 1.25rem !important; /* 20px */
+  color: var(--text-main) !important;
+}
+
+.prose p {
+  font-size: 1.0625rem !important; /* 17px */
+  line-height: 1.9 !important; /* Siêu thoáng */
+  letter-spacing: normal !important;
+  margin-top: 1.25rem !important;
+  margin-bottom: 1.75rem !important; /* 28px */
+  color: var(--text-muted);
+}
+
+.dark .prose p {
+  color: #cbd5e1 !important;
+}
+
+/* Khối Code Shiki */
+.prose pre {
+  position: relative !important;
+  margin-top: 2.5rem !important; /* 40px */
+  margin-bottom: 3.5rem !important; /* 56px */
+  padding: 1.5rem 1.75rem !important; /* 24px 28px */
+  border-radius: 1rem !important;
+  border: 1px solid var(--border-subtle) !important;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.25);
+}
+
+/* ========================================================
+   KHỐI TOÁN HỌC KATEX (Academic Formula Showcase Box)
+   Rộng rãi, không dẹp lép, chỉ số & phân số có không gian thở
+   ======================================================== */
+.katex-display {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  margin: 3.5rem 0 !important; /* 56px = 4*14 trên dưới */
+  padding: 2.25rem 2.5rem !important; /* 36px 40px */
+  background: var(--surface-card) !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: 1.25rem !important;
+  box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.3) !important;
+  overflow-x: auto !important;
+  text-align: center;
+}
+
+.katex-display > .katex {
+  font-size: 1.3rem !important; /* 20.8px: Bề thế, sang trọng */
+  line-height: normal !important;
+  display: block !important;
+}
+
+/* Mẫu số, tử số và dấu gạch phân số không bị dính */
+.katex .mfrac .vlist-t {
+  margin: 0.15em 0 !important;
+}
+
+/* Đảm bảo cận trên N hoặc dấu Sigma có khoảng đệm phía dưới vạch phân số */
+.katex .mfrac .vlist-t2 .vlist-r .vlist > span:first-child {
+  padding-top: 3px !important;
+}
+
+/* Sơ đồ Mermaid */
+.mermaid-rendered {
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
+  margin-top: 3rem !important;
+  margin-bottom: 3.5rem !important;
+  padding: 2.25rem !important;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 1.25rem;
+  box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.25);
+}
+
+/* Reading font modes */
+.mode-sans {
+  font-family: 'Be Vietnam Pro', 'Inter', sans-serif !important;
+}
+
+.mode-academic {
+  font-family: 'Times New Roman', 'Times', 'STIX Two Text', serif !important;
+}
+
+.mode-serif {
+  font-family: 'Literata', 'Merriweather', serif !important;
+}
+
+/* Subtle dot grid */
+.bg-grid-dots {
+  background-image: radial-gradient(rgba(148, 163, 184, 0.15) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+.dark .bg-grid-dots {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.25);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.45);
+}

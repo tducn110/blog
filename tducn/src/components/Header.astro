@@ -1,0 +1,221 @@
+---
+// ponytail: Lean header with active category indicator, font-switcher and theme-switcher, 64px fixed 4*x height
+import { NAV_ITEMS } from '../utils/categories';
+import { Sun, Moon, Search, Type, Menu, X } from 'lucide-astro';
+
+const currentPath = Astro.url.pathname;
+const navItems = NAV_ITEMS.map(item => ({
+  ...item,
+  active: item.slug === 'all' ? currentPath === '/' : currentPath.startsWith(item.href)
+}));
+---
+
+<header class="sticky top-0 z-40 backdrop-blur-md bg-[var(--bg-canvas)]/90 border-b border-subtle transition-colors">
+  <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+    
+    <div class="flex items-center space-x-3">
+      <!-- Mobile Menu Toggle Button (Accessible & High Touch-Area) -->
+      <button
+        id="mobile-menu-toggle"
+        class="btn-icon md:hidden text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
+        aria-label="Mở danh mục điều hướng"
+        aria-expanded="false"
+        aria-controls="mobile-drawer"
+      >
+        <Menu class="w-4 h-4 menu-open-icon" />
+        <X class="w-4 h-4 menu-close-icon hidden" />
+      </button>
+
+      <!-- Brand / Author Identity -->
+      <a href="/" class="flex items-center space-x-3 group" aria-label="Chi Nguyen Blog Trang chủ">
+        <div class="w-8 h-8 rounded-lg bg-accent-primary dark:bg-accent-primaryDark flex items-center justify-center text-white dark:text-slate-950 font-bold text-xs shadow-sm transition-transform group-hover:scale-105">
+          <span>CN</span>
+        </div>
+        <div>
+          <span class="font-bold text-base tracking-tight text-slate-900 dark:text-white group-hover:text-accent-primary dark:group-hover:text-accent-primaryDark transition-colors">
+            Chi Nguyen
+          </span>
+          <span class="hidden sm:inline-block text-xs text-text-muted ml-2 font-mono">/tducn</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Category Nav Links with Active Indicator (Desktop) -->
+    <nav class="hidden md:flex items-center space-x-1.5 text-xs font-medium" id="header-nav" aria-label="Điều hướng chính">
+      {navItems.map(item => (
+        <a
+          href={item.href}
+          class={`px-3 py-1.5 rounded-lg transition-all ${
+            item.active
+              ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-bold shadow-sm'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'
+          }`}
+          aria-current={item.active ? 'page' : undefined}
+        >
+          {item.label}
+        </a>
+      ))}
+    </nav>
+
+    <!-- Controls (Search, Font, Theme) -->
+    <div class="flex items-center space-x-2">
+      <!-- Search Button (Refactored to .btn-control) -->
+      <button
+        onclick="window.openSearchModal?.()"
+        class="btn-control font-mono space-x-1.5"
+        title="Tìm kiếm (Cmd+K hoặc /)"
+        aria-label="Mở tìm kiếm"
+      >
+        <Search class="w-3.5 h-3.5 text-slate-500" />
+        <span class="hidden sm:inline">Tìm</span>
+        <kbd class="px-1.5 py-0.5 text-[10px] bg-slate-200 dark:bg-slate-800 rounded text-slate-500 font-mono">⌘K</kbd>
+      </button>
+
+      <!-- Font Switcher (Refactored to .btn-control) -->
+      <button
+        id="global-font-btn"
+        class="btn-control font-medium space-x-1"
+        title="Đổi phông chữ đọc: Sans / Times (arXiv) / Serif"
+        aria-label="Đổi phông chữ bài viết"
+      >
+        <Type class="w-3.5 h-3.5 text-slate-500" />
+        <span id="global-font-label" class="hidden sm:inline">Sans</span>
+      </button>
+
+      <!-- Theme Switcher (Refactored to .btn-icon with crisp SVG icons) -->
+      <button
+        id="global-theme-btn"
+        class="btn-icon"
+        title="Đổi giao diện Sáng / Tối"
+        aria-label="Đổi chế độ sáng tối"
+      >
+        <Moon class="w-4 h-4 dark:hidden text-slate-700" />
+        <Sun class="w-4 h-4 hidden dark:inline text-amber-400" />
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Mobile Drawer Menu (Category Navigation for Mobile Viewports) -->
+  <div
+    id="mobile-drawer"
+    class="hidden md:hidden border-t border-subtle bg-[var(--surface-card)] px-4 py-3 space-y-1 shadow-lg transition-all animate-in fade-in"
+    role="region"
+    aria-label="Menu danh mục di động"
+  >
+    <div class="text-[11px] font-bold text-text-muted uppercase tracking-wider px-2 py-1">
+      Chuyên mục bài viết
+    </div>
+    <div class="grid grid-cols-2 gap-1.5 pt-1">
+      {navItems.map(item => (
+        <a
+          href={item.href}
+          class={`px-3 py-2 rounded-xl text-xs font-medium transition-colors flex items-center justify-between ${
+            item.active
+              ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-bold shadow-sm'
+              : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-subtle'
+          }`}
+          aria-current={item.active ? 'page' : undefined}
+        >
+          <span>{item.label}</span>
+          {item.active && <span class="w-1.5 h-1.5 rounded-full bg-accent-primary dark:bg-accent-primaryDark"></span>}
+        </a>
+      ))}
+    </div>
+  </div>
+</header>
+
+<script>
+  // Theme logic
+  const themeBtn = document.getElementById('global-theme-btn');
+  themeBtn?.addEventListener('click', () => {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  });
+
+  // Reading Font logic
+  const fontBtn = document.getElementById('global-font-btn');
+  const fontLabel = document.getElementById('global-font-label');
+  const fontModes = [
+    { name: 'Sans', classAdd: 'mode-sans', classRemove: ['mode-academic', 'mode-serif'] },
+    { name: 'Times (arXiv)', classAdd: 'mode-academic', classRemove: ['mode-sans', 'mode-serif'] },
+    { name: 'Serif', classAdd: 'mode-serif', classRemove: ['mode-sans', 'mode-academic'] }
+  ];
+  let currentFontIdx = 0;
+
+  // Initialize font label if article has recommended mode
+  const currentArticle = document.querySelector('article');
+  if (currentArticle?.classList.contains('mode-academic')) {
+    currentFontIdx = 1;
+    if (fontLabel) fontLabel.innerText = 'Times (arXiv)';
+  } else if (currentArticle?.classList.contains('mode-serif')) {
+    currentFontIdx = 2;
+    if (fontLabel) fontLabel.innerText = 'Serif';
+  }
+
+  fontBtn?.addEventListener('click', () => {
+    currentFontIdx = (currentFontIdx + 1) % fontModes.length;
+    const mode = fontModes[currentFontIdx];
+    const article = document.querySelector('article');
+    if (article) {
+      mode.classRemove.forEach(c => article.classList.remove(c));
+      article.classList.add(mode.classAdd);
+    }
+    if (fontLabel) fontLabel.innerText = mode.name;
+    localStorage.setItem('font-mode', mode.name);
+  });
+
+  // Mobile Drawer toggle logic
+  const mobileToggle = document.getElementById('mobile-menu-toggle');
+  const mobileDrawer = document.getElementById('mobile-drawer');
+  const openIcon = mobileToggle?.querySelector('.menu-open-icon');
+  const closeIcon = mobileToggle?.querySelector('.menu-close-icon');
+
+  function toggleMobileMenu(force?: boolean) {
+    if (!mobileDrawer || !mobileToggle) return;
+    const isExpanded = force !== undefined ? !force : mobileToggle.getAttribute('aria-expanded') === 'true';
+    const nextState = !isExpanded;
+    mobileToggle.setAttribute('aria-expanded', String(nextState));
+    if (nextState) {
+      mobileDrawer.classList.remove('hidden');
+      openIcon?.classList.add('hidden');
+      closeIcon?.classList.remove('hidden');
+    } else {
+      mobileDrawer.classList.add('hidden');
+      openIcon?.classList.remove('hidden');
+      closeIcon?.classList.add('hidden');
+    }
+  }
+
+  mobileToggle?.addEventListener('click', () => toggleMobileMenu());
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && mobileDrawer && !mobileDrawer.classList.contains('hidden')) {
+      toggleMobileMenu(false);
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    if (mobileDrawer && !mobileDrawer.classList.contains('hidden')) {
+      const target = e.target as HTMLElement;
+      if (!mobileDrawer.contains(target) && !mobileToggle?.contains(target)) {
+        toggleMobileMenu(false);
+      }
+    }
+  });
+
+  // Highlight active category when reading specific post
+  if (window.location.pathname.startsWith('/posts/')) {
+    const breadcrumbCatLink = document.querySelector('main a[href^="/category/"]');
+    if (breadcrumbCatLink) {
+      const catHref = breadcrumbCatLink.getAttribute('href');
+      const headerLink = document.querySelector(`#header-nav a[href="${catHref}"]`);
+      if (headerLink) {
+        document.querySelectorAll('#header-nav a').forEach(a => {
+          a.className = 'px-3 py-1.5 rounded-lg transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800';
+        });
+        headerLink.className = 'px-3 py-1.5 rounded-lg transition-all bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-bold shadow-sm';
+      }
+    }
+  }
+</script>

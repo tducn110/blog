@@ -1,0 +1,274 @@
+---
+// ponytail: Dynamic post page with server-rendered KaTeX & Shiki, zero client bundle bloat
+import { getCollection, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CategoryBadge from '../../components/CategoryBadge.astro';
+import TableOfContents from '../../components/TableOfContents.astro';
+import ShareBar from '../../components/ShareBar.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { CATEGORIES } from '../../utils/categories';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  return posts.map(post => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+}
+
+const { post } = Astro.props;
+const { Content, headings } = await post.render();
+
+const allPosts = await getCollection('posts', ({ data }) => !data.draft);
+const sortedPosts = allPosts.sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+const currentIndex = sortedPosts.findIndex(p => p.slug === post.slug);
+const prevPost = currentIndex < sortedPosts.length - 1 ? sortedPosts[currentIndex + 1] : null;
+const nextPost = currentIndex > 0 ? sortedPosts[currentIndex - 1] : null;
+
+const fontClassMap = {
+  sans: 'mode-sans',
+  academic: 'mode-academic',
+  serif: 'mode-serif',
+};
+const defaultFontClass = fontClassMap[post.data.recommendedFont || 'sans'];
+---
+
+<BaseLayout title={post.data.title} description={post.data.description} ogType="article">
+  <div class="space-y-6">
+    
+    <!-- Reusable Breadcrumbs Navigation Map & Back Link -->
+    <Breadcrumbs
+      items={[
+        { label: 'Home', href: '/' },
+        { label: (CATEGORIES[post.data.category]?.label || post.data.category).toUpperCase(), href: `/category/${post.data.category}` },
+        { label: post.data.title }
+      ]}
+      backLink={{ label: 'Tất cả bài viết', href: '/' }}
+    />
+
+    <!-- 12-Column Grid: 8 cols Article Canvas (Expanded max 840px) + 4 cols Sticky TOC -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-10 lg:gap-14">
+      
+      <!-- Main Reading Column (8 cols = 66.6%) -->
+      <article class={`card-surface md:col-span-8 p-8 sm:p-12 lg:p-14 shadow-xl max-w-[840px] w-full mx-auto md:mx-0 rounded-3xl ${defaultFontClass}`}>
+        
+        <!-- Header (F-Pattern Left Anchored with generous spacing) -->
+        <header class="space-y-6 border-b border-subtle pb-8">
+          <div class="flex items-center space-x-2 text-xs text-text-muted">
+            <CategoryBadge category={post.data.category} />
+            <span>&bull;</span>
+            <span>{post.data.publishDate.toLocaleDateString('vi-VN')}</span>
+          </div>
+
+          <!-- Title with Vietnamese Stacked Diacritics Protection (Clamped 26px - 36px) -->
+          <h1 class="article-title font-bold text-slate-900 dark:text-white">
+            {post.data.title}
+          </h1>
+
+          <p class="article-body-p text-text-muted">
+            {post.data.description}
+          </p>
+
+          {post.data.tags && post.data.tags.length > 0 && (
+            <div class="flex flex-wrap gap-1.5 pt-2">
+              {post.data.tags.map(tag => (
+                <span class="text-xs font-mono text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/80 px-2.5 py-0.5 rounded-md border border-subtle">
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          )}
+        </header>
+
+        <!-- Article Body with Native Server-Rendered KaTeX & Shiki Syntax (No space-y-4 conflict) -->
+        <div class="prose dark:prose-invert max-w-none text-slate-800 dark:text-slate-200">
+          <Content />
+        </div>
+
+        <!-- 1-Click Social Share Bar -->
+        <ShareBar title={post.data.title} />
+
+        <!-- Next & Previous Post Navigation (Flow Continuity) -->
+        {(prevPost || nextPost) && (
+          <nav class="pt-8 mt-8 border-t border-subtle grid grid-cols-1 sm:grid-cols-2 gap-4" aria-label="Điều hướng bài viết">
+            {prevPost ? (
+              <a
+                href={`/posts/${prevPost.slug}`}
+                class="p-4 rounded-2xl border border-subtle bg-slate-50/50 dark:bg-slate-900/40 hover:border-accent-primary dark:hover:border-accent-primaryDark transition-all group flex flex-col justify-between"
+              >
+                <div class="text-[11px] font-mono text-text-muted flex items-center gap-1 group-hover:text-accent-primary dark:group-hover:text-accent-primaryDark transition-colors">
+                  &larr; <span>Bài viết trước</span>
+                </div>
+                <div class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white mt-1.5 line-clamp-2">
+                  {prevPost.data.title}
+                </div>
+              </a>
+            ) : <div />}
+
+            {nextPost ? (
+              <a
+                href={`/posts/${nextPost.slug}`}
+                class="p-4 rounded-2xl border border-subtle bg-slate-50/50 dark:bg-slate-900/40 hover:border-accent-primary dark:hover:border-accent-primaryDark transition-all group flex flex-col justify-between text-right"
+              >
+                <div class="text-[11px] font-mono text-text-muted flex items-center justify-end gap-1 group-hover:text-accent-primary dark:group-hover:text-accent-primaryDark transition-colors">
+                  <span>Bài viết tiếp theo</span> &rarr;
+                </div>
+                <div class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white mt-1.5 line-clamp-2">
+                  {nextPost.data.title}
+                </div>
+              </a>
+            ) : <div />}
+          </nav>
+        )}
+
+      </article>
+
+      <!-- Sticky Sidebar Column (4 cols = 33.3%) -->
+      <aside class="md:col-span-4 space-y-6">
+        
+        <div class="sticky top-24 space-y-6">
+          <!-- Table of Contents -->
+          <TableOfContents headings={headings} />
+
+          <!-- Article Stats Card (Refactored to .card-surface) -->
+          <div class="card-surface p-6 space-y-2 text-xs">
+            <div class="font-bold text-slate-900 dark:text-white">Thông số bài viết</div>
+            <div class="text-[11px] text-text-muted space-y-1">
+              <div>Phân loại: <a href={`/category/${post.data.category}`} class="font-medium text-slate-900 dark:text-white hover:text-accent-primary dark:hover:text-accent-primaryDark hover:underline inline-flex items-center gap-1">{CATEGORIES[post.data.category]?.label || post.data.category} &rarr;</a></div>
+              <div>Phông đề xuất: <span class="capitalize font-mono">{post.data.recommendedFont}</span></div>
+              <div>Bản quyền: CC BY-NC 4.0</div>
+            </div>
+          </div>
+        </div>
+
+      </aside>
+
+    </div>
+
+  </div>
+
+  <!-- Client-side Lightweight Mermaid Renderer & Code Block Enhancer -->
+  <script is:inline>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Enhanced Copy Button & Language Badge for Code Blocks
+      document.querySelectorAll('pre.astro-code').forEach(pre => {
+        // Detect language
+        const langAttr = pre.getAttribute('data-language');
+        const codeEl = pre.querySelector('code');
+        const langMatch = pre.className.match(/language-([a-z0-9_-]+)/i) || codeEl?.className.match(/language-([a-z0-9_-]+)/i);
+        const language = langAttr || (langMatch ? langMatch[1] : '');
+
+        if (language && language !== 'plaintext' && language !== 'text') {
+          const badge = document.createElement('span');
+          badge.className = 'code-lang-badge';
+          badge.textContent = language.toUpperCase();
+          pre.appendChild(badge);
+        }
+
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'copy-code-btn';
+        copyBtn.innerHTML = `
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+          <span class="copy-label">Copy</span>
+        `;
+        copyBtn.title = 'Sao chép đoạn mã';
+        copyBtn.setAttribute('aria-label', 'Sao chép đoạn mã');
+        
+        pre.appendChild(copyBtn);
+
+        copyBtn.addEventListener('click', async () => {
+          const code = codeEl?.innerText || pre.innerText;
+          try {
+            await navigator.clipboard.writeText(code);
+            copyBtn.innerHTML = `
+              <svg class="w-3.5 h-3.5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              <span class="text-emerald-400 font-semibold">Đã copy ✓</span>
+            `;
+            setTimeout(() => {
+              copyBtn.innerHTML = `
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                <span class="copy-label">Copy</span>
+              `;
+            }, 2000);
+          } catch (e) {
+            copyBtn.querySelector('.copy-label').textContent = 'Lỗi';
+          }
+        });
+      });
+
+      // Mermaid Diagrams with Theme Reactivity
+      let mermaidInstance = null;
+      const mermaidContainers = [];
+
+      const initialCodeBlocks = Array.from(document.querySelectorAll('pre code, pre'));
+      const mermaidBlocks = initialCodeBlocks.filter(el => {
+        return el.classList.contains('language-mermaid') || 
+               el.textContent?.trim().startsWith('flowchart') || 
+               el.textContent?.trim().startsWith('graph') ||
+               el.textContent?.trim().startsWith('sequenceDiagram');
+      });
+
+      if (mermaidBlocks.length > 0) {
+        import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs').then(m => {
+          mermaidInstance = m.default;
+
+          async function renderAllMermaid() {
+            if (!mermaidInstance) return;
+            const isDark = document.documentElement.classList.contains('dark');
+            mermaidInstance.initialize({
+              startOnLoad: false,
+              theme: isDark ? 'dark' : 'neutral',
+              fontFamily: 'Be Vietnam Pro, sans-serif'
+            });
+
+            for (let i = 0; i < mermaidContainers.length; i++) {
+              const item = mermaidContainers[i];
+              try {
+                const id = `mermaid-svg-${Date.now()}-${i}`;
+                const { svg } = await mermaidInstance.render(id, item.rawCode);
+                item.container.innerHTML = svg;
+              } catch (err) {
+                console.warn('Mermaid re-render failed:', err);
+              }
+            }
+          }
+
+          // Initial Render
+          mermaidBlocks.forEach(async (el, idx) => {
+            const rawCode = el.textContent || '';
+            const parent = el.closest('pre') || el;
+            const container = document.createElement('div');
+            container.className = 'mermaid-rendered';
+            parent.replaceWith(container);
+
+            const record = { container, rawCode };
+            mermaidContainers.push(record);
+
+            try {
+              const isDark = document.documentElement.classList.contains('dark');
+              mermaidInstance.initialize({
+                startOnLoad: false,
+                theme: isDark ? 'dark' : 'neutral',
+                fontFamily: 'Be Vietnam Pro, sans-serif'
+              });
+              const { svg } = await mermaidInstance.render(`mermaid-svg-${idx}`, rawCode);
+              container.innerHTML = svg;
+            } catch (err) {
+              console.warn('Initial Mermaid render error:', err);
+            }
+          });
+
+          // Listen for theme toggle to re-render diagrams in synced theme
+          document.getElementById('global-theme-btn')?.addEventListener('click', () => {
+            setTimeout(renderAllMermaid, 60);
+          });
+
+        }).catch(err => console.warn('Could not load Mermaid:', err));
+      }
+    });
+  </script>
+</BaseLayout>

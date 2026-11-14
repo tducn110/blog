@@ -1,0 +1,32 @@
+---
+// ponytail: Unified clickable category badge with category-specific icon, directs to full category archive page
+import { CATEGORIES, type CategoryKey } from '../utils/categories';
+import { Terminal, Workflow, Sigma, Feather } from 'lucide-astro';
+
+interface Props {
+  category: CategoryKey;
+  class?: string;
+  showIcon?: boolean;
+}
+
+const { category, class: className = '', showIcon = true } = Astro.props;
+const config = CATEGORIES[category] || CATEGORIES.tech;
+
+const iconMap = {
+  tech: Terminal,
+  engineering: Workflow,
+  math: Sigma,
+  thoughts: Feather,
+};
+const Icon = iconMap[category] || Terminal;
+---
+
+<a
+  href={`/category/${category}`}
+  class={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold border hover:opacity-80 transition-opacity cursor-pointer ${config.badgeClasses} ${className}`}
+  title={`Khám phá toàn bộ bài viết chuyên mục ${config.label}`}
+  aria-label={`Chuyên mục ${config.label}`}
+>
+  {showIcon && <Icon class="w-3 h-3 stroke-[2]" />}
+  <span>{config.label}</span>
+</a>

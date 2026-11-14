@@ -1,0 +1,31 @@
+{
+  "name": "tducn",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@astrojs/markdown-remark": "^7.3.5",
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/tailwind": "^6.0.2",
+    "astro": "^5.18.2",
+    "katex": "^0.19.1",
+    "lucide-astro": "^0.556.0",
+    "rehype-katex": "^7.0.1",
+    "remark-math": "^6.0.0",
+    "tailwindcss": "^3.4.19"
+  },
+  "devDependencies": {
+    "vitest": "^5.0.5"
+  }
+}

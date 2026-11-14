@@ -1,0 +1,93 @@
+---
+// ponytail: Interactive Sticky Table of Contents with ScrollSpy & Active Heading Highlight
+import { Bookmark } from 'lucide-astro';
+
+interface Props {
+  headings: { depth: number; slug: string; text: string }[];
+}
+
+const { headings } = Astro.props;
+const toc = headings.filter(h => h.depth === 2 || h.depth === 3);
+---
+
+{toc.length > 0 && (
+  <nav class="card-surface p-6 space-y-3 shadow-sm" aria-label="Mục lục bài viết" id="article-toc">
+    <div class="text-xs font-bold text-text-main flex items-center gap-2 border-b border-subtle pb-2.5">
+      <Bookmark class="w-3.5 h-3.5 text-accent-primary dark:text-accent-primaryDark" />
+      <span>Mục lục nội dung</span>
+    </div>
+    <ul class="space-y-1.5 text-xs text-text-muted">
+      {toc.map(item => (
+        <li class={item.depth === 3 ? "pl-3 text-[11px]" : ""}>
+          <a
+            href={`#${item.slug}`}
+            data-toc-slug={item.slug}
+            class="toc-link block transition-all py-1 hover:text-accent-primary dark:hover:text-accent-primaryDark"
+          >
+            {item.text}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+
+  <script>
+    // ScrollSpy: Dynamic Table of Contents Highlight based on Active Heading
+    const tocLinks = document.querySelectorAll<HTMLAnchorElement>('#article-toc a[data-toc-slug]');
+    const headingElements = Array.from(tocLinks)
+      .map(link => {
+        const slug = link.getAttribute('data-toc-slug');
+        return slug ? document.getElementById(slug) : null;
+      })
+      .filter((el): el is HTMLElement => el !== null);
+
+    if (headingElements.length > 0 && tocLinks.length > 0) {
+      let activeSlug = '';
+
+      function updateActiveHeading() {
+        const scrollPosition = window.scrollY + 120; // 120px offset below header
+        
+        let currentHeading: HTMLElement | null = null;
+        for (const heading of headingElements) {
+          if (heading.offsetTop <= scrollPosition) {
+            currentHeading = heading;
+          } else {
+            break;
+          }
+        }
+
+        const newActiveSlug = currentHeading ? currentHeading.id : (headingElements[0]?.id || '');
+        if (newActiveSlug !== activeSlug) {
+          activeSlug = newActiveSlug;
+          tocLinks.forEach(link => {
+            if (link.getAttribute('data-toc-slug') === activeSlug) {
+              link.classList.add('active');
+            } else {
+              link.classList.remove('active');
+            }
+          });
+        }
+      }
+
+      // Initial check & passive scroll listener
+      updateActiveHeading();
+      window.addEventListener('scroll', updateActiveHeading, { passive: true });
+
+      // Smooth scroll on click with history state
+      tocLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const slug = link.getAttribute('data-toc-slug');
+          if (slug) {
+            const target = document.getElementById(slug);
+            if (target) {
+              const top = target.getBoundingClientRect().top + window.scrollY - 88;
+              window.scrollTo({ top, behavior: 'smooth' });
+              history.pushState(null, '', `#${slug}`);
+            }
+          }
+        });
+      });
+    }
+  </script>
+)}

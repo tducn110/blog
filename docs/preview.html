@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog Design System & Wireframe Showcase</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Google Fonts: Be Vietnam Pro, Inter, Literata, JetBrains Mono, STIX Two Text -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=STIX+Two+Text:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <!-- KaTeX CSS & JS + Auto Render -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Be Vietnam Pro"', 'Inter', 'sans-serif'],
+            serif: ['Literata', 'Merriweather', 'serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            // 60-30-10 System Tokens
+            canvas: {
+              light: '#f8fafc',
+              dark: '#090a0f',
+            },
+            surface: {
+              light: '#ffffff',
+              dark: '#12151e',
+            },
+            borderSubtle: {
+              light: '#e2e8f0',
+              dark: '#1e2433',
+            },
+            accent: {
+              cyan: '#06b6d4',
+              blue: '#3b82f6',
+              purple: '#8b5cf6',
+              emerald: '#10b981',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    // 60-30-10 System Tokens: Academic / Editorial Palette (Khắc phục lỗi màu neon)
+    :root {
+      --bg-canvas: #ffffff;          /* 60% Dominant: Nền trang giấy trắng ngà sạch */
+      --surface-card: #f9fafb;       /* 30% Secondary: Card bề mặt xám nhạt */
+      --border-subtle: #e5e7eb;      /* Đường tóc phân cách tinh tế */
+      --text-main: #111827;          /* Chữ chính đen tuyền sắc nét */
+      --text-muted: #4b5563;         /* Chữ phụ xám trung tính */
+      --primary-accent: #991b1b;     /* 10% Accent: Đỏ rượu học thuật (Academic Crimson / VNUK-inspired) */
+    }
+    .dark {
+      --bg-canvas: #121316;          /* 60% Dominant: Nền tối than kẽm, không đen tuyệt đối */
+      --surface-card: #1a1b1f;       /* 30% Secondary: Bề mặt card phân tầng rõ */
+      --border-subtle: #27282d;      /* Đường tóc viền mảnh */
+      --text-main: #f3f4f6;          /* Chữ chính sáng dịu */
+      --text-muted: #9ca3af;         /* Chữ phụ */
+      --primary-accent: #f87171;     /* 10% Accent: Điểm nhấn đỏ san hô dịu mắt trên nền tối */
+    }
+    body {
+      background-color: var(--bg-canvas);
+      color: var(--text-main);
+      font-family: 'Be Vietnam Pro', sans-serif;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+    .code-font {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .serif-mode {
+      font-family: 'Literata', 'Merriweather', serif !important;
+    }
+    .academic-mode {
+      font-family: 'Times New Roman', Times, 'STIX Two Text', serif !important;
+    }
+    /* VIETNAMESE TYPOGRAPHY SAFEGUARDS: Chống vỡ dấu tiếng Việt */
+    .article-title {
+      font-size: clamp(1.6rem, 3.2vw, 2.15rem) !important;
+      line-height: 1.4 !important;
+      letter-spacing: 0 !important;
+      text-wrap: balance;
+    }
+    .article-h2 {
+      font-size: clamp(1.25rem, 2.2vw, 1.45rem) !important;
+      line-height: 1.45 !important;
+      letter-spacing: 0 !important;
+      text-wrap: balance;
+    }
+    .article-body-p {
+      font-size: 16.5px !important;
+      line-height: 1.78 !important;
+      letter-spacing: 0 !important;
+      max-width: 55ch;
+      text-wrap: pretty;
+    }
+    /* Cấm triệt để tracking âm (negative letter-spacing) gây dính bệt dấu */
+    h1, h2, h3, h4, p, span, a, li {
+      letter-spacing: normal;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+    }
+    /* Subtle dot grid */
+    .bg-grid-pattern {
+      background-image: radial-gradient(rgba(148, 163, 184, 0.15) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .dark .bg-grid-pattern {
+      background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(100, 116, 139, 0.3);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(100, 116, 139, 0.5);
+    }
+  </style>
+</head>
+<body class="min-h-screen antialiased flex flex-col bg-grid-pattern">
+
+  <!-- Top Controller Bar -->
+  <header class="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-[#090a0f]/85 border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+      
+      <!-- Brand & Project Title -->
+      <div class="flex items-center space-x-3">
+        <div class="w-8 h-8 rounded-lg bg-red-800 dark:bg-red-700 flex items-center justify-center text-white font-bold text-sm shadow-sm">
+          <i data-lucide="book-open" class="w-4 h-4"></i>
+        </div>
+        <div>
+          <span class="font-bold text-base tracking-tight text-slate-900 dark:text-white">Blog Prototype</span>
+          <span class="hidden sm:inline-block text-xs px-2 py-0.5 ml-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-mono">v2.1 (Scholarly Edition)</span>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs (View Switcher) -->
+      <nav class="flex items-center space-x-1 bg-slate-100 dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-medium">
+        <button onclick="switchTab('design-kit')" id="tab-design-kit" class="px-3.5 py-1.5 rounded-lg flex items-center space-x-1.5 transition-all bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm">
+          <i data-lucide="palette" class="w-3.5 h-3.5 text-red-700 dark:text-red-400"></i>
+          <span>Design Kit (/ui)</span>
+        </button>
+        <button onclick="switchTab('wireframe-a')" id="tab-wireframe-a" class="px-3.5 py-1.5 rounded-lg flex items-center space-x-1.5 transition-all text-slate-500 hover:text-slate-900 dark:hover:text-white">
+          <i data-lucide="layout" class="w-3.5 h-3.5"></i>
+          <span>Wireframe Prototype</span>
+        </button>
+        <button onclick="switchTab('wireframe-b')" id="tab-wireframe-b" class="px-3.5 py-1.5 rounded-lg flex items-center space-x-1.5 transition-all text-slate-500 hover:text-slate-900 dark:hover:text-white">
+          <i data-lucide="columns-3" class="w-3.5 h-3.5"></i>
+          <span>Option B (Tree Nav)</span>
+        </button>
+      </nav>
+
+      <!-- Global Controls -->
+      <div class="flex items-center space-x-2">
+        <!-- 4*x px Grid Overlay Toggle Button -->
+        <button onclick="toggleGridOverlay()" id="grid-toggle-btn" class="h-9 px-2.5 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-mono font-medium flex items-center space-x-1.5 text-slate-700 dark:text-slate-300 transition-colors" title="Bật/Tắt Lưới 12 Cột & Tỷ lệ 4*x px">
+          <i data-lucide="grid-3x3" class="w-4 h-4 text-red-700 dark:text-red-400"></i>
+          <span class="hidden md:inline">Lưới 4*x px</span>
+        </button>
+
+        <!-- Search Cmd+K Button -->
+        <button onclick="toggleSearchModal(true)" class="h-9 px-2.5 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-mono flex items-center space-x-1.5 text-slate-600 dark:text-slate-400 transition-colors" title="Tìm kiếm bài viết (Cmd+K)">
+          <i data-lucide="search" class="w-3.5 h-3.5"></i>
+          <span class="hidden lg:inline">Tìm kiếm</span>
+          <kbd class="hidden lg:inline-block px-1.5 py-0.5 text-[10px] bg-slate-200 dark:bg-slate-800 rounded text-slate-500">⌘K</kbd>
+        </button>
+
+        <!-- Font Family Switcher -->
+        <button onclick="toggleReadingFont()" id="font-toggle-btn" class="h-9 px-2.5 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-medium flex items-center space-x-1 text-slate-700 dark:text-slate-300 transition-colors" title="Chuyển đổi phông đọc (Sans / Times / Serif)">
+          <i data-lucide="type" class="w-4 h-4 text-purple-600 dark:text-purple-400"></i>
+          <span id="font-mode-label" class="hidden sm:inline">Sans</span>
+        </button>
+
+        <!-- Dark/Light Theme Toggle -->
+        <button onclick="toggleTheme()" class="w-9 h-9 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-300 transition-colors" title="Đổi giao diện Sáng / Tối">
+          <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-amber-400"></i>
+          <i data-lucide="moon" class="w-4 h-4 block dark:hidden text-slate-700"></i>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 1: DESIGN SYSTEM & COMPONENT KIT (/ui) -->
+  <!-- ========================================================================= -->
+  <main id="view-design-kit" class="flex-1 max-w-7xl w-full mx-auto px-4 py-8 space-y-12">
+    
+    <!-- Hero / HCI Overview Banner -->
+    <section class="bg-white dark:bg-[#1a1b1f] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 relative overflow-hidden shadow-sm">
+      <div class="max-w-3xl space-y-3 relative z-10">
+        <div class="inline-flex items-center space-x-2 px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold">
+          <i data-lucide="book-marked" class="w-3.5 h-3.5 text-red-700 dark:text-red-400"></i>
+          <span>Tài liệu tham chiếu HCI (Human-Computer Interaction)</span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+          Hệ Thống Thiết Kế UI/UX: Chuẩn Mực Nghiên Cứu & Trải Nghiệm Đọc Sâu
+        </h1>
+        <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+          Ứng dụng tiêu chuẩn <strong>3 "USE"</strong> (Useful, Usable, Used), nguyên lý <strong>F-Pattern Eye Tracking</strong> và <strong>tỷ lệ màu 60-30-10 nghiêm ngặt</strong>. Loại bỏ hoàn toàn các yếu tố màu neon giả tạo để đưa sự tập trung vào tri thức và câu chữ.
+        </p>
+      </div>
+    </section>
+
+    <!-- 1. Pure 60-30-10 Color System (Chỉ gồm 3 màu đơn sắc thuần túy) -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-red-700"></span>
+            <span>1. Quy tắc Phối màu Chuẩn 60 - 30 - 10 (Chỉ Áp Dụng Cho Màu Đơn Sắc)</span>
+          </h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            Phân bổ chính xác 3 khối màu đơn sắc (Solid Colors) theo tỷ lệ diện tích thị giác. <strong>Gradient không nằm trong công thức này</strong>.
+          </p>
+        </div>
+        <span class="text-xs font-mono text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/40 px-2.5 py-1 rounded-md border border-red-200 dark:border-red-900/60 font-semibold">Tỷ lệ Chuẩn 60-30-10</span>
+      </div>
+
+      <!-- Ratio Visual Bar (Strictly 3 Solid Colors) -->
+      <div class="w-full h-5 rounded-lg overflow-hidden flex border border-slate-300 dark:border-slate-700 shadow-sm">
+        <div class="w-[60%] bg-[#ffffff] dark:bg-[#121316] flex items-center justify-center text-[11px] font-mono text-slate-700 dark:text-slate-300 font-bold border-r border-slate-200 dark:border-slate-800" title="60% Dominant Canvas">
+          60% Dominant (Canvas Base)
+        </div>
+        <div class="w-[30%] bg-[#f9fafb] dark:bg-[#1a1b1f] flex items-center justify-center text-[11px] font-mono text-slate-700 dark:text-slate-300 font-bold border-r border-slate-200 dark:border-slate-800" title="30% Secondary Surface">
+          30% Secondary (Card & Border)
+        </div>
+        <div class="w-[10%] bg-[#991b1b] dark:bg-[#f87171] flex items-center justify-center text-[11px] font-mono text-white dark:text-slate-900 font-bold" title="10% Accent CTA">
+          10% Accent
+        </div>
+      </div>
+
+      <!-- 3 Solid Color Cards Only -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-1">
+        <!-- 60% Canvas -->
+        <div class="bg-white dark:bg-[#1a1b1f] border border-slate-200 dark:border-slate-800 rounded-xl p-4 space-y-2 shadow-sm">
+          <div class="h-12 rounded-lg bg-[#ffffff] dark:bg-[#121316] border-2 border-slate-300 dark:border-slate-700 flex items-center justify-center">
+            <span class="text-xs font-mono font-bold text-slate-800 dark:text-slate-200">60% Dominant Canvas</span>
+          </div>
+          <div class="text-xs space-y-0.5">
+            <div class="font-bold text-slate-900 dark:text-white">Nền Chủ Đạo (Background)</div>
+            <div class="text-[11px] font-mono text-slate-500">Light: #ffffff | Dark: #121316</div>
+            <div class="text-[11px] text-slate-600 dark:text-slate-400">Chiếm 60% không gian trang, tạo khoảng thở cho mắt.</div>
+          </div>
+        </div>
+
+        <!-- 30% Secondary Surface -->
+        <div class="bg-white dark:bg-[#1a1b1f] border border-slate-200 dark:border-slate-800 rounded-xl p-4 space-y-2 shadow-sm">
+          <div class="h-12 rounded-lg bg-[#f9fafb] dark:bg-[#1a1b1f] border-2 border-slate-300 dark:border-slate-700 flex items-center justify-center">
+            <span class="text-xs font-mono font-bold text-slate-800 dark:text-slate-200">30% Secondary Surface</span>
+          </div>
+          <div class="text-xs space-y-0.5">
+            <div class="font-bold text-slate-900 dark:text-white">Bề Mặt & Cấu Trúc (Cards & Lines)</div>
+            <div class="text-[11px] font-mono text-slate-500">Light: #f9fafb | Dark: #1a1b1f</div>
+            <div class="text-[11px] text-slate-600 dark:text-slate-400">Chiếm 30% diện tích để đóng khung nội dung, bảng, code.</div>
+          </div>
+        </div>
+
+        <!-- 10% Accent -->
+        <div class="bg-white dark:bg-[#1a1b1f] border border-slate-200 dark:border-slate-800 rounded-xl p-4 space-y-2 shadow-sm">
+          <div class="h-12 rounded-lg bg-[#991b1b] dark:bg-[#f87171] flex items-center justify-center text-white dark:text-slate-900 font-bold shadow-sm">
+            <span class="text-xs font-mono">10% Accent Color</span>
+          </div>
+          <div class="text-xs space-y-0.5">
+            <div class="font-bold text-slate-900 dark:text-white">Điểm Nhấn Tương Tác (CTA & Active)</div>
+            <div class="text-[11px] font-mono text-slate-500">Academic Crimson: Light #991b1b | Dark #f87171</div>
+            <div class="text-[11px] text-slate-600 dark:text-slate-400">Chỉ chiếm 10% cho các nút bấm chính, link active.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tách bạch mục Hiệu ứng Gradient (Không thuộc 60-30-10) -->
+      <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
+        <div class="flex items-center space-x-2 text-slate-600 dark:text-slate-400">
+          <i data-lucide="info" class="w-4 h-4 text-slate-500"></i>
+          <span><strong>Lưu ý về Gradient:</strong> Gradient chỉ là kỹ thuật ánh sáng điểm xuyết (Decorative Wash), hoàn toàn tách rời khỏi tỷ lệ 60-30-10.</span>
+        </div>
+        <div class="flex items-center space-x-2 font-mono text-[11px]">
+          <span class="text-slate-500">Subtle Wash:</span>
+          <span class="w-16 h-3 rounded bg-gradient-to-r from-red-900/20 to-blue-900/20 border border-slate-300 dark:border-slate-700"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Typography Matrix & Recommendation Engine -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+            <span class="w-2 h-2 rounded-full bg-purple-500"></span>
+            <span>2. Typography Matrix & Cơ chế Gợi ý Font theo Thể loại</span>
+          </h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Không ép 1 font cố định. Tự động đề xuất Serif cho tản văn và Sans-serif cho bài viết kỹ thuật.</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Sans-Serif Technical (Be Vietnam Pro / Inter) -->
+        <div class="bg-white dark:bg-[#12151e] border border-slate-200 dark:border-slate-800 rounded-xl p-5 space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-semibold">Sans-serif</span>
+              <h3 class="font-bold text-sm text-slate-900 dark:text-white">Be Vietnam Pro / Inter</h3>
+            </div>
+          </div>
+          <span class="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
+            <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Đề xuất: Tech & Engineering
+          </span>
+          <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-sans">
+            "Hệ thống phân tán yêu cầu tính nhất quán (Consistency) và khả năng chịu lỗi (Fault Tolerance) cao."
+          </p>
+          <div class="text-[11px] text-slate-500 font-mono pt-1 border-t border-slate-100 dark:border-slate-800/80">
+            Dấu tiếng Việt chuẩn UTF-8 &bull; Không lỗi Vietlish
+          </div>
+        </div>
+
+        <!-- Academic Paper (Times New Roman / STIX Two Text) -->
+        <div class="bg-white dark:bg-[#12151e] border-2 border-cyan-500/40 dark:border-cyan-500/30 rounded-xl p-5 space-y-3 relative overflow-hidden">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-cyan-100 dark:bg-cyan-950 text-cyan-700 dark:text-cyan-300 font-semibold">Academic Paper</span>
+              <h3 class="font-bold text-sm text-slate-900 dark:text-white">Times New Roman / STIX Two</h3>
+            </div>
+          </div>
+          <span class="text-[11px] text-cyan-600 dark:text-cyan-400 font-medium flex items-center gap-1">
+            <i data-lucide="award" class="w-3.5 h-3.5"></i> Đề xuất: Phân tích bài báo arXiv & Khoa học
+          </span>
+          <p class="text-xs text-slate-800 dark:text-slate-200 leading-relaxed academic-mode text-[13.5px]">
+            "In this paper, we present an empirical evaluation of attention mechanisms [1]. Statistical significance was confirmed with $p < 0.001$."
+          </p>
+          <div class="text-[11px] text-slate-500 font-mono pt-1 border-t border-slate-100 dark:border-slate-800/80">
+            Chuẩn mực học thuật quốc tế &bull; Đọc như PDF arXiv
+          </div>
+        </div>
+
+        <!-- Serif Literary (Literata / Merriweather) -->
+        <div class="bg-white dark:bg-[#12151e] border border-slate-200 dark:border-slate-800 rounded-xl p-5 space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 font-semibold">Literary Serif</span>
+              <h3 class="font-bold text-sm text-slate-900 dark:text-white">Literata / Newsreader</h3>
+            </div>
+          </div>
+          <span class="text-[11px] text-purple-600 dark:text-purple-400 font-medium flex items-center gap-1">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Đề xuất: Thoughts & Chiêm nghiệm
+          </span>
+          <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed serif-mode italic text-[13px]">
+            "Có những ngày ta nhận ra sự tĩnh lặng giữa các dòng suy nghĩ mới là thứ giúp con người định hình lại bản thân..."
+          </p>
+          <div class="text-[11px] text-slate-500 font-mono pt-1 border-t border-slate-100 dark:border-slate-800/80">
+            Nhịp đọc sâu sắc &bull; Tạp chí văn học
+          </div>
+        </div>
+
+        <!-- Monospace (JetBrains Mono) -->
+        <div class="bg-white dark:bg-[#12151e] border border-slate-200 dark:border-slate-800 rounded-xl p-5 space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-semibold">Monospace</span>
+              <h3 class="font-bold text-sm text-slate-900 dark:text-white">JetBrains Mono (Ligatures)</h3>
+            </div>
+            <span class="text-[11px] text-slate-500">Dành riêng cho Code & Terminal</span>
+          </div>
+          <div class="p-3 rounded-lg bg-slate-900 text-slate-200 text-xs font-mono space-y-1">
+            <div class="text-slate-500">// Programming ligatures support</div>
+            <div>const isOptimal = (latency <= 15 && speed >= 100) => true;</div>
+          </div>
+        </div>
+
+        <!-- Academic Mathematics (KaTeX) -->
+        <div class="bg-white dark:bg-[#12151e] border border-slate-200 dark:border-slate-800 rounded-xl p-5 space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 font-semibold">Math KaTeX</span>
+              <h3 class="font-bold text-sm text-slate-900 dark:text-white">LaTeX Equation Engine</h3>
+            </div>
+            <span class="text-[11px] text-purple-600 dark:text-purple-400 font-medium">Dành riêng cho Mathematics</span>
+          </div>
+          <div class="p-3 rounded-lg bg-purple-50/50 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-900/50 text-center py-4">
+            <div id="katex-preview" class="text-lg text-purple-900 dark:text-purple-200 font-serif">
+              $$\oint_{\partial \Omega} \mathbf{E} \cdot d\mathbf{l} = -\frac{\partial}{\partial t} \iint_{\Omega} \mathbf{B} \cdot d\mathbf{S}$$
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Diacritics Protection Visual Case Study Card -->
+      <div class="p-5 rounded-2xl bg-white dark:bg-[#1a1b1f] border border-slate-200 dark:border-slate-800 space-y-3 shadow-sm">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2 text-xs font-bold text-slate-900 dark:text-white">
+            <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
+            <span>Cơ Chế Khóa Kích Thước Chống Vỡ Dấu Xếp Tầng (Stacked Diacritics Protection)</span>
+          </div>
+          <span class="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">
+            Trần H1: 36px | Line-Height: 1.45 - 1.78
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1 text-xs">
+          <!-- Bad Practice: Font quá to, tracking âm, leading hẹp -->
+          <div class="p-3.5 rounded-xl bg-red-50/60 dark:bg-red-950/20 border border-red-200 dark:border-red-900/40 space-y-1.5">
+            <div class="text-[11px] font-bold text-red-700 dark:text-red-400 flex items-center gap-1">
+              <i data-lucide="x-circle" class="w-3.5 h-3.5"></i> Bị Lỗi (Cỡ > 48px, line-height 1.0, tracking âm)
+            </div>
+            <div class="text-[17px] font-bold leading-tight tracking-tighter text-slate-900 dark:text-slate-100 line-through opacity-75">
+              Hệ thống xử lý thông điệp bất đồng bộ
+            </div>
+            <p class="text-[11px] text-red-600 dark:text-red-300">
+              Dấu ngã đè dấu mũ, khoảng cách giữa các chữ bị co dính bệt, chữ "thống" chạm vào dòng trên.
+            </p>
+          </div>
+
+          <!-- Good Practice: Clamp an toàn, line-height chuẩn -->
+          <div class="p-3.5 rounded-xl bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/40 space-y-1.5">
+            <div class="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-1">
+              <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Đã Chuẩn Hóa (Clamp 28-36px, leading 1.45, tracking normal)
+            </div>
+            <div class="article-h2 font-bold text-slate-900 dark:text-white">
+              Hệ thống xử lý thông điệp bất đồng bộ
+            </div>
+            <p class="text-[11px] text-emerald-700 dark:text-emerald-300">
+              Dấu thanh & mũ thanh thoát, khoảng cách chữ tự nhiên, hoàn toàn không bị cắt ngọn hay vỡ nét.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Icon Framework (Strictly Lucide, No Laptop Icon) -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span>3. Hệ thống Icon Đồng nhất (Lucide Framework) & Điều cấm kỵ</span>
+          </h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">100% icon cùng một họ với stroke 1.75px. Tuyệt đối không dùng icon laptop generic rẻ tiền.</p>
+        </div>
+      </div>
+
+      <!-- Warning Callout on Laptop Icon -->
+      <div class="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/80 flex items-start space-x-3 text-xs text-amber-900 dark:text-amber-200">
+        <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-500 shrink-0 mt-0.5"></i>
+        <div>
+          <span class="font-bold">Quy tắc cấm tuyệt đối:</span> Không bao giờ sử dụng hình ảnh chiếc laptop để minh họa cho Tech/Lập trình. Thay vào đó, dùng biểu tượng thể hiện chiều sâu tư duy: <code class="px-1.5 py-0.5 rounded bg-amber-200/50 dark:bg-amber-900/60 font-mono text-[11px]">Terminal</code>, <code class="px-1.5 py-0.5 rounded bg-amber-200/50 dark:bg-amber-900/60 font-mono text-[11px]">Binary</code>, <code class="px-1.5 py-0.5 rounded bg-amber-200/50 dark:bg-amber-900/60 font-mono text-[11px]">Workflow</code>, <code class="px-1.5 py-0.5 rounded bg-amber-200/50 dark:bg-amber-900/60 font-mono text-[11px]">Sigma</code>.
+        </div>
+      </div>
+
+      <!-- Icon Palette Gallery -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3">
+        <div class="p-3 rounded-lg bg-white dark:bg-[#12151e] border border-slate-200 dark:border-slate-800 flex items-center space-x-3">
+          <div class="p-2 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400"><i data-lucide="terminal" class="w-4 h-4"></i></div>
+          <span class="text-xs font-mono">Terminal (Tech)</span>
+        </div>
+        <div class="p-3 rounded-lg bg-white dark:bg-[#12151e] border border-slate-200 dark:border-slate-800 flex items-center space-x-3">
+          <div class="p-2 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400"><i data-lucide="workflow" class="w-4 h-4"></i></div>
+          <span class="text-xs font-mono">Workflow (Eng)</span>
+        </div>
+        <div class="p-3 rounded-lg bg-white dark:bg-[#12151e] border border-slate-200 dark:border-slate-800 flex items-center space-x-3">
+          <div class="p-2 rounded-md bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400"><i data-lucide="sigma" class="w-4 h-4"></i></div>
+          <span class="text-xs font-mono">Sigma (Math)</span>
+        </div>
+        <div class="p-3 rounded-lg bg-white dark:bg-[#12151e] border border-slate-200 dark:border-slate-800 flex items-center space-x-3">
+          <div class="p-2 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400"><i data-lucide="feather" class="w-4 h-4"></i></div>
+          <span class="text-xs font-mono">Feather (Thoughts)</span>
+        </div>
+        <div class="p-3 rounded-lg bg-white dark:bg-[#12151e] border border-slate-200 dark:border-slate-800 flex items-center space-x-3">
+          <div class="p-2 rounded-md bg-cyan-50 dark:bg-cyan-950/60 text-cyan-600 dark:text-cyan-400"><i data-lucide="share-2" class="w-4 h-4"></i></div>
+          <span class="text-xs font-mono">Share (1-Click)</span>
+        </div>
+        <div class="p-3 rounded-lg bg-white dark:bg-[#12151e] border border-slate-200 dark:border-slate-800 flex items-center space-x-3">
+          <div class="p-2 rounded-md bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400"><i data-lucide="book-open" class="w-4 h-4"></i></div>
+          <span class="text-xs font-mono">BookOpen (Docs)</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Standard Mermaid Representation -->
+    <section class="space-y-4">
+      <div>
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+          <span class="w-2 h-2 rounded-full bg-cyan-500"></span>
+          <span>4. Quy chuẩn Trình diễn Sơ đồ Kỹ thuật (Mermaid Diagram Card)</span>
+        </h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400">Đóng gói sơ đồ hệ thống trong Technical Card có nút Copy cú pháp và Zoom toàn màn hình.</p>
+      </div>
+
+      <!-- Technical Card Container -->
+      <div class="bg-white dark:bg-[#12151e] border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm">
+        <!-- Card Header -->
+        <div class="px-4 py-3 bg-slate-50 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
+          <div class="flex items-center space-x-2">
+            <i data-lucide="workflow" class="w-4 h-4 text-cyan-500"></i>
+            <span class="font-semibold text-slate-800 dark:text-slate-200">System Architecture: Edge CDN & CMS Pipeline</span>
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400">flowchart LR</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <button class="px-2 py-1 rounded-md bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center space-x-1">
+              <i data-lucide="copy" class="w-3 h-3"></i>
+              <span>Copy Code</span>
+            </button>
+            <button class="px-2 py-1 rounded-md bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300">
+              <i data-lucide="maximize-2" class="w-3 h-3"></i>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Rendered Visual SVG Diagram -->
+        <div class="p-6 overflow-x-auto flex items-center justify-center bg-grid-pattern min-h-[180px]">
+          <div class="flex items-center space-x-4 text-xs font-mono">
+            <!-- Node 1 -->
+            <div class="px-4 py-3 rounded-xl bg-cyan-50 dark:bg-cyan-950/60 border border-cyan-200 dark:border-cyan-800 text-center shadow-sm">
+              <div class="font-bold text-cyan-700 dark:text-cyan-300">Keystatic Web CMS</div>
+              <div class="text-[10px] text-slate-500">/keystatic Editor</div>
+            </div>
+            <!-- Arrow -->
+            <div class="flex items-center text-slate-400">
+              <div class="w-8 h-[2px] bg-cyan-500"></div>
+              <i data-lucide="chevron-right" class="w-4 h-4 -ml-2 text-cyan-500"></i>
+            </div>
+            <!-- Node 2 -->
+            <div class="px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-center shadow-sm">
+              <div class="font-bold text-slate-800 dark:text-slate-200">GitHub Git Repo</div>
+              <div class="text-[10px] text-slate-500">Markdown + KaTeX + Math</div>
+            </div>
+            <!-- Arrow -->
+            <div class="flex items-center text-slate-400">
+              <div class="w-8 h-[2px] bg-blue-500"></div>
+              <i data-lucide="chevron-right" class="w-4 h-4 -ml-2 text-blue-500"></i>
+            </div>
+            <!-- Node 3 -->
+            <div class="px-4 py-3 rounded-xl bg-purple-50 dark:bg-purple-950/60 border border-purple-200 dark:border-purple-800 text-center shadow-sm">
+              <div class="font-bold text-purple-700 dark:text-purple-300">Cloudflare Pages Edge</div>
+              <div class="text-[10px] text-slate-500">Global Anycast CDN &lt;15ms</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 2: WIREFRAME PROTOTYPE (INTERACTIVE FEED & READING WITH 12-COL GRID) -->
+  <!-- ========================================================================= -->
+  <main id="view-wireframe-a" class="hidden flex-1 max-w-7xl w-full mx-auto px-4 py-8 space-y-6">
+    
+    <!-- Wireframe Sub-Navigation Bar (Home Feed vs Article Detail) -->
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-2xl bg-white dark:bg-[#1a1b1f] border border-slate-200 dark:border-slate-800 shadow-sm">
+      <div class="flex items-center space-x-2">
+        <span class="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+          <i data-lucide="layers" class="w-4 h-4 text-red-700 dark:text-red-400"></i>
+          <span>Wireframe Live Simulator:</span>
+        </span>
+        <div class="inline-flex p-1 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-medium">
+          <button onclick="switchWireframeView('feed')" id="btn-wf-feed" class="px-3 py-1 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm flex items-center gap-1">
+            <i data-lucide="list" class="w-3.5 h-3.5"></i>
+            <span>Màn 1: Trang Chủ (Feed)</span>
+          </button>
+          <button onclick="switchWireframeView('article')" id="btn-wf-article" class="px-3 py-1 rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-white flex items-center gap-1">
+            <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+            <span>Màn 2: Đọc Bài Viết (Reading)</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="text-[11px] font-mono text-slate-500 flex items-center gap-2">
+        <span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span>Lưới 12 Cột &bull; Rãnh Gutter 24px (4*6) &bull; Khung Đọc 720px (4*180)</span>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SUBVIEW 1: HOMEPAGE & FEED (12-COLUMN RESPONSIVE GRID) -->
+    <!-- ========================================================================= -->
+    <div id="wf-subview-feed" class="space-y-6">
+      
+      <!-- Category Filter Pills Bar (4*x Spacing) -->
+      <div class="flex items-center space-x-2 overflow-x-auto pb-1">
+        <button onclick="filterCategory('all')" class="cat-pill active px-3.5 py-1.5 rounded-full text-xs font-semibold bg-red-800 text-white shadow-sm transition-all">
+          Tất cả (4)
+        </button>
+        <button onclick="filterCategory('tech')" class="cat-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-[#1a1b1f] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-slate-400 transition-all flex items-center gap-1">
+          <i data-lucide="terminal" class="w-3 h-3"></i> Tech
+        </button>
+        <button onclick="filterCategory('eng')" class="cat-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-[#1a1b1f] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-slate-400 transition-all flex items-center gap-1">
+          <i data-lucide="workflow" class="w-3 h-3"></i> Engineering
+        </button>
+        <button onclick="filterCategory('math')" class="cat-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-[#1a1b1f] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-slate-400 transition-all flex items-center gap-1">
+          <i data-lucide="sigma" class="w-3 h-3"></i> Mathematics
+        </button>
+        <button onclick="filterCategory('thoughts')" class="cat-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-[#1a1b1f] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-slate-400 transition-all flex items-center gap-1">
+          <i data-lucide="feather" class="w-3 h-3"></i> Thoughts
+        </button>
+      </div>
+
+      <!-- 12-Column Grid Layout: 8 cols Feed + 4 cols Sidebar -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+        
+        <!-- Main Feed Column (8 cols = 66.6%) -->
+        <div class="md:col-span-8 space-y-6">
+          
+          <!-- Featured Post Hero Card (Clicking opens article) -->
+          <article onclick="switchWireframeView('article')" class="post-item cat-eng group cursor-pointer bg-white dark:bg-[#1a1b1f] border border-slate-200 dark:border-slate-800 hover:border-red-700/60 dark:hover:border-red-500/60 rounded-2xl p-6 sm:p-8 space-y-4 shadow-sm transition-all">
+            <div class="flex items-center justify-between text-xs text-slate-500">
+              <span class="px-2.5 py-0.5 rounded-full font-semibold bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-900/60 flex items-center gap-1">
+                <i data-lucide="star" class="w-3 h-3"></i> Featured Article &bull; Engineering
+              </span>
+              <span>29 Tháng 10, 2026 &bull; 6 phút đọc</span>
+            </div>
+
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white group-hover:text-red-700 dark:group-hover:text-red-400 transition-colors leading-snug">
+              Tối ưu Độ trễ Hệ thống & Phân phối Bộ nhớ Đệm Toàn cầu
+            </h2>
+
+            <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed line-clamp-3">
+              Làm thế nào để giảm thời gian phản hồi từ 300ms xuống còn 15ms bằng cách kết hợp Edge CDN, thuật toán Cache Invalidation và toán học xác suất Zipf?
+            </p>
+
+            <div class="flex items-center justify-between pt-2 text-xs font-medium text-red-700 dark:text-red-400 group-hover:underline">
+              <span>Đọc bài viết chi tiết &rarr;</span>
+              <span class="text-slate-400 text-[11px] font-mono">Edge CDN &bull; KaTeX &bull; Mermaid</span>
+            </div>
+          </article>
+
+          <!-- Post Item 2: Tech (Astro 5.0) -->
+          <article onclick="switchWireframeView('article')" class="post-item cat-tech group cursor-pointer bg-white dark:bg-[#1a1b1f] border border-slate-200 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-600 rounded-2xl p-6 space-y-3 shadow-sm transition-all">
+            <div class="flex items-center justify-between text-xs text-slate-500">
+              <span class="px-2.5 py-0.5 rounded-full font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                <i data-lucide="terminal" class="w-3 h-3"></i> Tech
+              </span>
+              <span>28 Tháng 10, 2026 &bull; 4 phút đọc</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-red-700 dark:group-hover:text-red-400 transition-colors">
+              Astro 5.0 Content Collections: Quản lý Markdown không còn là nỗi sợ
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 line-clamp-2">
+              Tại sao Astro lại là framework tĩnh số một để kết hợp cùng Keystatic Web CMS và triển khai Cloudflare Pages với chi phí 0 VNĐ vĩnh viễn.
+            </p>
+          </article>
+
+          <!-- Post Item 3: Math (Fourier Transform) -->
+          <article onclick="switchWireframeView('article')" class="post-item cat-math group cursor-pointer bg-white dark:bg-[#1a1b1f] border border-slate-200 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-600 rounded-2xl p-6 space-y-3 shadow-sm transition-all">
+            <div class="flex items-center justify-between text-xs text-slate-500">
+              <span class="px-2.5 py-0.5 rounded-full font-semibold bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-900/60 flex items-center gap-1">
+                <i data-lucide="sigma" class="w-3 h-3"></i> Mathematics
+              </span>
+              <span>24 Tháng 10, 2026 &bull; 8 phút đọc</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-red-700 dark:group-hover:text-red-400 transition-colors">
+              Vẻ đẹp của Biến đổi Fourier Rời rạc (DFT) trong Xử lý Tín hiệu
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 line-clamp-2">
+              Từ tích phân Fourier trong miền thời gian chuyển dịch sang miền tần số, trực quan hóa từng bước bằng công thức toán KaTeX viện hàn lâm.
+            </p>
+          </article>
+
+          <!-- Post Item 4: Thoughts (Tản văn) -->
+          <article onclick="switchWireframeView('article')" class="post-item cat-thoughts group cursor-pointer bg-white dark:bg-[#1a1b1f] border border-slate-200 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-600 rounded-2xl p-6 space-y-3 shadow-sm transition-all">
+            <div class="flex items-center justify-between text-xs text-slate-500">
+              <span class="px-2.5 py-0.5 rounded-full font-semibold bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-900/60 flex items-center gap-1">
+                <i data-lucide="feather" class="w-3 h-3"></i> Thoughts
+              </span>
+              <span>19 Tháng 10, 2026 &bull; 5 phút đọc</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-red-700 dark:group-hover:text-red-400 transition-colors font-serif">
+              Viết cho bản thân trước, viết cho thế giới sau
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 line-clamp-2 font-serif italic">
+              Khi ta ngừng quan tâm đến số lượt click và bắt đầu viết bằng sự trung thực thuần khiết, blog sẽ trở thành tấm gương phản chiếu chính tâm hồn mình.
+            </p>
+          </article>
+
+        </div>
+
+        <!-- Right Sidebar Column (4 cols = 33.3%) -->
+        <aside class="md:col-span-4 space-y-6">
+          
+          <!-- Author Card (4*x System: p-6 = 24px) -->
+          <div class="bg-white dark:bg-[#1a1b1f] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-4 shadow-sm">
+            <div class="flex items-center space-x-3">
+              <div class="w-12 h-12 rounded-xl bg-red-800 text-white font-bold flex items-center justify-center text-base shadow-sm">
+                CN
+              </div>
+              <div>
+                <h4 class="font-bold text-sm text-slate-900 dark:text-white">Chi Nguyen</h4>
+                <div class="text-xs text-slate-500">Software & Math Thinker</div>
+              </div>
+            </div>
+            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+              Không gian cá nhân ghi chép và chia sẻ về kiến trúc hệ thống, toán học ứng dụng, và những suy tưởng thường nhật.
+            </p>
+            <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center space-x-3 text-xs text-slate-500">
+              <a href="#" class="hover:text-slate-900 dark:hover:text-white flex items-center gap-1"><i data-lucide="github" class="w-3.5 h-3.5"></i> GitHub</a>
+              <span>&bull;</span>
+              <a href="#" class="hover:text-slate-900 dark:hover:text-white flex items-center gap-1"><i data-lucide="rss" class="w-3.5 h-3.5"></i> RSS Feed</a>
+            </div>
+          </div>
+
+          <!-- Topics Cloud Widget -->
+          <div class="bg-white dark:bg-[#1a1b1f] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-3 shadow-sm">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+              <i data-lucide="tag" class="w-3.5 h-3.5 text-red-700 dark:text-red-400"></i>
+              <span>Chủ đề nổi bật</span>
+            </h4>
+            <div class="flex flex-wrap gap-2 text-xs">
+              <span class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">#HCI</span>
+              <span class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">#KaTeX</span>
+              <span class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">#Mermaid</span>
+              <span class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">#EdgeCDN</span>
+              <span class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">#Typography</span>
+              <span class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">#DistributedSystems</span>
+            </div>
+          </div>
+
+          <!-- Newsletter / RSS Box -->
+          <div class="bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-3">
+            <h4 class="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+              <i data-lucide="mail" class="w-4 h-4 text-red-700 dark:text-red-400"></i>
+              <span>Đăng ký nhận bài viết mới</span>
+            </h4>
+            <p class="text-xs text-slate-600 dark:text-slate-400">Không spam. Chỉ gửi email khi có bài nghiên cứu hoặc tản văn mới.</p>
+            <div class="space-y-2">
+              <input type="email" placeholder="email@cuaban.com" class="w-full h-10 px-3 rounded-xl bg-white dark:bg-[#1a1b1f] border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none">
+              <button class="w-full h-10 rounded-xl bg-red-800 dark:bg-red-700 text-white font-medium text-xs shadow-sm hover:bg-red-900 transition-colors">
+                Đăng ký theo dõi
+              </button>
+            </div>
+          </div>
+
+        </aside>
+
+      </div>
+
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SUBVIEW 2: FULL ARTICLE READING VIEW (12-COL GRID: 8 COLS READING + 4 COLS TOC) -->
+    <!-- ========================================================================= -->
+    <div id="wf-subview-article" class="hidden space-y-6">
+      
+      <!-- Back Button & Breadcrumbs Navigation Map -->
+      <div class="flex items-center justify-between">
+        <button onclick="switchWireframeView('feed')" class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#1a1b1f] text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-1.5 transition-colors">
+          <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+          <span>Quay lại danh sách bài viết</span>
+        </button>
+
+        <nav class="flex items-center space-x-2 text-xs text-slate-500 dark:text-slate-400 font-mono">
+          <span class="hover:text-red-700 cursor-pointer" onclick="switchWireframeView('feed')">Home</span>
+          <span>/</span>
+          <span>Engineering</span>
+          <span>/</span>
+          <span class="text-slate-900 dark:text-slate-200 font-medium truncate max-w-[150px] sm:max-w-none">Tối ưu Độ trễ</span>
+        </nav>
+      </div>
+
+      <!-- 12-Column Grid: 8 cols Article Canvas + 4 cols Sticky Sidebar (TOC) -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+        
+        <!-- Main Reading Canvas (8 cols, max-w-[720px] = 4*180px) -->
+        <article class="md:col-span-8 bg-white dark:bg-[#1a1b1f] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-10 space-y-8 shadow-sm max-w-[720px] w-full mx-auto md:mx-0">
+          
+          <!-- Article Header (F-Pattern Left Anchored) -->
+          <header class="space-y-4 border-b border-slate-100 dark:border-slate-800 pb-6">
+            <div class="flex items-center space-x-2">
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 flex items-center gap-1">
+                <i data-lucide="workflow" class="w-3 h-3"></i> Engineering
+              </span>
+              <span class="text-xs text-slate-500">&bull;</span>
+              <span class="text-xs text-slate-500">29 Tháng 10, 2026</span>
+              <span class="text-xs text-slate-500">&bull;</span>
+              <span class="text-xs text-slate-500 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> 6 phút đọc</span>
+            </div>
+
+            <!-- Title with Vietnamese Stacked Diacritics Protection (Clamp 26-36px, Leading 1.4) -->
+            <h1 class="article-title font-bold text-slate-900 dark:text-white article-text">
+              Tối ưu Độ trễ Hệ thống & Phân phối Bộ nhớ Đệm Toàn cầu
+            </h1>
+
+            <p class="article-body-p text-slate-600 dark:text-slate-400 article-text">
+              Làm thế nào để giảm thời gian phản hồi từ 300ms xuống còn 15ms bằng cách kết hợp Edge CDN, thuật toán Cache Invalidation và toán học xác suất Zipf?
+            </p>
+          </header>
+
+          <!-- Technical Code Block with Copy -->
+          <section class="space-y-3">
+            <h2 id="sec1" class="article-h2 font-bold text-slate-900 dark:text-white article-text">
+              1. Triển khai Worker tại biên mạng (Edge Worker)
+            </h2>
+            <p class="article-body-p text-slate-700 dark:text-slate-300 article-text">
+              Mỗi yêu cầu từ trình duyệt được chặn lại ngay tại trạm PoP gần nhất (Hà Nội hoặc TP.HCM) để giải mã header trước khi quyết định gọi cơ sở dữ liệu gốc:
+            </p>
+
+            <!-- Code Block (4*x Spacing: p-4 = 16px) -->
+            <div class="rounded-xl overflow-hidden border border-slate-800 bg-slate-950 text-slate-200 text-xs code-font">
+              <div class="px-4 py-2 bg-slate-900 border-b border-slate-800 flex items-center justify-between text-slate-400">
+                <span class="flex items-center gap-1.5"><i data-lucide="file-code" class="w-3.5 h-3.5 text-red-400"></i> edge-cache.ts</span>
+                <button class="flex items-center gap-1 hover:text-white transition-colors" onclick="alert('Đã copy mã nguồn!')">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy
+                </button>
+              </div>
+              <div class="p-4 overflow-x-auto space-y-1">
+                <div><span class="text-purple-400">export default</span> {</div>
+                <div class="pl-4"><span class="text-blue-400">async</span> fetch(request: Request, env: Env): Promise&lt;Response&gt; {</div>
+                <div class="pl-8"><span class="text-slate-500">// Check Edge Key-Value Cache</span></div>
+                <div class="pl-8"><span class="text-red-400">const</span> cacheKey = <span class="text-emerald-300">`page:${new URL(request.url).pathname}`</span>;</div>
+                <div class="pl-8"><span class="text-purple-400">return</span> <span class="text-blue-400">await</span> env.CACHE.get(cacheKey) || fetch(request);</div>
+                <div class="pl-4">}</div>
+                <div>}</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- KaTeX Math Equation Section -->
+          <section class="space-y-3">
+            <h2 id="sec2" class="article-h2 font-bold text-slate-900 dark:text-white article-text">
+              2. Mô hình Toán học: Tỷ lệ Cache Hit theo định luật Zipf
+            </h2>
+            <p class="article-body-p text-slate-700 dark:text-slate-300 article-text">
+              Xác suất truy cập vào tài nguyên thứ $k$ tuân theo phân phối hàm mũ, trong đó $\alpha$ đại diện cho mức độ tập trung bài viết:
+            </p>
+            <div class="p-4 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center text-sm font-serif text-slate-900 dark:text-slate-200">
+              $$P(k) = \frac{k^{-\alpha}}{\sum_{n=1}^{N} n^{-\alpha}} \quad \text{với } \alpha \in [0.8, 1.2]$$
+            </div>
+          </section>
+
+          <!-- Mermaid Technical Diagram Card -->
+          <section class="space-y-3">
+            <h2 id="sec3" class="article-h2 font-bold text-slate-900 dark:text-white article-text">
+              3. Luồng dữ liệu qua Mạng lưới Toàn cầu
+            </h2>
+            <div class="bg-white dark:bg-[#121316] border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm">
+              <div class="px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
+                <span class="font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                  <i data-lucide="workflow" class="w-3.5 h-3.5 text-red-700 dark:text-red-400"></i> Anycast Edge Routing
+                </span>
+                <span class="font-mono text-[10px] text-slate-500">flowchart LR</span>
+              </div>
+              <div class="p-6 flex items-center justify-center text-xs font-mono space-x-3 bg-grid-pattern">
+                <div class="px-3 py-2 rounded-lg bg-slate-200 dark:bg-slate-800 font-bold">User (Browser)</div>
+                <div class="w-6 h-[2px] bg-red-700"></div>
+                <div class="px-3 py-2 rounded-lg bg-red-50 dark:bg-red-950/60 border border-red-300 dark:border-red-900 font-bold text-red-800 dark:text-red-300">Edge PoP (VN)</div>
+                <div class="w-6 h-[2px] bg-slate-400"></div>
+                <div class="px-3 py-2 rounded-lg bg-slate-200 dark:bg-slate-800 font-bold">Origin (KV Storage)</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 1-Click Social Share Bar (Bắt buộc theo yêu cầu) -->
+          <footer class="pt-6 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="text-xs text-slate-500 flex items-center gap-1.5">
+              <i data-lucide="share-2" class="w-4 h-4 text-red-700 dark:text-red-400"></i>
+              <span>Chia sẻ bài viết này:</span>
+            </div>
+
+            <div class="flex items-center space-x-2">
+              <button onclick="copyArticleLink()" id="btn-copy-link" class="h-8 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center space-x-1.5 transition-all">
+                <i data-lucide="link" class="w-3.5 h-3.5"></i>
+                <span id="copy-link-text">Copy link</span>
+              </button>
+              <button class="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-300" title="Chia sẻ lên X (Twitter)">
+                <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              </button>
+              <button class="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-300" title="Chia sẻ lên Facebook">
+                <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+              </button>
+              <button class="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-300" title="Chia sẻ lên LinkedIn">
+                <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+              </button>
+            </div>
+          </footer>
+
+        </article>
+
+        <!-- Sticky Sidebar Column (4 cols = 33.3%) -->
+        <aside class="md:col-span-4 space-y-6">
+          
+          <!-- Sticky Table of Contents (TOC) -->
+          <div class="sticky top-24 space-y-6">
+            <div class="bg-white dark:bg-[#1a1b1f] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-3 shadow-sm">
+              <div class="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5 border-b border-slate-100 dark:border-slate-800 pb-2">
+                <i data-lucide="list" class="w-4 h-4 text-red-700 dark:text-red-400"></i>
+                <span>Mục lục bài viết (TOC)</span>
+              </div>
+              <ul class="space-y-2 text-xs text-slate-600 dark:text-slate-400">
+                <li><a href="#sec1" class="hover:text-red-700 dark:hover:text-red-400 block transition-colors">1. Triển khai Worker tại biên mạng</a></li>
+                <li><a href="#sec2" class="hover:text-red-700 dark:hover:text-red-400 block transition-colors">2. Mô hình Toán học: Zipf Law</a></li>
+                <li><a href="#sec3" class="hover:text-red-700 dark:hover:text-red-400 block transition-colors">3. Luồng dữ liệu qua Mạng lưới Toàn cầu</a></li>
+              </ul>
+            </div>
+
+            <!-- Reading Metrics Box -->
+            <div class="bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-2 text-xs">
+              <div class="font-semibold text-slate-800 dark:text-slate-200">Thông số bài viết</div>
+              <div class="text-[11px] text-slate-500 space-y-1">
+                <div>Độ dài: ~1,250 từ</div>
+                <div>Công thức toán: 2 khối KaTeX</div>
+                <div>Sơ đồ: 1 khối Mermaid</div>
+                <div>Bản quyền: CC BY-NC 4.0</div>
+              </div>
+            </div>
+          </div>
+
+        </aside>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 3: WIREFRAME OPTION B (TECHNICAL MULTI-COLUMN / KNOWLEDGE BASE) -->
+  <!-- ========================================================================= -->
+  <main id="view-wireframe-b" class="hidden flex-1 max-w-7xl w-full mx-auto px-4 py-8">
+    
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+      
+      <!-- Left Column: Topic & Series Tree (3 cols) -->
+      <aside class="md:col-span-3 space-y-4">
+        <div class="bg-white dark:bg-[#12151e] border border-slate-200 dark:border-slate-800 rounded-2xl p-4 space-y-3">
+          <div class="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+            <i data-lucide="folder-tree" class="w-3.5 h-3.5 text-cyan-500"></i>
+            <span>Chuyên mục & Tuyển tập</span>
+          </div>
+
+          <nav class="space-y-1 text-xs">
+            <a href="#" class="flex items-center justify-between px-3 py-2 rounded-lg bg-cyan-50 dark:bg-cyan-950/60 text-cyan-700 dark:text-cyan-300 font-semibold">
+              <span class="flex items-center gap-2"><i data-lucide="terminal" class="w-3.5 h-3.5"></i> Tech</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-cyan-200 dark:bg-cyan-900">14</span>
+            </a>
+            <a href="#" class="flex items-center justify-between px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+              <span class="flex items-center gap-2"><i data-lucide="workflow" class="w-3.5 h-3.5"></i> Engineering</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800">8</span>
+            </a>
+            <a href="#" class="flex items-center justify-between px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+              <span class="flex items-center gap-2"><i data-lucide="sigma" class="w-3.5 h-3.5"></i> Mathematics</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800">12</span>
+            </a>
+            <a href="#" class="flex items-center justify-between px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+              <span class="flex items-center gap-2"><i data-lucide="feather" class="w-3.5 h-3.5"></i> Thoughts</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800">19</span>
+            </a>
+          </nav>
+        </div>
+      </aside>
+
+      <!-- Center Column: Post List / Feed (6 cols) -->
+      <section class="md:col-span-6 space-y-4">
+        
+        <!-- Post Card 1 -->
+        <article class="bg-white dark:bg-[#12151e] border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-3 hover:border-cyan-500/50 transition-all shadow-sm">
+          <div class="flex items-center justify-between text-xs text-slate-500">
+            <span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-300">Tech</span>
+            <span>28 Tháng 10, 2026 &bull; 4 phút đọc</span>
+          </div>
+          <h2 class="text-base font-bold text-slate-900 dark:text-white hover:text-cyan-500 cursor-pointer">
+            Astro 5.0 Content Collections: Quản lý Markdown không còn là nỗi sợ
+          </h2>
+          <p class="text-xs text-slate-600 dark:text-slate-400 line-clamp-2">
+            Tại sao Astro lại là framework tĩnh tốt nhất để kết hợp cùng Keystatic CMS và triển khai Cloudflare Edge với chi phí 0 VNĐ.
+          </p>
+        </article>
+
+        <!-- Post Card 2 (Math) -->
+        <article class="bg-white dark:bg-[#12151e] border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-3 hover:border-purple-500/50 transition-all shadow-sm">
+          <div class="flex items-center justify-between text-xs text-slate-500">
+            <span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-300">Mathematics</span>
+            <span>24 Tháng 10, 2026 &bull; 8 phút đọc</span>
+          </div>
+          <h2 class="text-base font-bold text-slate-900 dark:text-white hover:text-purple-500 cursor-pointer">
+            Vẻ đẹp của Biến đổi Fourier Rời rạc (DFT) trong Xử lý Tín hiệu
+          </h2>
+          <p class="text-xs text-slate-600 dark:text-slate-400 line-clamp-2">
+            Từ tích phân Fourier trong miền thời gian chuyển dịch sang miền tần số, trực quan hóa bằng hình ảnh động và KaTeX.
+          </p>
+        </article>
+
+        <!-- Post Card 3 (Thoughts) -->
+        <article class="bg-white dark:bg-[#12151e] border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-3 hover:border-amber-500/50 transition-all shadow-sm">
+          <div class="flex items-center justify-between text-xs text-slate-500">
+            <span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300">Thoughts</span>
+            <span>19 Tháng 10, 2026 &bull; 5 phút đọc</span>
+          </div>
+          <h2 class="text-base font-bold text-slate-900 dark:text-white hover:text-amber-500 cursor-pointer font-serif">
+            Viết cho bản thân trước, viết cho thế giới sau
+          </h2>
+          <p class="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 font-serif italic">
+            Khi ta ngừng quan tâm đến lượt click và bắt đầu viết bằng sự trung thực thuần khiết, blog sẽ trở thành tấm gương phản chiếu tâm hồn.
+          </p>
+        </article>
+
+      </section>
+
+      <!-- Right Column: Author Bio & Quick Filter (3 cols) -->
+      <aside class="md:col-span-3 space-y-4">
+        <div class="bg-white dark:bg-[#12151e] border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-3">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-cyan-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">
+              CN
+            </div>
+            <div>
+              <div class="font-bold text-sm text-slate-900 dark:text-white">Chi Nguyen</div>
+              <div class="text-[11px] text-slate-500">Software & Math Thinker</div>
+            </div>
+          </div>
+          <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+            Không gian ghi chép cá nhân về kỹ thuật hệ thống, toán ứng dụng và những suy tưởng thường nhật.
+          </p>
+        </div>
+      </aside>
+
+    </div>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- 12-COLUMN MATHEMATICAL GRID OVERLAY (4*X PX SPATIAL SYSTEM) -->
+  <!-- ========================================================================= -->
+  <div id="grid-overlay" class="hidden fixed inset-0 pointer-events-none z-50 max-w-7xl mx-auto px-4 w-full h-full">
+    <div class="grid grid-cols-12 gap-6 h-full w-full">
+      <div class="bg-rose-500/10 dark:bg-rose-500/15 border-x border-rose-500/25 text-rose-500 text-[10px] font-mono flex items-start justify-center pt-20">Col 1 (4*x)</div>
+      <div class="bg-rose-500/10 dark:bg-rose-500/15 border-x border-rose-500/25 text-rose-500 text-[10px] font-mono flex items-start justify-center pt-20">Col 2</div>
+      <div class="bg-rose-500/10 dark:bg-rose-500/15 border-x border-rose-500/25 text-rose-500 text-[10px] font-mono flex items-start justify-center pt-20">Col 3</div>
+      <div class="bg-rose-500/10 dark:bg-rose-500/15 border-x border-rose-500/25 text-rose-500 text-[10px] font-mono flex items-start justify-center pt-20">Col 4</div>
+      <div class="bg-rose-500/10 dark:bg-rose-500/15 border-x border-rose-500/25 text-rose-500 text-[10px] font-mono flex items-start justify-center pt-20">Col 5</div>
+      <div class="bg-rose-500/10 dark:bg-rose-500/15 border-x border-rose-500/25 text-rose-500 text-[10px] font-mono flex items-start justify-center pt-20">Col 6</div>
+      <div class="bg-rose-500/10 dark:bg-rose-500/15 border-x border-rose-500/25 text-rose-500 text-[10px] font-mono flex items-start justify-center pt-20">Col 7</div>
+      <div class="bg-rose-500/10 dark:bg-rose-500/15 border-x border-rose-500/25 text-rose-500 text-[10px] font-mono flex items-start justify-center pt-20">Col 8</div>
+      <div class="bg-rose-500/10 dark:bg-rose-500/15 border-x border-rose-500/25 text-rose-500 text-[10px] font-mono flex items-start justify-center pt-20">Col 9</div>
+      <div class="bg-rose-500/10 dark:bg-rose-500/15 border-x border-rose-500/25 text-rose-500 text-[10px] font-mono flex items-start justify-center pt-20">Col 10</div>
+      <div class="bg-rose-500/10 dark:bg-rose-500/15 border-x border-rose-500/25 text-rose-500 text-[10px] font-mono flex items-start justify-center pt-20">Col 11</div>
+      <div class="bg-rose-500/10 dark:bg-rose-500/15 border-x border-rose-500/25 text-rose-500 text-[10px] font-mono flex items-start justify-center pt-20">Col 12 (4*x)</div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- INTERACTIVE SEARCH MODAL (CMD+K) -->
+  <!-- ========================================================================= -->
+  <div id="search-modal" class="hidden fixed inset-0 z-50 flex items-start justify-center pt-20 bg-black/60 backdrop-blur-sm p-4" onclick="toggleSearchModal(false)">
+    <div class="bg-white dark:bg-[#1a1b1f] border border-slate-200 dark:border-slate-800 rounded-2xl max-w-xl w-full p-4 space-y-4 shadow-2xl" onclick="event.stopPropagation()">
+      <div class="flex items-center space-x-2 border-b border-slate-200 dark:border-slate-800 pb-3">
+        <i data-lucide="search" class="w-4 h-4 text-slate-400"></i>
+        <input type="text" id="search-input" placeholder="Tìm kiếm bài viết, thuật toán, công thức..." class="w-full bg-transparent text-sm focus:outline-none text-slate-900 dark:text-white" oninput="handleSearch(this.value)">
+        <button onclick="toggleSearchModal(false)" class="text-xs px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-slate-500">ESC</button>
+      </div>
+      <div id="search-results" class="space-y-1.5 max-h-72 overflow-y-auto text-xs">
+        <div onclick="selectSearchResult('article')" class="p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer flex items-center justify-between">
+          <div>
+            <div class="font-bold text-slate-900 dark:text-white">Tối ưu Độ trễ Hệ thống & Phân phối Bộ nhớ Đệm Toàn cầu</div>
+            <div class="text-[11px] text-slate-500">Engineering &bull; Edge CDN, Zipf Law</div>
+          </div>
+          <span class="text-[10px] font-mono text-slate-400">Enter &rarr;</span>
+        </div>
+        <div onclick="selectSearchResult('article')" class="p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer flex items-center justify-between">
+          <div>
+            <div class="font-bold text-slate-900 dark:text-white">Vẻ đẹp của Biến đổi Fourier Rời rạc (DFT) trong Xử lý Tín hiệu</div>
+            <div class="text-[11px] text-slate-500">Mathematics &bull; KaTeX Formula</div>
+          </div>
+          <span class="text-[10px] font-mono text-slate-400">Enter &rarr;</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tab Switcher
+    function switchTab(tabId) {
+      const views = ['design-kit', 'wireframe-a', 'wireframe-b'];
+      views.forEach(v => {
+        const el = document.getElementById(`view-${v}`);
+        const btn = document.getElementById(`tab-${v}`);
+        if (v === tabId) {
+          el.classList.remove('hidden');
+          btn.classList.add('bg-white', 'dark:bg-slate-800', 'text-slate-900', 'dark:text-white', 'shadow-sm');
+          btn.classList.remove('text-slate-500');
+        } else {
+          el.classList.add('hidden');
+          btn.classList.remove('bg-white', 'dark:bg-slate-800', 'text-slate-900', 'dark:text-white', 'shadow-sm');
+          btn.classList.add('text-slate-500');
+        }
+      });
+      lucide.createIcons();
+    }
+
+    // Subview Switcher inside Wireframe Prototype (Feed vs Article Detail)
+    function switchWireframeView(view) {
+      const feedView = document.getElementById('wf-subview-feed');
+      const articleView = document.getElementById('wf-subview-article');
+      const btnFeed = document.getElementById('btn-wf-feed');
+      const btnArticle = document.getElementById('btn-wf-article');
+
+      if (view === 'feed') {
+        feedView.classList.remove('hidden');
+        articleView.classList.add('hidden');
+        btnFeed.classList.add('bg-white', 'dark:bg-slate-800', 'text-slate-900', 'dark:text-white', 'shadow-sm');
+        btnFeed.classList.remove('text-slate-500');
+        btnArticle.classList.remove('bg-white', 'dark:bg-slate-800', 'text-slate-900', 'dark:text-white', 'shadow-sm');
+        btnArticle.classList.add('text-slate-500');
+      } else {
+        feedView.classList.add('hidden');
+        articleView.classList.remove('hidden');
+        btnArticle.classList.add('bg-white', 'dark:bg-slate-800', 'text-slate-900', 'dark:text-white', 'shadow-sm');
+        btnArticle.classList.remove('text-slate-500');
+        btnFeed.classList.remove('bg-white', 'dark:bg-slate-800', 'text-slate-900', 'dark:text-white', 'shadow-sm');
+        btnFeed.classList.add('text-slate-500');
+      }
+      lucide.createIcons();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Category Filter in Feed
+    function filterCategory(cat) {
+      const pills = document.querySelectorAll('.cat-pill');
+      pills.forEach(p => {
+        p.classList.remove('bg-red-800', 'text-white', 'shadow-sm');
+        p.classList.add('bg-white', 'dark:bg-[#1a1b1f]', 'text-slate-700', 'dark:text-slate-300');
+      });
+      event.currentTarget.classList.add('bg-red-800', 'text-white', 'shadow-sm');
+      event.currentTarget.classList.remove('bg-white', 'dark:bg-[#1a1b1f]', 'text-slate-700', 'dark:text-slate-300');
+
+      const items = document.querySelectorAll('.post-item');
+      items.forEach(item => {
+        if (cat === 'all') {
+          item.classList.remove('hidden');
+        } else if (item.classList.contains(`cat-${cat}`)) {
+          item.classList.remove('hidden');
+        } else {
+          item.classList.add('hidden');
+        }
+      });
+    }
+
+    // Toggle 12-Column Grid Overlay
+    let isGridVisible = false;
+    function toggleGridOverlay() {
+      isGridVisible = !isGridVisible;
+      const overlay = document.getElementById('grid-overlay');
+      const btn = document.getElementById('grid-toggle-btn');
+      if (isGridVisible) {
+        overlay.classList.remove('hidden');
+        btn.classList.add('bg-red-50', 'dark:bg-red-950', 'border-red-300', 'dark:border-red-900');
+      } else {
+        overlay.classList.add('hidden');
+        btn.classList.remove('bg-red-50', 'dark:bg-red-950', 'border-red-300', 'dark:border-red-900');
+      }
+    }
+
+    // Toggle Search Modal (Cmd+K)
+    function toggleSearchModal(show) {
+      const modal = document.getElementById('search-modal');
+      const input = document.getElementById('search-input');
+      if (show) {
+        modal.classList.remove('hidden');
+        setTimeout(() => input.focus(), 100);
+      } else {
+        modal.classList.add('hidden');
+      }
+    }
+
+    function selectSearchResult(view) {
+      toggleSearchModal(false);
+      switchTab('wireframe-a');
+      switchWireframeView(view);
+    }
+
+    // Keyboard shortcut for Cmd+K and Esc
+    document.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        toggleSearchModal(true);
+      }
+      if (e.key === 'Escape') {
+        toggleSearchModal(false);
+      }
+    });
+
+    // Toggle Dark / Light Theme
+    function toggleTheme() {
+      const html = document.documentElement;
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+      } else {
+        html.classList.add('dark');
+      }
+      lucide.createIcons();
+    }
+
+    // Cycle Reading Font (Sans -> Times/arXiv -> Literary Serif)
+    let fontModeIndex = 0;
+    const fontModes = [
+      { name: 'Sans', classAdd: 'font-sans', classRemove: ['academic-mode', 'serif-mode', 'font-serif'] },
+      { name: 'Times (arXiv)', classAdd: 'academic-mode', classRemove: ['font-sans', 'serif-mode', 'font-serif'] },
+      { name: 'Serif (Literary)', classAdd: 'serif-mode', classRemove: ['font-sans', 'academic-mode', 'font-serif'] }
+    ];
+
+    function toggleReadingFont() {
+      fontModeIndex = (fontModeIndex + 1) % fontModes.length;
+      const current = fontModes[fontModeIndex];
+      const elements = document.querySelectorAll('.article-text');
+      const label = document.getElementById('font-mode-label');
+      
+      elements.forEach(el => {
+        current.classRemove.forEach(c => el.classList.remove(c));
+        el.classList.add(current.classAdd);
+      });
+      label.innerText = current.name;
+    }
+
+    // Copy link handler
+    function copyArticleLink() {
+      const btnText = document.getElementById('copy-link-text');
+      btnText.innerText = 'Đã sao chép!';
+      setTimeout(() => {
+        btnText.innerText = 'Copy link';
+      }, 2000);
+    }
+
+    // Initialize Lucide Icons & KaTeX on load
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      if (typeof renderMathInElement === 'function') {
+        renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false}
+          ]
+        });
+      }
+    });
+  </script>
+
+</body>
+</html>

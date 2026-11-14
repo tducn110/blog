@@ -1,0 +1,124 @@
+---
+// ponytail: Category archive page, reuses unified PostCard and categories metadata
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import CategoryPills from '../../components/CategoryPills.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { CATEGORIES, CATEGORY_KEYS, type CategoryKey } from '../../utils/categories';
+import { Terminal, Workflow, Sigma, Feather } from 'lucide-astro';
+
+export async function getStaticPaths() {
+  return CATEGORY_KEYS.map(category => ({
+    params: { category },
+    props: { category },
+  }));
+}
+
+interface Props {
+  category: CategoryKey;
+}
+
+const { category } = Astro.props;
+const currentMeta = CATEGORIES[category];
+
+const iconMap = {
+  tech: Terminal,
+  engineering: Workflow,
+  math: Sigma,
+  thoughts: Feather,
+};
+const CategoryIcon = iconMap[category] || Terminal;
+
+const allPosts = await getCollection('posts', ({ data }) => !data.draft && data.category === category);
+const sortedPosts = allPosts.sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+---
+
+<BaseLayout title={currentMeta.title} description={currentMeta.desc}>
+  <div class="space-y-8">
+    
+    <!-- Header Banner (Refactored to .card-surface) -->
+    <section class="card-surface p-6 sm:p-8 rounded-3xl space-y-4 shadow-sm relative overflow-hidden">
+      <div class="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-accent-primary/5 dark:bg-accent-primaryDark/10 blur-3xl pointer-events-none"></div>
+
+      <Breadcrumbs
+        items={[
+          { label: 'Home', href: '/' },
+          { label: 'Chuyên mục' },
+          { label: currentMeta.label.toUpperCase() }
+        ]}
+      />
+
+      <div class="flex items-start gap-4 pt-1">
+        <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800/90 border border-subtle flex items-center justify-center text-accent-primary dark:text-accent-primaryDark shrink-0 shadow-sm">
+          <CategoryIcon class="w-6 h-6 stroke-[1.75]" />
+        </div>
+        <div class="space-y-1.5">
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+            {currentMeta.title}
+          </h1>
+          <p class="text-sm text-text-muted max-w-2xl leading-relaxed">
+            {currentMeta.desc}
+          </p>
+        </div>
+      </div>
+
+      <div class="pt-1 text-xs text-text-muted font-mono flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span>Tuyển tập {sortedPosts.length} bài viết chuyên sâu</span>
+      </div>
+    </section>
+
+    <!-- Reusable Category Filter Pills -->
+    <CategoryPills activeSlug={category} />
+
+    <!-- Post List Grid (Expanded Spacing) -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-10">
+      
+      <!-- Main Feed (8 cols) -->
+      <div class="md:col-span-8 space-y-6">
+        {sortedPosts.map(post => (
+          <PostCard
+            title={post.data.title}
+            description={post.data.description}
+            slug={post.slug}
+            category={post.data.category}
+            publishDate={post.data.publishDate}
+            tags={post.data.tags}
+          />
+        ))}
+      </div>
+
+      <!-- Aside Sidebar (4 cols) with Active Category Highlight (Refactored to .card-surface) -->
+      <aside class="md:col-span-4 space-y-6">
+        <div class="card-surface p-6 sm:p-8 space-y-4 text-xs shadow-sm sticky top-24">
+          <div class="font-bold text-sm text-slate-900 dark:text-white border-b border-subtle pb-3">
+            Khám phá các chuyên mục
+          </div>
+          <div class="space-y-2">
+            {Object.entries(CATEGORIES).map(([catKey, meta]) => {
+              const isCurrent = catKey === category;
+              return (
+                <a
+                  href={`/category/${catKey}`}
+                  class={`block p-3 rounded-xl transition-all ${
+                    isCurrent
+                      ? 'bg-slate-100 dark:bg-slate-800 font-bold text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 shadow-sm'
+                      : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400'
+                  }`}
+                >
+                  <div class="flex items-center justify-between">
+                    <span class="capitalize">{meta.label}</span>
+                    {isCurrent && <span class="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-accent-primary text-white">Đang xem</span>}
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      </aside>
+
+    </div>
+
+  </div>
+</BaseLayout>

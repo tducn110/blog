@@ -1,0 +1,27 @@
+---
+// ponytail: Reusable Category Filter Pills component, single source of truth for taxonomy navigation
+import { NAV_ITEMS } from '../utils/categories';
+
+interface Props {
+  activeSlug?: string;
+  class?: string;
+}
+
+const { activeSlug = 'all', class: className = '' } = Astro.props;
+---
+
+<div class={`flex items-center space-x-2 overflow-x-auto pb-1 ${className}`} role="tablist" aria-label="Lọc theo chuyên mục">
+  {NAV_ITEMS.map(cat => {
+    const isActive = cat.slug === activeSlug;
+    return (
+      <a
+        href={cat.href}
+        class={isActive ? 'btn-tab-active' : 'btn-tab'}
+        role="tab"
+        aria-selected={isActive ? 'true' : 'false'}
+      >
+        {cat.label}
+      </a>
+    );
+  })}
+</div>
