@@ -97,10 +97,14 @@ body {
   transform: translateY(0) scale(1);
 }
 
-/* Suppress standalone back-to-top on mobile when reading pill is active */
+/* Suppress standalone back-to-top and ensure bottom breathing room on mobile when reading pill is active */
 @media (max-width: 767px) {
   body.has-reading-pill .back-to-top-btn {
     display: none !important;
+  }
+
+  body.has-reading-pill #main-content {
+    padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px)) !important;
   }
 }
 
@@ -463,10 +467,10 @@ mark {
 
 .prose p {
   font-size: 1.0625rem !important; /* 17px */
-  line-height: 2.15 !important; /* Golden-ratio vertical rhythm for math & text */
+  line-height: 1.85 !important; /* Balanced readability for math & Vietnamese text */
   letter-spacing: normal !important;
-  margin-top: 1.5rem !important;
-  margin-bottom: 2.25rem !important;
+  margin-top: 1.25rem !important;
+  margin-bottom: 1.75rem !important;
   color: var(--text-muted);
 }
 
@@ -476,16 +480,16 @@ mark {
 
 .prose ul,
 .prose ol {
-  margin-top: 1.5rem !important;
-  margin-bottom: 2.25rem !important;
-  padding-left: 1.75rem !important;
+  margin-top: 1.25rem !important;
+  margin-bottom: 1.75rem !important;
+  padding-left: 1.5rem !important;
 }
 
 .prose li {
   font-size: 1.0625rem !important;
-  line-height: 2.1 !important;
-  margin-top: 0.75rem !important;
-  margin-bottom: 0.75rem !important;
+  line-height: 1.8 !important;
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
 }
 
 .prose blockquote {
@@ -511,15 +515,57 @@ mark {
 }
 
 @media (max-width: 640px) {
+  .prose h2 {
+    font-size: 1.35rem !important;
+    line-height: 1.35 !important;
+    margin-top: 2.75rem !important;
+    margin-bottom: 1.25rem !important;
+    padding-bottom: 0.5rem !important;
+  }
+
+  .prose h3 {
+    font-size: 1.15rem !important;
+    line-height: 1.4 !important;
+    margin-top: 2rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  .prose h4 {
+    font-size: 1.05rem !important;
+    margin-top: 1.5rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .prose p {
+    font-size: 1rem !important; /* 16px */
+    line-height: 1.75 !important; /* Ergonomic readable rhythm on iPhone */
+    margin-top: 0.875rem !important;
+    margin-bottom: 1.25rem !important;
+  }
+
+  .prose li {
+    font-size: 1rem !important;
+    line-height: 1.7 !important;
+    margin-top: 0.5rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .prose ul,
+  .prose ol {
+    margin-top: 0.875rem !important;
+    margin-bottom: 1.25rem !important;
+    padding-left: 1.25rem !important;
+  }
+
   .prose blockquote {
-    margin: 2rem 0 !important;
-    padding: 1.25rem 1.25rem !important;
+    margin: 1.75rem 0 !important;
+    padding: 1rem 1.25rem !important;
     border-radius: 0 0.75rem 0.75rem 0 !important;
   }
 
   .prose pre {
-    margin-top: 2rem !important;
-    margin-bottom: 2rem !important;
+    margin-top: 1.75rem !important;
+    margin-bottom: 1.75rem !important;
     padding: 1.25rem 1rem !important;
     border-radius: 1rem !important;
   }
@@ -534,13 +580,13 @@ mark {
    KHỐI TOÁN HỌC KATEX (Academic Formula Showcase Box)
    Rộng rãi, căn giữa tự nhiên, hỗ trợ cuộn mượt mà trên iPhone/Mobile
    ======================================================== */
-/* Inline KaTeX: ample breathing room, horizontal padding & clear baseline */
+/* Inline KaTeX: natural sentence integration without artificial gaps */
 .prose :not(.katex-display) > .katex {
-  display: inline-block !important;
-  font-size: 1.05em !important;
-  padding: 0 0.25em !important;
-  margin: 0 0.1em !important;
-  vertical-align: -0.1em !important;
+  display: inline !important;
+  font-size: 1.02em !important;
+  padding: 0 0.06em !important;
+  margin: 0 !important;
+  vertical-align: -0.05em !important;
 }
 
 .katex-display {
