@@ -8,15 +8,15 @@ export async function GET(context: APIContext) {
   const sortedPosts = posts.sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
 
   return rss({
-    title: 'Duc Nguyen | Engineering & Tech Blog',
-    description: 'Kiến trúc hệ thống, toán học ứng dụng và kỹ thuật phần mềm.',
-    site: context.site || 'https://tducn.dev',
+    title: 'Duc Nguyen | Engineering & Systems Notes',
+    description: 'Personal notes on systems architecture, applied mathematics, and software design.',
+    site: context.site || 'https://tducn.vercel.app',
     items: sortedPosts.map(post => ({
       title: post.data.title,
       pubDate: post.data.publishDate,
       description: post.data.description,
       link: `/posts/${post.slug}/`,
     })),
-    customData: `<language>vi-VN</language>`,
+    customData: `<language>en-us</language>`,
   });
 }

@@ -3,11 +3,11 @@
 > Personal engineering blog by Duc Nguyen (/tducn) focusing on systems architecture, applied mathematics, and software craftsmanship. Built with Astro 5 static site generation.
 
 ## Main Sections
-- [Tech](https://tducn.dev/category/tech)
-- [Engineering](https://tducn.dev/category/engineering)
-- [Mathematics](https://tducn.dev/category/math)
-- [Thoughts](https://tducn.dev/category/thoughts)
+- [Tech](https://tducn.vercel.app/category/tech)
+- [Engineering](https://tducn.vercel.app/category/engineering)
+- [Mathematics](https://tducn.vercel.app/category/math)
+- [Thoughts](https://tducn.vercel.app/category/thoughts)
 
 ## Feeds & Resources
-- [RSS Feed](https://tducn.dev/rss.xml)
-- [Search Index](https://tducn.dev/search.json)
+- [RSS Feed](https://tducn.vercel.app/rss.xml)
+- [Search Index](https://tducn.vercel.app/search.json)

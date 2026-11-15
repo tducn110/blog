@@ -5,7 +5,7 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 
 export default defineConfig({
-  site: 'https://tducn.dev',
+  site: 'https://tducn.vercel.app',
   integrations: [tailwind()],
   markdown: {
     remarkPlugins: [remarkMath],
