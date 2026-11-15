@@ -439,7 +439,7 @@ $$
 Since $R_{nn} > 0$ and $X$ has full column rank, $H \succ 0$. Cross-Entropy loss is <strong>strictly convex</strong> everywhere, guaranteeing that any stationary point is the <mark class="hl-focus">unique global minimum</mark> with zero local minima traps.
 </div>
 
-#### Newton-Raphson Iterations to <mark class="hl-key"><mark class="hl-key">Iteratively Reweighted Least Squares (IRLS)</mark></mark>
+#### Newton-Raphson Iterations to <mark class="hl-key">Iteratively Reweighted Least Squares (IRLS)</mark>
 Newton-Raphson parameter updates:
 
 $$
@@ -519,7 +519,7 @@ flowchart TD
     Smooth --> PolySweep["Polynomial Degree Sweep (d = 2, 3, 4, 5, 6)"]
     PolySweep --> Optimal["Optimal Model: Degree 4 (R² = 0.9328, MSE = 1.2641)"]
     Optimal --> Residuals["Statistical Residual Verification: e ~ N(0, σ²)"]
-    Residuals --> Band["3σ Statistical Process Control Corridor: [ŷ - 3σ, ŷ + 3σ]"]
+    Residuals --> Band["3σ Statistical Process Control Corridor: (ŷ - 3σ, ŷ + 3σ)"]
 ```
 
 #### Degree Sweep Findings & Runge Oscillation Protection

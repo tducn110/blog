@@ -177,8 +177,27 @@ const defaultFontClass = fontClassMap[post.data.recommendedFont || 'sans'];
   <!-- Client-side Lightweight Mermaid Renderer & Code Block Enhancer -->
   <script is:inline>
     document.addEventListener('DOMContentLoaded', () => {
-      // Enhanced Copy Button & Language Badge for Code Blocks
-      document.querySelectorAll('pre.astro-code').forEach(pre => {
+      // 1. Identify Mermaid Diagram Pre Blocks First
+      const allPres = Array.from(document.querySelectorAll('pre'));
+      const mermaidPres = allPres.filter(pre => {
+        const lang = pre.getAttribute('data-language') || '';
+        const codeEl = pre.querySelector('code');
+        const text = (codeEl ? codeEl.textContent : pre.textContent) || '';
+        const trimmed = text.trim();
+        return lang === 'mermaid' ||
+               pre.classList.contains('language-mermaid') ||
+               (codeEl && codeEl.classList.contains('language-mermaid')) ||
+               trimmed.startsWith('flowchart') ||
+               trimmed.startsWith('graph') ||
+               trimmed.startsWith('sequenceDiagram') ||
+               trimmed.startsWith('classDiagram') ||
+               trimmed.startsWith('stateDiagram');
+      });
+
+      // 2. Enhanced Copy Button & Language Badge for Standard Code Blocks Only (Exclude Mermaid)
+      allPres.forEach(pre => {
+        if (mermaidPres.includes(pre)) return;
+
         // Detect language
         const langAttr = pre.getAttribute('data-language');
         const codeEl = pre.querySelector('code');
@@ -246,15 +265,7 @@ const defaultFontClass = fontClassMap[post.data.recommendedFont || 'sans'];
       // ==============================================================================
       // High-Performance Lazy Mermaid Engine & Mobile Touch Guard
       // ==============================================================================
-      const initialCodeBlocks = Array.from(document.querySelectorAll('pre code, pre'));
-      const mermaidBlocks = initialCodeBlocks.filter(el => {
-        return el.classList.contains('language-mermaid') || 
-               el.textContent?.trim().startsWith('flowchart') || 
-               el.textContent?.trim().startsWith('graph') ||
-               el.textContent?.trim().startsWith('sequenceDiagram');
-      });
-
-      if (mermaidBlocks.length > 0) {
+      if (mermaidPres.length > 0) {
         let mermaidInstance = null;
         let mermaidPromise = null;
         const diagramRecords = [];
@@ -266,6 +277,7 @@ const defaultFontClass = fontClassMap[post.data.recommendedFont || 'sans'];
               const isDark = document.documentElement.classList.contains('dark');
               mermaidInstance.initialize({
                 startOnLoad: false,
+                suppressErrorRendering: true,
                 theme: isDark ? 'dark' : 'neutral',
                 fontFamily: 'Be Vietnam Pro, sans-serif'
               });
@@ -278,10 +290,10 @@ const defaultFontClass = fontClassMap[post.data.recommendedFont || 'sans'];
           return mermaidPromise;
         }
 
-        // Setup DOM shells immediately (lightweight, no initial CPU consumption)
-        mermaidBlocks.forEach((el, idx) => {
-          const rawCode = el.textContent || '';
-          const parent = el.closest('pre') || el;
+        // Setup DOM shells immediately (lightweight, pristine raw code preserved)
+        mermaidPres.forEach((pre, idx) => {
+          const codeEl = pre.querySelector('code');
+          const rawCode = ((codeEl ? codeEl.textContent : pre.textContent) || '').trim();
 
           const wrapper = document.createElement('div');
           wrapper.className = 'mermaid-interactive-wrapper';
@@ -314,7 +326,7 @@ const defaultFontClass = fontClassMap[post.data.recommendedFont || 'sans'];
           viewport.appendChild(canvas);
           wrapper.appendChild(toolbar);
           wrapper.appendChild(viewport);
-          parent.replaceWith(wrapper);
+          pre.replaceWith(wrapper);
 
           // State
           let scale = 1.0;

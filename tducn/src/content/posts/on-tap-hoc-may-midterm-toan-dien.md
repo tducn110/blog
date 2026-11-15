@@ -385,7 +385,7 @@ flowchart TD
     Smooth --> PolySweep["Khảo sát bậc đa thức (d = 2, 3, 4, 5, 6)"]
     PolySweep --> Optimal["Điểm cân bằng tối ưu: Bậc 4 (R² = 0.9328, MSE = 1.2641)"]
     Optimal --> Residuals["Kiểm định thống kê phần dư: e ~ N(0, σ²)"]
-    Residuals --> Band["Dải dung sai kiểm soát chất lượng 3σ: [ŷ - 3σ, ŷ + 3σ]"]
+    Residuals --> Band["Dải dung sai kiểm soát chất lượng 3σ: (ŷ - 3σ, ŷ + 3σ)"]
 ```
 
 * **Khảo sát bậc đa thức:** $d=4$ đạt trạng thái tối ưu ($R^2 = 0.9328$, MSE $= 1.2641$). Các bậc $d=5, 6$ bắt đầu xuất hiện dao động Runge ở mốc biên nửa đêm.
