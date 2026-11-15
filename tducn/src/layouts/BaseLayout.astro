@@ -22,7 +22,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://tducn.ve
 ---
 
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -58,12 +58,12 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://tducn.ve
 
   <!-- KaTeX CSS is loaded via global.css -->
   <script is:inline>
-    // Theme initialization before render to avoid flash of wrong theme
-    const theme = localStorage.getItem('theme');
-    if (theme === 'light') {
-      document.documentElement.classList.remove('dark');
-    } else {
+    // Theme initialization before render: Default MUST be light (white background)
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
       document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
     }
   </script>
 </head>

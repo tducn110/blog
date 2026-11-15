@@ -1,5 +1,5 @@
 ---
-// ponytail: Interactive Smart Table of Contents with ScrollSpy, Reading Auto-Hide, and Collapse/Expand
+// ponytail: Click-to-Expand Smart Table of Contents (Zero scroll distraction, Click-only reveal)
 import { Bookmark, ChevronDown } from 'lucide-astro';
 
 interface Props {
@@ -12,12 +12,19 @@ const toc = headings.filter(h => h.depth === 2 || h.depth === 3);
 
 {toc.length > 0 && (
   <nav
-    class="card-surface p-5 space-y-3 shadow-md border border-subtle rounded-2xl transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] select-none"
+    class="card-surface shadow-sm hover:shadow-md border border-subtle rounded-2xl transition-all duration-200 select-none toc-is-collapsed"
     aria-label="Table of Contents"
     id="article-toc"
   >
-    <!-- Header with Section Count & Collapse/Expand Toggle -->
-    <div class="flex items-center justify-between border-b border-subtle pb-2.5">
+    <!-- Clickable Header: Toggles TOC on click, completely quiet while reading/scrolling -->
+    <div
+      id="toc-header"
+      class="flex items-center justify-between p-4 cursor-pointer hover:bg-slate-50/60 dark:hover:bg-slate-800/40 rounded-2xl transition-colors"
+      role="button"
+      tabindex="0"
+      aria-expanded="false"
+      aria-controls="toc-content"
+    >
       <div class="flex items-center gap-2 text-xs font-bold text-text-main">
         <Bookmark class="w-3.5 h-3.5 text-accent-primary dark:text-accent-primaryDark shrink-0" />
         <span>Table of Contents</span>
@@ -29,21 +36,21 @@ const toc = headings.filter(h => h.depth === 2 || h.depth === 3);
       <button
         id="toc-toggle-btn"
         type="button"
-        class="text-[11px] font-mono text-text-muted hover:text-text-main hover:bg-slate-100 dark:hover:bg-slate-800/80 px-2 py-0.5 rounded-lg flex items-center gap-1 transition-all cursor-pointer"
-        aria-expanded="true"
+        class="text-[11px] font-mono text-text-muted hover:text-text-main bg-slate-100/80 dark:bg-slate-800/80 px-2 py-0.5 rounded-lg flex items-center gap-1 transition-all cursor-pointer border border-subtle"
+        aria-expanded="false"
         aria-controls="toc-content"
-        title="Toggle Table of Contents"
+        title="Click to expand/collapse Table of Contents"
       >
-        <span id="toc-toggle-label">Collapse</span>
+        <span id="toc-toggle-label">Expand</span>
         <ChevronDown id="toc-toggle-icon" class="w-3.5 h-3.5 transition-transform duration-200" />
       </button>
     </div>
 
-    <!-- Collapsible List Container with Max-Height & Custom Scrollbar -->
-    <div id="toc-content" class="transition-all duration-300">
+    <!-- Collapsible List Container: ONLY visible when explicitly clicked by user -->
+    <div id="toc-content" class="px-4 pb-4 pt-1 border-t border-subtle/80 transition-all duration-300">
       <ul
         id="toc-scroll-list"
-        class="space-y-1 text-xs text-text-muted max-h-[calc(100vh-14rem)] overflow-y-auto pr-1 py-1 custom-scrollbar"
+        class="space-y-1 text-xs text-text-muted max-h-[calc(100vh-16rem)] overflow-y-auto pr-1 py-1 custom-scrollbar"
       >
         {toc.map(item => (
           <li class={item.depth === 3 ? "pl-3 text-[11px]" : ""}>
@@ -58,23 +65,16 @@ const toc = headings.filter(h => h.depth === 2 || h.depth === 3);
         ))}
       </ul>
       
-      <!-- Subtle Reading Helper Footer -->
-      <div class="pt-2 border-t border-subtle/60 text-[10px] font-mono text-text-muted/70 flex items-center justify-between">
-        <span>Auto-hides while reading</span>
-        <span>Scroll up to reveal</span>
+      <!-- Subtle Helper Note -->
+      <div class="pt-2.5 mt-2 border-t border-subtle/60 text-[10px] font-mono text-text-muted/70 flex items-center justify-between">
+        <span>Click heading to jump</span>
+        <span class="text-accent-primary dark:text-accent-primaryDark">Distraction-free</span>
       </div>
     </div>
   </nav>
 
   <style>
-    /* Distraction-Free Reading Mode: Hidden on scroll-down */
-    #article-toc.toc-reading-hidden {
-      opacity: 0;
-      transform: translateY(-10px) scale(0.97);
-      pointer-events: none;
-    }
-
-    /* Manually Collapsed State */
+    /* Collapsed State: Hidden content until user clicks the header area */
     #article-toc.toc-is-collapsed #toc-content {
       display: none;
     }
@@ -98,7 +98,7 @@ const toc = headings.filter(h => h.depth === 2 || h.depth === 3);
       background: rgba(150, 150, 150, 0.4);
     }
 
-    /* Active Heading Link in TOC: High-contrast, prestigious active indicator (Zero error-red) */
+    /* Active Heading Link in TOC: High-contrast, prestigious slate/indigo active indicator */
     .toc-link.active {
       color: #0f172a !important;
       font-weight: 700 !important;
@@ -117,87 +117,57 @@ const toc = headings.filter(h => h.depth === 2 || h.depth === 3);
 
   <script>
     const tocNav = document.getElementById('article-toc');
+    const tocHeader = document.getElementById('toc-header');
     const toggleBtn = document.getElementById('toc-toggle-btn');
     const toggleLabel = document.getElementById('toc-toggle-label');
     const tocLinks = document.querySelectorAll<HTMLAnchorElement>('#article-toc a[data-toc-slug]');
     const tocScrollList = document.getElementById('toc-scroll-list');
 
-    // 1. Manual Collapse / Expand Logic with LocalStorage persistence
-    let isCollapsed = localStorage.getItem('blog_toc_collapsed') === 'true';
+    // State: Default is COLLAPSED so scrolling never shows TOC while reading
+    let isExpanded = false;
 
-    function setCollapsedState(collapsed: boolean) {
-      isCollapsed = collapsed;
-      if (!tocNav || !toggleBtn || !toggleLabel) return;
+    function setExpandedState(expanded: boolean) {
+      isExpanded = expanded;
+      if (!tocNav || !toggleBtn || !toggleLabel || !tocHeader) return;
 
-      if (isCollapsed) {
-        tocNav.classList.add('toc-is-collapsed');
-        toggleLabel.textContent = 'Expand';
-        toggleBtn.setAttribute('aria-expanded', 'false');
-      } else {
+      if (isExpanded) {
         tocNav.classList.remove('toc-is-collapsed');
         toggleLabel.textContent = 'Collapse';
         toggleBtn.setAttribute('aria-expanded', 'true');
+        tocHeader.setAttribute('aria-expanded', 'true');
+      } else {
+        tocNav.classList.add('toc-is-collapsed');
+        toggleLabel.textContent = 'Expand';
+        toggleBtn.setAttribute('aria-expanded', 'false');
+        tocHeader.setAttribute('aria-expanded', 'false');
       }
-      localStorage.setItem('blog_toc_collapsed', String(isCollapsed));
     }
 
-    // Initialize from storage
-    if (isCollapsed) {
-      setCollapsedState(true);
+    // Toggle on clicking the header or button
+    function toggleToc() {
+      setExpandedState(!isExpanded);
     }
 
-    toggleBtn?.addEventListener('click', () => {
-      setCollapsedState(!isCollapsed);
-    });
-
-    // 2. Scroll-Aware Distraction-Free Reading Mode (Auto-hide on scroll down, reveal on scroll up)
-    let lastScrollY = window.scrollY;
-    let isScrollingTicking = false;
-    let isHovering = false;
-
-    function handleTocScroll() {
-      const currentScrollY = window.scrollY;
-      const scrollDiff = currentScrollY - lastScrollY;
-
-      if (!isHovering && tocNav) {
-        if (currentScrollY < 140) {
-          // Near top of article: always reveal TOC
-          tocNav.classList.remove('toc-reading-hidden');
-        } else if (scrollDiff > 8 && currentScrollY > 180) {
-          // Scrolling DOWN (Active reading): Auto-hide TOC to eliminate visual clutter
-          tocNav.classList.add('toc-reading-hidden');
-        } else if (scrollDiff < -8) {
-          // Scrolling UP (Navigating): Reveal TOC smoothly
-          tocNav.classList.remove('toc-reading-hidden');
-        }
-      }
-
-      lastScrollY = currentScrollY;
-      isScrollingTicking = false;
-    }
-
-    window.addEventListener('scroll', () => {
-      if (!isScrollingTicking) {
-        window.requestAnimationFrame(handleTocScroll);
-        isScrollingTicking = true;
-      }
-    }, { passive: true });
-
-    // 3. Hover to Reveal: Moving mouse over TOC container temporarily restores visibility
-    tocNav?.parentElement?.addEventListener('mouseenter', () => {
-      isHovering = true;
-      tocNav?.classList.remove('toc-reading-hidden');
-    });
-
-    tocNav?.parentElement?.addEventListener('mouseleave', () => {
-      isHovering = false;
-      // If currently scrolling down into content, restore hidden reading mode
-      if (window.scrollY > 200) {
-        tocNav?.classList.add('toc-reading-hidden');
+    tocHeader?.addEventListener('click', (e) => {
+      // Avoid double trigger if clicking directly on button
+      if (e.target !== toggleBtn && !toggleBtn?.contains(e.target as Node)) {
+        toggleToc();
       }
     });
 
-    // 4. ScrollSpy: Dynamic Table of Contents Highlight & Keep in View
+    tocHeader?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleToc();
+      }
+    });
+
+    toggleBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleToc();
+    });
+
+    // ScrollSpy: Update active link quietly in background without forcing TOC to show on scroll
     const headingElements = Array.from(tocLinks)
       .map(link => {
         const slug = link.getAttribute('data-toc-slug');
@@ -209,7 +179,7 @@ const toc = headings.filter(h => h.depth === 2 || h.depth === 3);
       let activeSlug = '';
 
       function updateActiveHeading() {
-        const scrollPosition = window.scrollY + 120; // 120px offset below header
+        const scrollPosition = window.scrollY + 120;
         
         let currentHeading: HTMLElement | null = null;
         for (const heading of headingElements) {
@@ -234,8 +204,8 @@ const toc = headings.filter(h => h.depth === 2 || h.depth === 3);
             }
           });
 
-          // Auto-scroll inside TOC if active heading is off-screen
-          if (activeLinkEl && tocScrollList) {
+          // If currently expanded, keep active link in view inside TOC list
+          if (isExpanded && activeLinkEl && tocScrollList) {
             const listRect = tocScrollList.getBoundingClientRect();
             const linkRect = (activeLinkEl as HTMLElement).getBoundingClientRect();
             if (linkRect.bottom > listRect.bottom || linkRect.top < listRect.top) {
@@ -248,7 +218,7 @@ const toc = headings.filter(h => h.depth === 2 || h.depth === 3);
       updateActiveHeading();
       window.addEventListener('scroll', updateActiveHeading, { passive: true });
 
-      // Smooth scroll on click with history state
+      // Smooth scroll on click and optionally collapse
       tocLinks.forEach(link => {
         link.addEventListener('click', (e) => {
           e.preventDefault();

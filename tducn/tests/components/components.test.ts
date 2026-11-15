@@ -187,7 +187,8 @@ describe('Component Reusability & Rendering Contracts', () => {
     expect(result).toContain('Intro Section');
     expect(result).toContain('href="#deep-dive"');
     expect(result).toContain('Deep Dive');
-    expect(result).toContain('Collapse');
+    expect(result).toContain('toc-is-collapsed');
+    expect(result).toContain('Expand');
   });
 
   it('TableOfContents: should render nothing if headings array is empty', async () => {

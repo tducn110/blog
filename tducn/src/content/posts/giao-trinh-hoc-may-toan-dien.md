@@ -10,7 +10,6 @@ lang: "vi"
 translationSlug: "machine-learning-comprehensive-curriculum"
 ---
 
-> [!IMPORTANT]
 > **TÀI LIỆU TOÀN VĂN (BẢN CHUẨN XUẤT BẢN THÁNG 11/2026)**  
 > Tài liệu gốc dài 93 trang biên soạn bởi **Nhóm Nghiên Cứu AI & Học Máy VNUK (Viện Nghiên Cứu và Đào Tạo Việt – Anh, Đại Học Đà Nẵng)**. Bản in PDF tích hợp đầy đủ công thức toán học, bảng đối sánh, sơ đồ kiến trúc, mã nguồn Rust kiểm thử và ngân hàng 60 câu hỏi ôn tập có lời giải chi tiết.  
 > 
@@ -36,8 +35,11 @@ Bài viết này tổng hợp và phân tích có hệ thống toàn bộ nội 
 Theo học thuyết Machine Learning hiện đại (Mitchell & Jordan, Science 2015), một bài toán học máy tổng quát được mô hình hóa chặt chẽ dưới dạng một bộ 5 thành phần (5-tuple):
 
 $$
+
 \mathcal{M} = \langle T, E, \mathcal{F}, P, A \rangle
+
 $$
+
 
 * $T$ (Task – Tác vụ nghiệp vụ): Hồi quy ($f^*: \mathbb{R}^d \to \mathbb{R}$), Phân loại ($f^*: \mathbb{R}^d \to \{1, \dots, K\}$), hoặc nén dữ liệu.
 * $E$ (Experience – Dữ liệu quan sát): Tập có nhãn $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$ hoặc không nhãn $\mathcal{D} = \{x_i\}_{i=1}^n$.
@@ -50,8 +52,11 @@ $$
 Máy tính "học" thực chất là quá trình tìm kiếm tự động một hàm số $f^* \in \mathcal{F}$ sao cho năng lực khái quát hóa (*Generalization*) trên dữ liệu tương lai là tối ưu nhất. Để máy tính có thể biểu diễn và thao tác trên không gian hàm trừu tượng (*coordinate-free*), ta sử dụng Không gian vector $\langle V, \mathbb{R}, +, * \rangle$ và Hệ cơ sở (*Basis functions*):
 
 $$
+
 f(x) = \sum_{j=1}^m w_j \phi_j(x)
+
 $$
+
 
 Dữ liệu được biểu diễn thông qua cấu trúc Tensor nhiều chiều:
 * **Tensor bậc 0 (Scalar)**: Đại lượng vô hướng $x \in \mathbb{R}$.
@@ -70,13 +75,19 @@ Giáo trình cảnh báo: *Sự hiện diện của một cột nhãn trong bả
 Mục tiêu tối thượng của học máy thống kê không phải là ghi nhớ dữ liệu huấn luyện mà là đạt được khả năng khái quát hóa (*Generalization*) trên các quan sát độc lập chưa từng thấy trong tương lai.
 
 * **Rủi ro thực nghiệm (Empirical Risk)**:
+
   $$
   \hat{R}_n(h) = \frac{1}{n} \sum_{i=1}^n \mathcal{L}(h(x_i), y_i)
+
   $$
+
 * **Rủi ro kỳ vọng / Rủi ro thực tế (Generalization Risk)**:
+
   $$
   R(h) = \mathbb{E}_{(X,Y) \sim P}[\mathcal{L}(h(X), Y)] = \int_{\mathcal{X} \times \mathcal{Y}} \mathcal{L}(h(x), y) dP(x, y)
+
   $$
+
 
 Khoảng cách khái quát hóa $\Delta(h) = R(h) - \hat{R}_n(h)$ biểu thị mức độ quá khớp (*Overfitting*). Khi không gian giả thuyết $\mathcal{H}$ quá phức tạp, $\hat{R}_n(h) \to 0$ nhưng $R(h)$ tăng vọt.
 
@@ -84,33 +95,48 @@ Khoảng cách khái quát hóa $\Delta(h) = R(h) - \hat{R}_n(h)$ biểu thị m
 Với hàm mất mát bình phương sai số $\mathcal{L}(y, h(x)) = (h(x) - y)^2$, ta thêm bớt đại lượng $\mathbb{E}[y | x]$:
 
 $$
+
 (h(x) - y)^2 = \big((h(x) - \mathbb{E}[y | x]) + (\mathbb{E}[y | x] - y)\big)^2
+
 $$
+
 
 Bằng Luật Kỳ Vọng Lặp (*Law of Iterated Expectations*), số hạng chéo triệt tiêu hoàn toàn về 0:
 
 $$
+
 \mathbb{E}_{x, y}\big[(h(x) - \mathbb{E}[y|x])(\mathbb{E}[y|x] - y)\big] = \mathbb{E}_x \big[(h(x) - \mathbb{E}[y|x]) \cdot \mathbb{E}_{y|x}[\mathbb{E}[y|x] - y | x]\big] = 0
+
 $$
+
 
 Từ đó suy ra:
 
 $$
+
 \mathbb{E}[\mathcal{L}(y, h(x))] = \int (h(x) - \mathbb{E}[y | x])^2 P(x)dx + \int \text{Var}(y | x)P(x)dx
+
 $$
+
 
 Vì số hạng đầu tiên luôn $\ge 0$, để rủi ro kỳ vọng nhỏ nhất, nghiệm tối ưu duy nhất bắt buộc phải là:
 
 $$
+
 h^*(x) = \mathbb{E}[y | x]
+
 $$
+
 
 #### Chứng Minh Phân Rã Đánh Đổi Độ Chệch và Phương Sai (Bias-Variance Decomposition)
 Khi mô hình được huấn luyện trên tập dữ liệu cụ thể $\mathcal{D}$, kỳ vọng sai số ngoài mẫu phân rã thành ba thành phần độc lập:
 
 $$
+
 \mathbb{E}_{\mathcal{D}, y}\big[(h(x; \mathcal{D}) - y)^2\big] = \underbrace{\big(\mathbb{E}_{\mathcal{D}}[h(x; \mathcal{D})] - \mathbb{E}[y | x]\big)^2}_{\text{Bias}^2(x)} + \underbrace{\mathbb{E}_{\mathcal{D}}\big[(h(x; \mathcal{D}) - \mathbb{E}_{\mathcal{D}}[h(x; \mathcal{D})])^2\big]}_{\text{Variance}(x)} + \underbrace{\text{Var}(y | x)}_{\sigma^2(x) \text{ (Noise)}}
+
 $$
+
 
 * $\text{Bias}^2$: Sai lệch giữa dự đoán trung bình của thuật toán với chân lý lý thuyết (gây ra hiện tượng Underfitting).
 * $\text{Variance}$: Độ nhạy của mô hình trước biến động của tập dữ liệu mẫu (gây ra hiện tượng Overfitting).
@@ -127,8 +153,11 @@ Trong bài toán phân loại nhị phân ($y \in \{0, 1\}$), Ma trận nhầm l
 * **True Negative (TN)**: Thực tế âm, đoán đúng là âm.
 
 $$
+
 \text{Precision} = \frac{TP}{TP + FP}, \quad \text{Recall} = \frac{TP}{TP + FN}, \quad F_1 = \frac{2 \cdot \text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}
+
 $$
+
 
 ```
                        DỰ ĐOÁN (PREDICTION)
@@ -137,8 +166,7 @@ THỰC TẾ  Positive(1) [    TP     ]   [  FN (Bỏ sót) ]
 (ACTUAL) Negative(0) [ FP (Nhầm) ]   [      TN      ]
 ```
 
-> [!WARNING]
-> **CẢNH BÁO KHOA HỌC: CẠM BẪY ROC-AUC KHI MẤT CÂN BẰNG DỮ LIỆU**  
+> > **CẢNH BÁO KHOA HỌC: CẠM BẪY ROC-AUC KHI MẤT CÂN BẰNG DỮ LIỆU**  
 > Khi tập dữ liệu có tỷ lệ dương tính cực thấp (ví dụ chỉ $0.1\%$ mẫu gian lận, số mẫu âm tính $TN$ lên tới hàng triệu), số lượng báo động nhầm $FP$ dù tăng vọt vẫn bị mẫu số $(TN + FP)$ áp đảo. Hậu quả là tỷ lệ $FPR = \frac{FP}{TN+FP} \approx 0$, làm đường cong **ROC-AUC hiển thị giá trị ảo rất cao ($> 0.95$)**.  
 > Trong các bài toán phát hiện gian lận, chẩn đoán y tế hay an ninh mạng, **PR-AUC (Precision-Recall AUC)** là thước đo bắt buộc duy nhất phản ánh trung thực sự sụp đổ của mô hình.
 
@@ -166,8 +194,11 @@ Theo phương pháp trực quan Feynman, bài toán phân loại thực chất l
 Định lý Bayes xác lập mối quan hệ:
 
 $$
+
 P(C_k | x) = \frac{p(x | C_k) P(C_k)}{p(x)} = \frac{p(x | C_k) P(C_k)}{\sum_{j=1}^K p(x | C_j) P(C_j)}
+
 $$
+
 
 * $P(C_k)$: Xác suất Tiên nghiệm (Prior).
 * $p(x | C_k)$: Hàm Khả năng (Likelihood).
@@ -190,8 +221,10 @@ $$
 #### Phân Tích Phân Biệt Gauss (GDA)
 Giả định mỗi lớp tuân theo phân phối chuẩn đa biến $\mathcal{N}(\mu_k, \Sigma_k)$.
 * **LDA (Linear Discriminant Analysis)**: Giả định các lớp có chung ma trận hiệp phương sai $\Sigma_1 = \Sigma_2 = \Sigma$. Khi xét tỷ số log-likelihood:
+
   $$
   \log \frac{P(C_1 | x)}{P(C_2 | x)} = (\mu_1 - \mu_2)^T \Sigma^{-1} x + w_0 = 0
+
   $$
   Số hạng bậc hai $x^T \Sigma^{-1} x$ triệt tiêu hoàn toàn, tạo ra **ranh giới quyết định tuyến tính phẳng**.
 * **QDA (Quadratic Discriminant Analysis)**: Cho phép mỗi lớp có ma trận hiệp phương sai riêng $\Sigma_1 \ne \Sigma_2$. Số hạng bậc hai tồn tại tạo nên **ranh giới bậc hai phi tuyến** (elip, parabol, hyperbol).
@@ -200,8 +233,11 @@ Giả định mỗi lớp tuân theo phân phối chuẩn đa biến $\mathcal{N
 Giả định các đặc trưng độc lập có điều kiện khi biết nhãn lớp: $p(x | y) = \prod_{j=1}^d p(x_j | y)$. Để tránh xác suất thực nghiệm bằng 0 khi gặp từ vựng mới kéo sụp toàn bộ tích số về 0, kỹ thuật làm mịn Laplace bổ sung hằng số $\alpha = 1$:
 
 $$
+
 \hat{p}(x_j | y = k) = \frac{N_{j, k} + \alpha}{N_k + \alpha d}
+
 $$
+
 
 ---
 
@@ -210,8 +246,11 @@ $$
 Cho $n$ quan sát độc lập cùng phân phối (i.i.d.) từ phân phối $p(x; \theta)$, hàm log-likelihood là:
 
 $$
+
 \ell(\theta; \mathcal{D}) = \sum_{i=1}^n \log p(x_i; \theta) \implies \hat{\theta}_{\text{MLE}} = \arg\max_\theta \ell(\theta; \mathcal{D})
+
 $$
+
 
 Với phân phối chuẩn $\mathcal{N}(\mu, \sigma^2)$, nghiệm MLE dẫn xuất được:
 * $\hat{\mu}_{\text{MLE}} = \bar{x} = \frac{1}{n} \sum x_i$ (Ước lượng không thiên lệch).
@@ -232,27 +271,38 @@ Khi kích thước mẫu $n \to \infty$:
 Một tầng tuyến tính kết nối đầy đủ `nn.Linear(in_features, out_features)` biến đổi tensor đầu vào thông qua:
 
 $$
+
 y = x W^T + b, \quad \text{Parameters: } P = (\text{in} + 1) \times \text{out}
+
 $$
+
 
 #### Vai Trò Bắt Buộc Của Hàm Kích Hoạt Phi Tuyến
 Nếu không có hàm kích hoạt phi tuyến $\sigma(\cdot)$, mạng nơ-ron dù xếp chồng hàng trăm tầng ẩn cũng chỉ tương đương với một phép biến đổi tuyến tính đơn lẻ duy nhất:
 
 $$
+
 W_k \dots W_2 W_1 x = W_{\text{eff}} x
+
 $$
+
 
 Mạng mất đi toàn bộ khả năng xấp xỉ hàm vạn năng (*Universal Function Approximation*).
 
 #### Tính Ổn Định Số Học Trong Hàm Mất Mát (Numerical Stability)
 Để triệt tiêu hiện tượng tràn số (*numerical overflow/underflow*) khi tính số mũ $e^z$, PyTorch kết hợp phép biến đổi toán học trực tiếp trong hàm mất mát:
 * **Binary Cross-Entropy**:
+
   $$
   \mathcal{L}(z, y) = \max(z, 0) - yz + \log(1 + e^{-|z|}) \implies \text{Use } \texttt{nn.BCEWithLogitsLoss()}
+
   $$
+
 * **Multiclass Cross-Entropy (Thuật toán Log-Sum-Exp)**:
+
   $$
   \log \sum_{j=1}^K e^{z_j} = m + \log \sum_{j=1}^K e^{z_j - m}, \quad \text{where } m = \max_j z_j \implies \text{Use } \texttt{nn.CrossEntropyLoss()}
+
   $$
   *Quy tắc chuẩn: Truyền trực tiếp logits thô vào loss function, tuyệt đối không gọi `nn.Softmax()` thủ công trước đó.*
 
@@ -265,8 +315,11 @@ Trong không gian hàm mất mát phi lồi chứa nhiều thung lũng hẹp d�
 Cơ chế Momentum tích lũy vận tốc quá khứ $v_t$ để duy trì quán tính chuyển động (tương tự hòn bi lăn xuống dốc):
 
 $$
+
 v_t = \beta v_{t-1} + g_t, \quad w_t = w_{t-1} - \eta v_t
+
 $$
+
 
 ```
 MẶT PHẲNG MẤT MÁT (LOSS SURFACE) & ĐỘNG HỌC TỐI ƯU
@@ -285,16 +338,23 @@ Giáo trình minh họa thực nghiệm bước $t=4$ và $t=5$ khi đạo hàm 
 Trong khi 2D-CNN thống trị bài toán xử lý ảnh, 1D-CNN là giải pháp tối ưu cho chuỗi tín hiệu cảm biến thời gian thực (như dữ liệu gia tốc kế và con quay hồi chuyển 6 kênh trong bài toán nhận dạng hoạt động người HAPT).
 
 #### Công Thức Kích Thước Đầu Ra (Output Shape)
+
 $$
+
 L_{\text{out}} = \left\lfloor \frac{L_{\text{in}} + 2P - D(K - 1) - 1}{S} \right\rfloor + 1
+
 $$
+
 
 #### Hệ Thức Truy Hồi Vùng Cảm Nhận (Receptive Field - RF)
 Vùng cảm nhận tại tầng thứ $k$ biểu thị độ dài đoạn tín hiệu đầu vào gốc mà một nơ-ron có thể quan sát:
 
 $$
+
 RF_k = RF_{k-1} + (K_k - 1) \prod_{i=1}^{k-1} S_i, \quad \text{where } RF_0 = 1
+
 $$
+
 
 #### Ưu Thế Vượt Trội Của Global Average Pooling (GAP) So Với Flatten
 Xét kiến trúc phân loại 12 hoạt động thể chất với feature map sau Conv3 kích thước $[B, 64, 120]$:
@@ -305,8 +365,11 @@ Xét kiến trúc phân loại 12 hoạt động thể chất với feature map 
 Trong kiểm định độ bền vững (*Robustness Verification*), lề quyết định $\gamma(x) = z_{y^*} - \max_{j \ne y^*} z_j$ đo lường khoảng cách an toàn giữa lớp đúng và lớp sai thứ nhì. Nếu mô hình có hằng số Lipschitz toàn cục $L_{\text{net}}$, với mọi nhiễu cảm biến $\|\Delta x\| \le \epsilon$, điều kiện đủ để mô hình không bao giờ bị đánh lừa là:
 
 $$
+
 L_{\text{net}} \cdot \epsilon < \gamma(x)
+
 $$
+
 
 Bất đẳng thức này cung cấp chứng chỉ toán học bảo đảm an toàn tuyệt đối khi triển khai AI trên các thiết bị y tế và nhúng IoT.
 
