@@ -17,6 +17,6 @@ export async function GET(context: APIContext) {
       description: post.data.description,
       link: `/posts/${post.slug}/`,
     })),
-    customData: `<language>en-us</language>`,
+    customData: `<language>vi-VN</language>`,
   });
 }

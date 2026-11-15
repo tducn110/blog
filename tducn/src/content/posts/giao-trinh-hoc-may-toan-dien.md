@@ -9,10 +9,10 @@ recommendedFont: "academic"
 ---
 
 > [!IMPORTANT]
-> 📥 **ĐÍNH KÈM TOÀN VĂN TÀI LIỆU (BẢN CHUẨN XUẤT BẢN THÁNG 11/2026)**  
+> **TÀI LIỆU TOÀN VĂN (BẢN CHUẨN XUẤT BẢN THÁNG 11/2026)**  
 > Tài liệu gốc dài 93 trang biên soạn bởi **Nhóm Nghiên Cứu AI & Học Máy VNUK (Viện Nghiên Cứu và Đào Tạo Việt – Anh, Đại Học Đà Nẵng)**. Bản in PDF tích hợp đầy đủ công thức toán học, bảng đối sánh, sơ đồ kiến trúc, mã nguồn Rust kiểm thử và ngân hàng 60 câu hỏi ôn tập có lời giải chi tiết.  
 > 
-> 👉 **[Tải xuống Giao_Trinh_Machine_Learning_Toan_Dien.pdf (PDF 93 Trang, 457 KB)](/downloads/Giao_Trinh_Machine_Learning_Toan_Dien.pdf)**
+> [Tải xuống Giao_Trinh_Machine_Learning_Toan_Dien.pdf (PDF 93 Trang, 457 KB)](/downloads/Giao_Trinh_Machine_Learning_Toan_Dien.pdf)
 
 ---
 
@@ -230,7 +230,7 @@ Khi kích thước mẫu $n \to \infty$:
 Một tầng tuyến tính kết nối đầy đủ `nn.Linear(in_features, out_features)` biến đổi tensor đầu vào thông qua:
 
 $$
-y = x W^T + b, \quad \text{Tổng số tham số: } P = (\text{in} + 1) \times \text{out}
+y = x W^T + b, \quad \text{Parameters: } P = (\text{in} + 1) \times \text{out}
 $$
 
 #### Vai Trò Bắt Buộc Của Hàm Kích Hoạt Phi Tuyến
@@ -246,11 +246,11 @@ Mạng mất đi toàn bộ khả năng xấp xỉ hàm vạn năng (*Universal 
 Để triệt tiêu hiện tượng tràn số (*numerical overflow/underflow*) khi tính số mũ $e^z$, PyTorch kết hợp phép biến đổi toán học trực tiếp trong hàm mất mát:
 * **Binary Cross-Entropy**:
   $$
-  \mathcal{L}(z, y) = \max(z, 0) - yz + \log(1 + e^{-|z|}) \implies \text{Dùng } \texttt{nn.BCEWithLogitsLoss()}
+  \mathcal{L}(z, y) = \max(z, 0) - yz + \log(1 + e^{-|z|}) \implies \text{Use } \texttt{nn.BCEWithLogitsLoss()}
   $$
 * **Multiclass Cross-Entropy (Thuật toán Log-Sum-Exp)**:
   $$
-  \log \sum_{j=1}^K e^{z_j} = m + \log \sum_{j=1}^K e^{z_j - m}, \quad \text{với } m = \max_j z_j \implies \text{Dùng } \texttt{nn.CrossEntropyLoss()}
+  \log \sum_{j=1}^K e^{z_j} = m + \log \sum_{j=1}^K e^{z_j - m}, \quad \text{where } m = \max_j z_j \implies \text{Use } \texttt{nn.CrossEntropyLoss()}
   $$
   *Quy tắc chuẩn: Truyền trực tiếp logits thô vào loss function, tuyệt đối không gọi `nn.Softmax()` thủ công trước đó.*
 
@@ -291,7 +291,7 @@ $$
 Vùng cảm nhận tại tầng thứ $k$ biểu thị độ dài đoạn tín hiệu đầu vào gốc mà một nơ-ron có thể quan sát:
 
 $$
-RF_k = RF_{k-1} + (K_k - 1) \prod_{i=1}^{k-1} S_i, \quad \text{với } RF_0 = 1
+RF_k = RF_{k-1} + (K_k - 1) \prod_{i=1}^{k-1} S_i, \quad \text{where } RF_0 = 1
 $$
 
 #### Ưu Thế Vượt Trội Của Global Average Pooling (GAP) So Với Flatten
@@ -348,7 +348,7 @@ Evaluation & Verification (Thước đo phù hợp & Chứng chỉ toàn vẹn)
 
 Toàn văn giáo trình định dạng PDF chất lượng cao (biên soạn bằng LaTeX) đã được tích hợp trực tiếp vào hệ thống blog:
 
-* 📄 **Tên tệp**: `Giao_Trinh_Machine_Learning_Toan_Dien.pdf`
-* 📏 **Quy mô**: 93 trang chuẩn A4
-* 💾 **Dung lượng**: 457 KB
-* 🔗 **Đường dẫn tải về**: **[/downloads/Giao_Trinh_Machine_Learning_Toan_Dien.pdf](/downloads/Giao_Trinh_Machine_Learning_Toan_Dien.pdf)**
+* **Tên tệp**: `Giao_Trinh_Machine_Learning_Toan_Dien.pdf`
+* **Quy mô**: 93 trang chuẩn A4
+* **Dung lượng**: 457 KB
+* **Đường dẫn tải về**: [/downloads/Giao_Trinh_Machine_Learning_Toan_Dien.pdf](/downloads/Giao_Trinh_Machine_Learning_Toan_Dien.pdf)

@@ -1,5 +1,4 @@
 @import "katex/dist/katex.min.css";
-@import url("https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=STIX+Two+Text:ital,wght@0,400;0,600;0,700;1,400&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -420,10 +419,10 @@ mark {
   font-weight: 700 !important;
   line-height: 1.4 !important;
   letter-spacing: normal !important;
-  scroll-margin-top: 6rem !important; /* Prevents sticky navbar from covering headings */
-  margin-top: 4.5rem !important; /* 72px = 4*18: Khoảng thở cực rộng giữa các phần */
-  margin-bottom: 1.5rem !important; /* 24px = 4*6 */
-  padding-bottom: 0.75rem !important;
+  scroll-margin-top: 6rem !important;
+  margin-top: 5.5rem !important; /* Generous breathing room */
+  margin-bottom: 2rem !important;
+  padding-bottom: 1rem !important;
   border-bottom: 1px solid var(--border-subtle);
   color: var(--text-main) !important;
 }
@@ -434,17 +433,26 @@ mark {
   line-height: 1.45 !important;
   letter-spacing: normal !important;
   scroll-margin-top: 6rem !important;
-  margin-top: 3.25rem !important; /* 52px = 4*13 */
-  margin-bottom: 1.25rem !important; /* 20px */
+  margin-top: 4rem !important;
+  margin-bottom: 1.5rem !important;
+  color: var(--text-main) !important;
+}
+
+.prose h4 {
+  font-size: 1.125rem !important;
+  font-weight: 600 !important;
+  line-height: 1.5 !important;
+  margin-top: 3rem !important;
+  margin-bottom: 1.25rem !important;
   color: var(--text-main) !important;
 }
 
 .prose p {
   font-size: 1.0625rem !important; /* 17px */
-  line-height: 1.9 !important; /* Siêu thoáng */
+  line-height: 2.15 !important; /* Golden-ratio vertical rhythm for math & text */
   letter-spacing: normal !important;
-  margin-top: 1.25rem !important;
-  margin-bottom: 1.75rem !important; /* 28px */
+  margin-top: 1.5rem !important;
+  margin-bottom: 2.25rem !important;
   color: var(--text-muted);
 }
 
@@ -452,13 +460,36 @@ mark {
   color: #cbd5e1 !important;
 }
 
+.prose ul,
+.prose ol {
+  margin-top: 1.5rem !important;
+  margin-bottom: 2.25rem !important;
+  padding-left: 1.75rem !important;
+}
+
+.prose li {
+  font-size: 1.0625rem !important;
+  line-height: 2.1 !important;
+  margin-top: 0.75rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
+.prose blockquote {
+  margin: 3.5rem 0 !important;
+  padding: 1.75rem 2rem !important;
+  border-left: 4px solid var(--accent-color) !important;
+  background: var(--surface-card) !important;
+  border-radius: 0 1rem 1rem 0 !important;
+  font-style: italic;
+}
+
 /* Khối Code Shiki */
 .prose pre {
   position: relative !important;
-  margin-top: 2.5rem !important; /* 40px */
-  margin-bottom: 3.5rem !important; /* 56px */
-  padding: 1.5rem 1.75rem !important; /* 24px 28px */
-  border-radius: 1rem !important;
+  margin-top: 3.5rem !important;
+  margin-bottom: 4rem !important;
+  padding: 1.75rem 2rem !important;
+  border-radius: 1.25rem !important;
   border: 1px solid var(--border-subtle) !important;
   box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.25);
 }
@@ -467,32 +498,42 @@ mark {
    KHỐI TOÁN HỌC KATEX (Academic Formula Showcase Box)
    Rộng rãi, căn giữa tự nhiên, hỗ trợ cuộn mượt mà trên iPhone/Mobile
    ======================================================== */
+/* Inline KaTeX: ample breathing room, horizontal padding & clear baseline */
+.prose :not(.katex-display) > .katex {
+  display: inline-block !important;
+  font-size: 1.06em !important;
+  padding: 0.12em 0.3em !important;
+  margin: 0 0.12em !important;
+  line-height: 1.25 !important;
+  vertical-align: -0.1em !important;
+}
+
 .katex-display {
   display: block !important;
   overflow-x: auto !important;
   overflow-y: hidden !important;
   max-width: 100% !important;
   -webkit-overflow-scrolling: touch;
-  margin: 2.25rem 0 !important;
-  padding: 1.25rem 1rem !important;
+  margin: 3.5rem 0 !important;
+  padding: 1.75rem 1.25rem !important;
   background: var(--surface-card) !important;
   border: 1px solid var(--border-subtle) !important;
-  border-radius: 1rem !important;
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.08) !important;
+  border-radius: 1.25rem !important;
+  box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.08) !important;
   text-align: center;
 }
 
 @media (min-width: 640px) {
   .katex-display {
-    margin: 3.5rem 0 !important;
-    padding: 2.25rem 2.5rem !important;
-    border-radius: 1.25rem !important;
-    box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.3) !important;
+    margin: 5rem 0 !important;
+    padding: 2.75rem 3rem !important;
+    border-radius: 1.5rem !important;
+    box-shadow: 0 8px 32px -4px rgba(0, 0, 0, 0.25) !important;
   }
 }
 
 .katex-display > .katex {
-  font-size: 1.15rem !important;
+  font-size: 1.2rem !important;
   line-height: normal !important;
   display: inline-block !important;
   text-align: initial;
@@ -501,7 +542,7 @@ mark {
 
 @media (min-width: 640px) {
   .katex-display > .katex {
-    font-size: 1.3rem !important;
+    font-size: 1.35rem !important;
   }
 }
 
@@ -615,4 +656,19 @@ mark {
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* PWA Standalone Mode & iOS Safe Area Handling */
+@supports (padding-top: env(safe-area-inset-top)) {
+  header {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+}
+
+@media (display-mode: standalone) {
+  body {
+    min-height: 100dvh;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+  }
 }
