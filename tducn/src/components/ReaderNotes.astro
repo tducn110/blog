@@ -1,6 +1,6 @@
 ---
-// ponytail: Accessible, lightweight Reader's Scratchpad with keyboard auto-trigger, auto-save, export, and copy
-import { PenLine, Copy, Download, Trash2, ChevronDown, Check, Keyboard } from 'lucide-astro';
+// ponytail: Accessible, premium Reader's Scratchpad with keyboard auto-trigger, auto-save, and clean toolbar
+import { PenLine, Copy, Download, Trash2, ChevronDown, Check } from 'lucide-astro';
 
 interface Props {
   slug: string;
@@ -12,106 +12,104 @@ const { slug, title = '' } = Astro.props;
 
 <div
   id="reader-notes-card"
-  class="card-surface p-4 space-y-2.5 shadow-md border border-subtle rounded-2xl transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] select-none"
+  class="card-surface shadow-sm hover:shadow-md border border-subtle rounded-2xl transition-all duration-200 select-none"
   data-slug={slug}
   data-title={title}
   aria-label="Personal Reading Notes"
 >
-  <!-- Header Bar -->
-  <div class="flex items-center justify-between border-b border-subtle pb-2">
-    <div class="flex items-center gap-2">
+  <!-- Clean, Serene Header (Symmetrically aligned with Table of Contents) -->
+  <div
+    id="notes-header"
+    class="flex items-center justify-between p-4 cursor-pointer hover:bg-slate-50/60 dark:hover:bg-slate-800/40 rounded-2xl transition-colors"
+    role="button"
+    tabindex="0"
+    aria-expanded="true"
+    aria-controls="notes-body"
+  >
+    <div class="flex items-center gap-2 text-xs font-bold text-text-main">
       <PenLine class="w-3.5 h-3.5 text-accent-primary dark:text-accent-primaryDark shrink-0" />
-      <span class="text-xs font-bold text-text-main">Reading Notes</span>
+      <span>Reading Notes</span>
       <span
         id="notes-count-badge"
-        class="text-[9px] font-mono text-text-muted bg-slate-100 dark:bg-slate-800 px-1.5 py-0.2 rounded-full border border-subtle hidden"
+        class="text-[10px] font-mono text-text-muted bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded-full border border-subtle hidden"
       >
         0
       </span>
-      <span
-        class="hidden xl:inline-flex items-center gap-1 text-[9px] font-mono text-text-muted/60 bg-slate-100 dark:bg-slate-800/60 px-1.5 py-0.5 rounded border border-subtle"
-        title="Type on keyboard anytime while reading to take quick notes"
-      >
-        <Keyboard class="w-2.5 h-2.5 text-slate-400" />
-        <span>Type to note</span>
-      </span>
     </div>
 
-    <!-- Right Controls -->
-    <div class="flex items-center gap-1">
-      <!-- Auto-save Status Indicator -->
-      <span
-        id="notes-save-status"
-        class="text-[10px] font-mono text-emerald-500 hidden sm:inline-flex items-center gap-1 mr-1 transition-opacity"
-      >
-        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span id="notes-status-text">Saved</span>
-      </span>
-
-      <!-- Copy to Clipboard -->
-      <button
-        id="notes-copy-btn"
-        type="button"
-        class="p-1 rounded text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors relative"
-        title="Copy notes to clipboard"
-        aria-label="Copy notes"
-      >
-        <Copy class="w-3.5 h-3.5 notes-copy-default" />
-        <Check class="w-3.5 h-3.5 text-emerald-400 notes-copy-success hidden" />
-      </button>
-
-      <!-- Download as TXT -->
-      <button
-        id="notes-download-btn"
-        type="button"
-        class="p-1 rounded text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-        title="Download notes (.txt)"
-        aria-label="Download notes"
-      >
-        <Download class="w-3.5 h-3.5" />
-      </button>
-
-      <!-- Clear Notes -->
-      <button
-        id="notes-clear-btn"
-        type="button"
-        class="p-1 rounded text-slate-400 hover:text-rose-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-        title="Clear notes"
-        aria-label="Clear notes"
-      >
-        <Trash2 class="w-3.5 h-3.5" />
-      </button>
-
-      <!-- Toggle Collapse -->
-      <button
-        id="notes-toggle-btn"
-        type="button"
-        class="p-1 rounded text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors ml-0.5 cursor-pointer"
-        title="Collapse or expand notes"
-        aria-expanded="true"
-        aria-controls="notes-body"
-        aria-label="Toggle notes panel"
-      >
-        <ChevronDown id="notes-toggle-icon" class="w-3.5 h-3.5 transition-transform duration-200" />
-      </button>
-    </div>
+    <!-- Toggle Button (Consistent with TOC button design) -->
+    <button
+      id="notes-toggle-btn"
+      type="button"
+      class="text-[11px] font-mono text-text-muted hover:text-text-main bg-slate-100/80 dark:bg-slate-800/80 px-2 py-0.5 rounded-lg flex items-center gap-1 transition-all cursor-pointer border border-subtle"
+      aria-expanded="true"
+      aria-controls="notes-body"
+      title="Toggle Notes Panel"
+    >
+      <span id="notes-toggle-label">Collapse</span>
+      <ChevronDown id="notes-toggle-icon" class="w-3.5 h-3.5 transition-transform duration-200" />
+    </button>
   </div>
 
   <!-- Collapsible Notes Body -->
-  <div id="notes-body" class="space-y-2 transition-all duration-300">
-    <textarea
-      id="reader-notes-textarea"
-      class="w-full h-28 text-xs font-sans p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/90 border border-subtle focus:border-accent-primary dark:focus:border-accent-primaryDark focus:ring-1 focus:ring-accent-primary dark:focus:ring-accent-primaryDark outline-none resize-y transition-all text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 leading-relaxed custom-scrollbar"
-      placeholder="Ghi chú cá nhân, công thức cần nhớ... (Gõ phím khi đọc bài để tự động ghi chú)"
-      aria-label="Personal notes text area"
-    ></textarea>
+  <div id="notes-body" class="px-4 pb-4 pt-1 border-t border-subtle/80 space-y-3 transition-all duration-300">
+    <!-- Note Editor Area -->
+    <div class="relative">
+      <textarea
+        id="reader-notes-textarea"
+        class="w-full h-32 text-xs font-sans p-3 rounded-xl bg-slate-50/80 dark:bg-slate-900/80 border border-subtle focus:border-accent-primary dark:focus:border-accent-primaryDark focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-accent-primary/15 dark:focus:ring-accent-primaryDark/20 outline-none resize-y transition-all text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 leading-relaxed custom-scrollbar"
+        placeholder="Ghi chú cá nhân, công thức cần nhớ... (Gõ phím khi đọc bài để tự động ghi chú)"
+        aria-label="Personal notes text area"
+      ></textarea>
+    </div>
 
-    <!-- Footer Meta -->
-    <div class="flex items-center justify-between text-[10px] font-mono text-text-muted/70 pt-0.5">
-      <span id="notes-metrics">0 words &bull; 0 chars</span>
-      <span class="flex items-center gap-1">
-        <span>Browser storage</span>
-      </span>
+    <!-- Clean Footer Toolbar with Status & Actions -->
+    <div class="flex items-center justify-between text-[11px] pt-1.5 border-t border-subtle/60 text-text-muted gap-2">
+      <!-- Left: Metrics & Auto-save Status -->
+      <div class="flex items-center gap-1.5 font-mono text-[10px] shrink-0">
+        <span id="notes-metrics">0 words</span>
+        <span class="text-slate-300 dark:text-slate-600">&bull;</span>
+        <span id="notes-save-status" class="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+          <span id="notes-status-text">Saved</span>
+        </span>
+      </div>
+
+      <!-- Right: Action Buttons -->
+      <div class="flex items-center gap-1 shrink-0">
+        <button
+          id="notes-copy-btn"
+          type="button"
+          class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] font-mono text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-slate-100/70 dark:bg-slate-800/70 hover:bg-slate-200/80 dark:hover:bg-slate-700/80 border border-subtle transition-all cursor-pointer"
+          title="Copy notes to clipboard"
+          aria-label="Copy notes"
+        >
+          <Copy class="w-2.5 h-2.5 notes-copy-default" />
+          <Check class="w-2.5 h-2.5 text-emerald-500 notes-copy-success hidden" />
+          <span>Copy</span>
+        </button>
+
+        <button
+          id="notes-download-btn"
+          type="button"
+          class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] font-mono text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-slate-100/70 dark:bg-slate-800/70 hover:bg-slate-200/80 dark:hover:bg-slate-700/80 border border-subtle transition-all cursor-pointer"
+          title="Download notes (.txt)"
+          aria-label="Export notes"
+        >
+          <Download class="w-2.5 h-2.5" />
+          <span>Export</span>
+        </button>
+
+        <button
+          id="notes-clear-btn"
+          type="button"
+          class="p-1 rounded-md text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-subtle transition-all cursor-pointer"
+          title="Clear notes"
+          aria-label="Clear notes"
+        >
+          <Trash2 class="w-2.5 h-2.5" />
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -137,16 +135,21 @@ const { slug, title = '' } = Astro.props;
     background: rgba(150, 150, 150, 0.2);
     border-radius: 4px;
   }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(150, 150, 150, 0.4);
+  }
 </style>
 
 <script>
   const notesCard = document.getElementById('reader-notes-card');
+  const notesHeader = document.getElementById('notes-header');
   const slug = notesCard?.getAttribute('data-slug') || 'default';
   const postTitle = notesCard?.getAttribute('data-title') || 'Article Notes';
   const storageKey = `blog_notes_${slug}`;
 
   const textarea = document.getElementById('reader-notes-textarea') as HTMLTextAreaElement | null;
   const toggleBtn = document.getElementById('notes-toggle-btn');
+  const toggleLabel = document.getElementById('notes-toggle-label');
   const copyBtn = document.getElementById('notes-copy-btn');
   const downloadBtn = document.getElementById('notes-download-btn');
   const clearBtn = document.getElementById('notes-clear-btn');
@@ -183,7 +186,7 @@ const { slug, title = '' } = Astro.props;
     const words = text.trim().length > 0 ? text.trim().split(/\s+/).length : 0;
 
     if (metricsSpan) {
-      metricsSpan.textContent = `${words} ${words === 1 ? 'word' : 'words'} • ${chars} chars`;
+      metricsSpan.textContent = `${words} ${words === 1 ? 'word' : 'words'}`;
     }
 
     if (countBadge) {
@@ -233,14 +236,18 @@ const { slug, title = '' } = Astro.props;
 
   function setNotesCollapsed(collapsed: boolean) {
     isCollapsed = collapsed;
-    if (!notesCard || !toggleBtn) return;
+    if (!notesCard || !toggleBtn || !toggleLabel || !notesHeader) return;
 
     if (isCollapsed) {
       notesCard.classList.add('notes-is-collapsed');
+      toggleLabel.textContent = 'Expand';
       toggleBtn.setAttribute('aria-expanded', 'false');
+      notesHeader.setAttribute('aria-expanded', 'false');
     } else {
       notesCard.classList.remove('notes-is-collapsed');
+      toggleLabel.textContent = 'Collapse';
       toggleBtn.setAttribute('aria-expanded', 'true');
+      notesHeader.setAttribute('aria-expanded', 'true');
     }
     localStorage.setItem('blog_notes_collapsed', String(isCollapsed));
   }
@@ -249,11 +256,30 @@ const { slug, title = '' } = Astro.props;
     setNotesCollapsed(true);
   }
 
-  toggleBtn?.addEventListener('click', () => {
+  // Toggle on clicking header or button
+  function toggleNotes() {
     setNotesCollapsed(!isCollapsed);
     if (!isCollapsed) {
       collapseTableOfContents();
     }
+  }
+
+  notesHeader?.addEventListener('click', (e) => {
+    if (e.target !== toggleBtn && !toggleBtn?.contains(e.target as Node)) {
+      toggleNotes();
+    }
+  });
+
+  notesHeader?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggleNotes();
+    }
+  });
+
+  toggleBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleNotes();
   });
 
   // 4. Keyboard Quick-Trigger: Typing while reading automatically opens notes and captures text
