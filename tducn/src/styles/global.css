@@ -1247,14 +1247,10 @@ mark.hl-zoom {
 
 /* ========================================================
    OFFSCREEN PERFORMANCE & THERMAL OPTIMIZATION (Mobile FPS)
-   Bỏ qua layout & rendering các khối nặng ngoài viewport
+   Chỉ áp dụng cho các khối biểu đồ nặng, loại bỏ layout shift
    ======================================================== */
-.mcq-card,
-.mermaid-interactive-wrapper,
-.prose > div[class*="callout-"],
-.prose > table,
-.prose > pre {
+.mermaid-interactive-wrapper {
   content-visibility: auto;
-  contain-intrinsic-size: 1px 300px;
+  contain-intrinsic-size: 1px 400px;
 }
 

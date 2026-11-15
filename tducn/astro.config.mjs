@@ -6,6 +6,63 @@ import rehypeKatex from 'rehype-katex';
 import katex from 'katex';
 import { visit } from 'unist-util-visit';
 import { fromHtml } from 'hast-util-from-html';
+import fs from 'fs';
+import path from 'path';
+import crypto from 'crypto';
+
+let preRenderedMermaid = {};
+try {
+  const p = path.resolve('src/utils/preRenderedMermaid.json');
+  if (fs.existsSync(p)) {
+    preRenderedMermaid = JSON.parse(fs.readFileSync(p, 'utf8'));
+  }
+} catch (e) {}
+
+function getNodeText(node) {
+  if (node.type === 'text') return node.value;
+  if (!node.children) return '';
+  return node.children.map(getNodeText).join('');
+}
+
+function rehypePreRenderMermaid() {
+  return (tree) => {
+    visit(tree, 'element', (node, index, parent) => {
+      if (node.tagName === 'pre') {
+        const text = getNodeText(node).trim();
+        const hash = crypto.createHash('md5').update(text).digest('hex');
+        if (preRenderedMermaid[hash] && parent && typeof index === 'number') {
+          const svg = preRenderedMermaid[hash];
+          const wrapperHtml = `<div class="mermaid-interactive-wrapper" data-prerendered="true">
+  <div class="mermaid-toolbar">
+    <div class="mermaid-toolbar-title">
+      <span>Diagram View</span>
+      <span class="mermaid-status-badge zoom-badge">100%</span>
+      <span class="mermaid-status-badge rot-badge">0°</span>
+    </div>
+    <div class="mermaid-toolbar-controls">
+      <button type="button" class="mermaid-btn btn-zoom-in" title="Zoom In (+)">+</button>
+      <button type="button" class="mermaid-btn btn-zoom-out" title="Zoom Out (−)">−</button>
+      <button type="button" class="mermaid-btn btn-rot-left" title="Rotate Left 90°">↶</button>
+      <button type="button" class="mermaid-btn btn-rot-right" title="Rotate Right 90°">↷</button>
+      <button type="button" class="mermaid-btn btn-reset" title="Reset View">1:1</button>
+      <button type="button" class="mermaid-btn btn-fullscreen" title="Toggle Fullscreen">Max</button>
+    </div>
+  </div>
+  <div class="mermaid-viewport">
+    <div class="mermaid-canvas">
+      ${svg}
+    </div>
+  </div>
+</div>`;
+          const parsed = fromHtml(wrapperHtml, { fragment: true });
+          if (parsed.children && parsed.children[0]) {
+            parent.children[index] = parsed.children[0];
+          }
+        }
+      }
+    });
+  };
+}
 
 function renderMathInText(str) {
   return str
@@ -74,6 +131,7 @@ export default defineConfig({
   markdown: {
     remarkPlugins: [remarkMath],
     rehypePlugins: [
+      rehypePreRenderMermaid,
       [rehypeKatex, {
         output: 'html',
         strict: false,

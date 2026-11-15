@@ -263,282 +263,227 @@ const defaultFontClass = fontClassMap[post.data.recommendedFont || 'sans'];
       });
 
       // ==============================================================================
-      // High-Performance Lazy Mermaid Engine & Mobile Touch Guard
+      // High-Performance Interactive Diagram Controller (Pre-Rendered Zero-CPU SVG)
       // ==============================================================================
-      if (mermaidPres.length > 0) {
-        let mermaidInstance = null;
-        let mermaidPromise = null;
-        const diagramRecords = [];
+      function setupDiagramInteractiveControls(wrapper) {
+        if (wrapper.dataset.controlsBound) return;
+        wrapper.dataset.controlsBound = 'true';
 
+        const toolbar = wrapper.querySelector('.mermaid-toolbar');
+        const viewport = wrapper.querySelector('.mermaid-viewport');
+        const canvas = wrapper.querySelector('.mermaid-canvas');
+        if (!toolbar || !viewport || !canvas) return;
+
+        let scale = 1.0;
+        let posX = 0;
+        let posY = 0;
+        let rotation = 0;
+        let isDragging = false;
+        let startX = 0;
+        let startY = 0;
+        let rafId = null;
+
+        const zoomBadge = toolbar.querySelector('.zoom-badge');
+        const rotBadge = toolbar.querySelector('.rot-badge');
+
+        function scheduleUpdate() {
+          if (rafId) return;
+          rafId = requestAnimationFrame(() => {
+            canvas.style.transform = `translate3d(${posX}px, ${posY}px, 0) rotate(${rotation}deg) scale(${scale})`;
+            if (zoomBadge) zoomBadge.textContent = `${Math.round(scale * 100)}%`;
+            if (rotBadge) rotBadge.textContent = `${rotation}°`;
+            rafId = null;
+          });
+        }
+
+        toolbar.querySelector('.btn-zoom-in')?.addEventListener('click', () => {
+          scale = Math.min(scale + 0.25, 3.5);
+          scheduleUpdate();
+        });
+        toolbar.querySelector('.btn-zoom-out')?.addEventListener('click', () => {
+          scale = Math.max(scale - 0.25, 0.4);
+          scheduleUpdate();
+        });
+        toolbar.querySelector('.btn-rot-left')?.addEventListener('click', () => {
+          rotation = (rotation - 90 + 360) % 360;
+          scheduleUpdate();
+        });
+        toolbar.querySelector('.btn-rot-right')?.addEventListener('click', () => {
+          rotation = (rotation + 90) % 360;
+          scheduleUpdate();
+        });
+        toolbar.querySelector('.btn-reset')?.addEventListener('click', () => {
+          scale = 1.0;
+          posX = 0;
+          posY = 0;
+          rotation = 0;
+          scheduleUpdate();
+        });
+        toolbar.querySelector('.btn-fullscreen')?.addEventListener('click', () => {
+          wrapper.classList.toggle('is-fullscreen');
+          if (!wrapper.classList.contains('is-fullscreen')) {
+            scale = 1.0;
+            posX = 0;
+            posY = 0;
+            rotation = 0;
+          }
+          scheduleUpdate();
+        });
+
+        // Desktop mouse dragging
+        function onMouseMove(e) {
+          if (!isDragging) return;
+          posX = e.clientX - startX;
+          posY = e.clientY - startY;
+          scheduleUpdate();
+        }
+        function onMouseUp() {
+          isDragging = false;
+          window.removeEventListener('mousemove', onMouseMove);
+          window.removeEventListener('mouseup', onMouseUp);
+        }
+        viewport.addEventListener('mousedown', (e) => {
+          if (e.button !== 0) return;
+          isDragging = true;
+          startX = e.clientX - posX;
+          startY = e.clientY - posY;
+          window.addEventListener('mousemove', onMouseMove, { passive: true });
+          window.addEventListener('mouseup', onMouseUp);
+        });
+
+        // Wheel zoom (Desktop only with ctrl or when in fullscreen)
+        viewport.addEventListener('wheel', (e) => {
+          if (e.ctrlKey || wrapper.classList.contains('is-fullscreen')) {
+            e.preventDefault();
+            const delta = e.deltaY < 0 ? 0.15 : -0.15;
+            scale = Math.min(Math.max(scale + delta, 0.4), 3.5);
+            scheduleUpdate();
+          }
+        }, { passive: false });
+
+        // Touch handling (Mobile pinch-to-zoom & smooth drag)
+        let touchDist = null;
+        let touchStartScale = 1.0;
+
+        viewport.addEventListener('touchstart', (e) => {
+          if (e.touches.length === 2) {
+            touchDist = Math.hypot(
+              e.touches[0].clientX - e.touches[1].clientX,
+              e.touches[0].clientY - e.touches[1].clientY
+            );
+            touchStartScale = scale;
+          } else if (e.touches.length === 1 && (scale > 1.05 || wrapper.classList.contains('is-fullscreen'))) {
+            isDragging = true;
+            startX = e.touches[0].clientX - posX;
+            startY = e.touches[0].clientY - posY;
+          }
+        }, { passive: true });
+
+        viewport.addEventListener('touchmove', (e) => {
+          if (e.touches.length === 2 && touchDist) {
+            e.preventDefault();
+            const currentDist = Math.hypot(
+              e.touches[0].clientX - e.touches[1].clientX,
+              e.touches[0].clientY - e.touches[1].clientY
+            );
+            scale = Math.min(Math.max(touchStartScale * (currentDist / touchDist), 0.4), 3.5);
+            scheduleUpdate();
+          } else if (e.touches.length === 1 && isDragging) {
+            e.preventDefault();
+            posX = e.touches[0].clientX - startX;
+            posY = e.touches[0].clientY - startY;
+            scheduleUpdate();
+          }
+        }, { passive: false });
+
+        viewport.addEventListener('touchend', () => {
+          isDragging = false;
+          touchDist = null;
+        });
+      }
+
+      // Initialize controls on all pre-rendered diagrams immediately (Zero network latency, 0% CPU cost)
+      document.querySelectorAll('.mermaid-interactive-wrapper').forEach(setupDiagramInteractiveControls);
+
+      // Dynamic Fallback for any un-rendered diagram blocks
+      if (mermaidPres.length > 0) {
+        let mermaidPromise = null;
         function loadMermaid() {
           if (!mermaidPromise) {
             mermaidPromise = import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs').then(m => {
-              mermaidInstance = m.default;
+              const inst = m.default;
               const isDark = document.documentElement.classList.contains('dark');
-              mermaidInstance.initialize({
+              inst.initialize({
                 startOnLoad: false,
                 suppressErrorRendering: true,
                 theme: isDark ? 'dark' : 'neutral',
                 fontFamily: 'Be Vietnam Pro, sans-serif'
               });
-              return mermaidInstance;
-            }).catch(err => {
-              console.warn('Could not load Mermaid:', err);
-              return null;
-            });
+              return inst;
+            }).catch(() => null);
           }
           return mermaidPromise;
         }
 
-        // Setup DOM shells immediately (lightweight, pristine raw code preserved)
         mermaidPres.forEach((pre, idx) => {
           const codeEl = pre.querySelector('code');
           const rawCode = ((codeEl ? codeEl.textContent : pre.textContent) || '').trim();
 
           const wrapper = document.createElement('div');
           wrapper.className = 'mermaid-interactive-wrapper';
-
-          const toolbar = document.createElement('div');
-          toolbar.className = 'mermaid-toolbar';
-          toolbar.innerHTML = `
-            <div class="mermaid-toolbar-title">
-              <span>Diagram View</span>
-              <span class="mermaid-status-badge zoom-badge">100%</span>
-              <span class="mermaid-status-badge rot-badge">0°</span>
+          wrapper.innerHTML = `
+            <div class="mermaid-toolbar">
+              <div class="mermaid-toolbar-title">
+                <span>Diagram View</span>
+                <span class="mermaid-status-badge zoom-badge">100%</span>
+                <span class="mermaid-status-badge rot-badge">0°</span>
+              </div>
+              <div class="mermaid-toolbar-controls">
+                <button type="button" class="mermaid-btn btn-zoom-in" title="Zoom In (+)">+</button>
+                <button type="button" class="mermaid-btn btn-zoom-out" title="Zoom Out (−)">−</button>
+                <button type="button" class="mermaid-btn btn-rot-left" title="Rotate Left 90°">↶</button>
+                <button type="button" class="mermaid-btn btn-rot-right" title="Rotate Right 90°">↷</button>
+                <button type="button" class="mermaid-btn btn-reset" title="Reset View">1:1</button>
+                <button type="button" class="mermaid-btn btn-fullscreen" title="Toggle Fullscreen">Max</button>
+              </div>
             </div>
-            <div class="mermaid-toolbar-controls">
-              <button type="button" class="mermaid-btn btn-zoom-in" title="Zoom In (+)">+</button>
-              <button type="button" class="mermaid-btn btn-zoom-out" title="Zoom Out (−)">−</button>
-              <button type="button" class="mermaid-btn btn-rot-left" title="Rotate Left 90°">↶</button>
-              <button type="button" class="mermaid-btn btn-rot-right" title="Rotate Right 90°">↷</button>
-              <button type="button" class="mermaid-btn btn-reset" title="Reset View">1:1</button>
-              <button type="button" class="mermaid-btn btn-fullscreen" title="Toggle Fullscreen">Max</button>
+            <div class="mermaid-viewport">
+              <div class="mermaid-canvas"><div class="text-xs text-text-muted font-mono py-12 text-center opacity-60">Loading diagram...</div></div>
             </div>
           `;
-
-          const viewport = document.createElement('div');
-          viewport.className = 'mermaid-viewport';
-
-          const canvas = document.createElement('div');
-          canvas.className = 'mermaid-canvas';
-          canvas.innerHTML = `<div class="text-xs text-text-muted font-mono py-12 text-center opacity-60">Loading diagram...</div>`;
-
-          viewport.appendChild(canvas);
-          wrapper.appendChild(toolbar);
-          wrapper.appendChild(viewport);
           pre.replaceWith(wrapper);
+          setupDiagramInteractiveControls(wrapper);
 
-          // State
-          let scale = 1.0;
-          let posX = 0;
-          let posY = 0;
-          let rotation = 0;
-          let isDragging = false;
-          let startX = 0;
-          let startY = 0;
-          let rafId = null;
-
-          const zoomBadge = toolbar.querySelector('.zoom-badge');
-          const rotBadge = toolbar.querySelector('.rot-badge');
-
-          function scheduleUpdate() {
-            if (rafId) return;
-            rafId = requestAnimationFrame(() => {
-              canvas.style.transform = `translate3d(${posX}px, ${posY}px, 0) rotate(${rotation}deg) scale(${scale})`;
-              if (zoomBadge) zoomBadge.textContent = `${Math.round(scale * 100)}%`;
-              if (rotBadge) rotBadge.textContent = `${rotation}°`;
-              rafId = null;
-            });
-          }
-
-          toolbar.querySelector('.btn-zoom-in')?.addEventListener('click', () => {
-            scale = Math.min(scale + 0.25, 3.5);
-            scheduleUpdate();
-          });
-          toolbar.querySelector('.btn-zoom-out')?.addEventListener('click', () => {
-            scale = Math.max(scale - 0.25, 0.4);
-            scheduleUpdate();
-          });
-          toolbar.querySelector('.btn-rot-left')?.addEventListener('click', () => {
-            rotation = (rotation - 90 + 360) % 360;
-            scheduleUpdate();
-          });
-          toolbar.querySelector('.btn-rot-right')?.addEventListener('click', () => {
-            rotation = (rotation + 90) % 360;
-            scheduleUpdate();
-          });
-          toolbar.querySelector('.btn-reset')?.addEventListener('click', () => {
-            scale = 1.0;
-            posX = 0;
-            posY = 0;
-            rotation = 0;
-            scheduleUpdate();
-          });
-          toolbar.querySelector('.btn-fullscreen')?.addEventListener('click', () => {
-            wrapper.classList.toggle('is-fullscreen');
-            if (!wrapper.classList.contains('is-fullscreen')) {
-              scale = 1.0;
-              posX = 0;
-              posY = 0;
-              rotation = 0;
-            }
-            scheduleUpdate();
-          });
-
-          // Mouse dragging (Desktop only)
-          function onMouseMove(e) {
-            if (!isDragging) return;
-            posX = e.clientX - startX;
-            posY = e.clientY - startY;
-            scheduleUpdate();
-          }
-
-          function onMouseUp() {
-            isDragging = false;
-            window.removeEventListener('mousemove', onMouseMove);
-            window.removeEventListener('mouseup', onMouseUp);
-          }
-
-          viewport.addEventListener('mousedown', (e) => {
-            if (e.button !== 0) return;
-            isDragging = true;
-            startX = e.clientX - posX;
-            startY = e.clientY - posY;
-            window.addEventListener('mousemove', onMouseMove, { passive: true });
-            window.addEventListener('mouseup', onMouseUp);
-          });
-
-          // Wheel zoom (Desktop only with ctrl or when in fullscreen)
-          viewport.addEventListener('wheel', (e) => {
-            if (e.ctrlKey || wrapper.classList.contains('is-fullscreen')) {
-              e.preventDefault();
-              const delta = e.deltaY < 0 ? 0.15 : -0.15;
-              scale = Math.min(Math.max(scale + delta, 0.4), 3.5);
-              scheduleUpdate();
-            }
-          }, { passive: false });
-
-          // Touch Handling (Ergonomic Mobile Protection):
-          // Single-finger touch MUST let the page scroll naturally unless zoomed in or in fullscreen!
-          let touchDist = null;
-          let touchStartScale = 1.0;
-
-          viewport.addEventListener('touchstart', (e) => {
-            if (e.touches.length === 2) {
-              // Pinch zoom
-              touchDist = Math.hypot(
-                e.touches[0].clientX - e.touches[1].clientX,
-                e.touches[0].clientY - e.touches[1].clientY
-              );
-              touchStartScale = scale;
-            } else if (e.touches.length === 1 && (scale > 1.05 || wrapper.classList.contains('is-fullscreen'))) {
-              // Only drag on mobile when zoomed in or in fullscreen
-              isDragging = true;
-              startX = e.touches[0].clientX - posX;
-              startY = e.touches[0].clientY - posY;
-            }
-          }, { passive: true });
-
-          viewport.addEventListener('touchmove', (e) => {
-            if (e.touches.length === 2 && touchDist) {
-              e.preventDefault();
-              const currentDist = Math.hypot(
-                e.touches[0].clientX - e.touches[1].clientX,
-                e.touches[0].clientY - e.touches[1].clientY
-              );
-              scale = Math.min(Math.max(touchStartScale * (currentDist / touchDist), 0.4), 3.5);
-              scheduleUpdate();
-            } else if (e.touches.length === 1 && isDragging) {
-              e.preventDefault();
-              posX = e.touches[0].clientX - startX;
-              posY = e.touches[0].clientY - startY;
-              scheduleUpdate();
-            }
-          }, { passive: false });
-
-          viewport.addEventListener('touchend', () => {
-            isDragging = false;
-            touchDist = null;
-          });
-
-          diagramRecords.push({
-            wrapper,
-            canvas,
-            rawCode,
-            idx,
-            rendered: false
-          });
-        });
-
-        // Lazy Rendering with IntersectionObserver: Renders ONLY when approaching viewport!
-        async function renderDiagramRecord(item) {
-          if (item.rendered) return;
-          const mermaid = await loadMermaid();
-          if (!mermaid) return;
-
-          try {
-            const isDark = document.documentElement.classList.contains('dark');
-            mermaid.initialize({
-              startOnLoad: false,
-              theme: isDark ? 'dark' : 'neutral',
-              fontFamily: 'Be Vietnam Pro, sans-serif'
-            });
-            const { svg } = await mermaid.render(`mermaid-svg-${Date.now()}-${item.idx}`, item.rawCode);
-            item.canvas.innerHTML = svg;
-            item.rendered = true;
-          } catch (err) {
-            console.warn('Mermaid render error:', err);
-            item.canvas.innerHTML = `<div class="text-xs text-rose-500 font-mono p-4">Diagram render failed</div>`;
-          }
-        }
-
-        if ('IntersectionObserver' in window) {
-          const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-              if (entry.isIntersecting) {
-                const targetWrapper = entry.target;
-                const rec = diagramRecords.find(r => r.wrapper === targetWrapper);
-                if (rec) {
-                  observer.unobserve(targetWrapper);
-                  renderDiagramRecord(rec);
+          // Lazy load dynamic mermaid only if needed
+          const canvas = wrapper.querySelector('.mermaid-canvas');
+          if ('IntersectionObserver' in window) {
+            const obs = new IntersectionObserver((entries) => {
+              entries.forEach(async (entry) => {
+                if (entry.isIntersecting) {
+                  obs.unobserve(entry.target);
+                  const mermaid = await loadMermaid();
+                  if (mermaid && canvas) {
+                    try {
+                      const { svg } = await mermaid.render(`mermaid-svg-dyn-${Date.now()}-${idx}`, rawCode);
+                      canvas.innerHTML = svg;
+                    } catch {
+                      canvas.innerHTML = `<div class="text-xs text-rose-500 font-mono p-4">Diagram render failed</div>`;
+                    }
+                  }
                 }
-              }
-            });
-          }, { rootMargin: '250px 0px' });
-
-          diagramRecords.forEach(r => observer.observe(r.wrapper));
-        } else {
-          diagramRecords.forEach(renderDiagramRecord);
-        }
-
-        // Theme switch re-render for already loaded diagrams
-        document.getElementById('global-theme-btn')?.addEventListener('click', () => {
-          setTimeout(async () => {
-            const mermaid = await loadMermaid();
-            if (!mermaid) return;
-            const isDark = document.documentElement.classList.contains('dark');
-            mermaid.initialize({
-              startOnLoad: false,
-              theme: isDark ? 'dark' : 'neutral',
-              fontFamily: 'Be Vietnam Pro, sans-serif'
-            });
-            diagramRecords.forEach(async (item) => {
-              if (item.rendered) {
-                try {
-                  const { svg } = await mermaid.render(`mermaid-svg-theme-${Date.now()}-${item.idx}`, item.rawCode);
-                  item.canvas.innerHTML = svg;
-                } catch {}
-              }
-            });
-          }, 100);
+              });
+            }, { rootMargin: '250px 0px' });
+            obs.observe(wrapper);
+          }
         });
       }
 
       // ==============================================================================
-      // Debounced & Mobile-Friendly Selection Highlighter (Zero Scroll Jitter)
+      // Desktop Selection Highlighter (Suppressed on Mobile Touch for Zero Battery/CPU Cost)
       // ==============================================================================
+      const isTouchDevice = window.matchMedia('(pointer: coarse)').matches || ('ontouchstart' in window);
       const proseArticle = document.querySelector('article .prose');
-      if (proseArticle) {
+      if (proseArticle && !isTouchDevice) {
         const hlToolbar = document.createElement('div');
         hlToolbar.className = 'reader-highlight-toolbar hidden';
         hlToolbar.innerHTML = `

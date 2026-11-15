@@ -178,45 +178,56 @@ const toc = headings.filter(h => h.depth === 2 || h.depth === 3);
     if (headingElements.length > 0 && tocLinks.length > 0) {
       let activeSlug = '';
 
-      function updateActiveHeading() {
-        const scrollPosition = window.scrollY + 120;
-        
-        let currentHeading: HTMLElement | null = null;
-        for (const heading of headingElements) {
-          if (heading.offsetTop <= scrollPosition) {
-            currentHeading = heading;
+      function setActiveHeading(newActiveSlug: string) {
+        if (!newActiveSlug || newActiveSlug === activeSlug) return;
+        activeSlug = newActiveSlug;
+        let activeLinkEl: HTMLAnchorElement | null = null;
+
+        tocLinks.forEach(link => {
+          if (link.getAttribute('data-toc-slug') === activeSlug) {
+            link.classList.add('active');
+            activeLinkEl = link;
           } else {
-            break;
+            link.classList.remove('active');
           }
-        }
+        });
 
-        const newActiveSlug = currentHeading ? currentHeading.id : (headingElements[0]?.id || '');
-        if (newActiveSlug !== activeSlug) {
-          activeSlug = newActiveSlug;
-          let activeLinkEl: HTMLAnchorElement | null = null;
-
-          tocLinks.forEach(link => {
-            if (link.getAttribute('data-toc-slug') === activeSlug) {
-              link.classList.add('active');
-              activeLinkEl = link;
-            } else {
-              link.classList.remove('active');
-            }
-          });
-
-          // If currently expanded, keep active link in view inside TOC list
-          if (isExpanded && activeLinkEl && tocScrollList) {
-            const listRect = tocScrollList.getBoundingClientRect();
-            const linkRect = (activeLinkEl as HTMLElement).getBoundingClientRect();
-            if (linkRect.bottom > listRect.bottom || linkRect.top < listRect.top) {
-              (activeLinkEl as HTMLElement).scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-            }
+        // If currently expanded, keep active link in view inside TOC list
+        if (isExpanded && activeLinkEl && tocScrollList) {
+          const listRect = tocScrollList.getBoundingClientRect();
+          const linkRect = (activeLinkEl as HTMLElement).getBoundingClientRect();
+          if (linkRect.bottom > listRect.bottom || linkRect.top < listRect.top) {
+            (activeLinkEl as HTMLElement).scrollIntoView({ block: 'nearest', behavior: 'smooth' });
           }
         }
       }
 
-      updateActiveHeading();
-      window.addEventListener('scroll', updateActiveHeading, { passive: true });
+      // High-performance IntersectionObserver: Zero layout reflow & zero scroll overhead
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              setActiveHeading(entry.target.id);
+            }
+          });
+        }, { rootMargin: '-64px 0px -70% 0px' });
+
+        headingElements.forEach(h => observer.observe(h));
+      } else {
+        // Fallback for ancient browsers only
+        window.addEventListener('scroll', () => {
+          const scrollPosition = window.scrollY + 120;
+          let currentHeading: HTMLElement | null = null;
+          for (const heading of headingElements) {
+            if (heading.offsetTop <= scrollPosition) {
+              currentHeading = heading;
+            } else {
+              break;
+            }
+          }
+          if (currentHeading) setActiveHeading(currentHeading.id);
+        }, { passive: true });
+      }
 
       // Smooth scroll on click and optionally collapse
       tocLinks.forEach(link => {
