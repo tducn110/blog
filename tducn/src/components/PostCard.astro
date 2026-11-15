@@ -39,21 +39,21 @@ const {
       ? 'p-4 sm:p-5 space-y-2 hover:border-slate-400 dark:hover:border-slate-600 rounded-xl'
       : 'p-5 sm:p-7 space-y-3 hover:border-slate-400 dark:hover:border-slate-600 rounded-2xl'
 } ${className}`}>
-  <div class="flex items-center justify-between text-xs text-text-muted">
-    <div class="flex items-center space-x-2">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between text-xs text-text-muted gap-2">
+    <div class="flex items-center space-x-2 shrink-0">
       {showCategory && <CategoryBadge category={category} />}
       {featured && (
-        <span class="font-semibold text-accent-primary dark:text-accent-primaryDark px-2 py-0.5 rounded-full bg-accent-primary/10 text-[11px]">
+        <span class="font-semibold text-accent-primary dark:text-accent-primaryDark px-2 py-0.5 rounded-full bg-accent-primary/10 text-[11px] whitespace-nowrap">
           Featured
         </span>
       )}
     </div>
-    <div class="flex items-center space-x-1.5 font-mono text-[11px]">
-      <time datetime={publishDate.toISOString()}>
+    <div class="flex items-center space-x-1.5 font-mono text-[11px] text-text-muted shrink-0 whitespace-nowrap">
+      <time datetime={publishDate.toISOString()} class="whitespace-nowrap">
         {publishDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
       </time>
       {readingTime && (
-        <span class="text-text-muted">&bull; {readingTime}</span>
+        <span class="whitespace-nowrap">&bull; {readingTime}</span>
       )}
     </div>
   </div>

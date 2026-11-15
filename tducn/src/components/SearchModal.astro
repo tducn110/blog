@@ -21,17 +21,20 @@ import { Search, X } from 'lucide-astro';
       />
       <div class="flex items-center space-x-1.5 shrink-0">
         <button id="search-clear-btn" class="hidden text-xs w-6 h-6 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400 flex items-center justify-center font-bold" title="Clear input" aria-label="Clear input">&times;</button>
-        <button id="search-close-btn" class="text-[11px] px-2 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 font-mono hover:bg-slate-200 dark:hover:bg-slate-700" aria-label="Close search">ESC</button>
+        <button id="search-close-btn" class="text-xs px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-mono hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" aria-label="Close search">
+          <span class="hidden sm:inline text-[11px]">ESC</span>
+          <span class="sm:hidden text-sm leading-none font-bold">&times;</span>
+        </button>
       </div>
     </div>
 
     <!-- Category Filter Chips -->
-    <div class="flex items-center space-x-1.5 overflow-x-auto pb-1 text-xs no-scrollbar" id="search-category-filters">
+    <div class="flex items-center space-x-1.5 overflow-x-auto pb-1 text-xs no-scrollbar touch-pan-x" id="search-category-filters">
       {NAV_ITEMS.map(cat => (
         <button
           type="button"
           data-category-filter={cat.slug}
-          class={`px-2.5 py-1 rounded-full font-medium transition-all text-xs ${
+          class={`shrink-0 whitespace-nowrap px-2.5 py-1 rounded-full font-medium transition-all text-xs ${
             cat.slug === 'all'
               ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-semibold shadow-sm'
               : 'border border-subtle text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'

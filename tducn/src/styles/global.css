@@ -506,6 +506,28 @@ mark {
   border-radius: 1.25rem !important;
   border: 1px solid var(--border-subtle) !important;
   box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.25);
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+@media (max-width: 640px) {
+  .prose blockquote {
+    margin: 2rem 0 !important;
+    padding: 1.25rem 1.25rem !important;
+    border-radius: 0 0.75rem 0.75rem 0 !important;
+  }
+
+  .prose pre {
+    margin-top: 2rem !important;
+    margin-bottom: 2rem !important;
+    padding: 1.25rem 1rem !important;
+    border-radius: 1rem !important;
+  }
+
+  .article-title {
+    font-size: clamp(1.4rem, 6vw, 1.85rem) !important;
+    line-height: 1.35 !important;
+  }
 }
 
 /* ========================================================
@@ -527,11 +549,11 @@ mark {
   overflow-y: hidden !important;
   max-width: 100% !important;
   -webkit-overflow-scrolling: touch;
-  margin: 3.5rem 0 !important;
-  padding: 1.75rem 1.25rem !important;
+  margin: 2rem 0 !important;
+  padding: 1.25rem 1rem !important;
   background: var(--surface-card) !important;
   border: 1px solid var(--border-subtle) !important;
-  border-radius: 1.25rem !important;
+  border-radius: 1rem !important;
   box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.08) !important;
   text-align: center;
 }

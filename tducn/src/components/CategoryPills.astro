@@ -10,13 +10,13 @@ interface Props {
 const { activeSlug = 'all', class: className = '' } = Astro.props;
 ---
 
-<div class={`flex items-center space-x-2 overflow-x-auto pb-1 no-scrollbar ${className}`} role="tablist" aria-label="Filter by topic">
+<div class={`flex items-center space-x-2 overflow-x-auto pb-1.5 px-0.5 no-scrollbar scroll-smooth snap-x snap-mandatory touch-pan-x ${className}`} role="tablist" aria-label="Filter by topic">
   {NAV_ITEMS.map(cat => {
     const isActive = cat.slug === activeSlug;
     return (
       <a
         href={cat.href}
-        class={isActive ? 'btn-tab-active' : 'btn-tab'}
+        class={`shrink-0 snap-start whitespace-nowrap ${isActive ? 'btn-tab-active' : 'btn-tab'}`}
         role="tab"
         aria-selected={isActive ? 'true' : 'false'}
       >
