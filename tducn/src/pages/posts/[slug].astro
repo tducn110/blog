@@ -4,6 +4,7 @@ import { getCollection, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import CategoryBadge from '../../components/CategoryBadge.astro';
 import TableOfContents from '../../components/TableOfContents.astro';
+import ReaderNotes from '../../components/ReaderNotes.astro';
 import ShareBar from '../../components/ShareBar.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ReadingPill from '../../components/ReadingPill.astro';
@@ -134,35 +135,13 @@ const defaultFontClass = fontClassMap[post.data.recommendedFont || 'sans'];
       </article>
 
       <!-- Desktop Sidebar Column (4 cols = 33.3%, hidden on mobile to avoid redundant footer clutter) -->
-      <aside class="hidden md:block md:col-span-4 space-y-6" id="post-sidebar">
+      <aside class="hidden md:block md:col-span-4" id="post-sidebar">
         
-        <!-- Article Info Card (At top of sidebar, scrolls naturally with header) -->
-        <div class="card-surface p-6 space-y-3 text-xs shadow-sm">
-          <div class="font-bold text-slate-900 dark:text-white border-b border-subtle pb-2">Article Details</div>
-          <div class="text-[11px] text-text-muted space-y-2">
-            <div class="flex items-center justify-between">
-              <span>Category:</span>
-              <a href={`/category/${post.data.category}`} class="font-semibold text-slate-900 dark:text-white hover:text-accent-primary dark:hover:text-accent-primaryDark transition-colors">
-                {CATEGORIES[post.data.category]?.label || post.data.category} &rarr;
-              </a>
-            </div>
-            <div class="flex items-center justify-between">
-              <span>Reading time:</span>
-              <span class="font-mono text-slate-700 dark:text-slate-300 font-medium">{readingTime}</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <span>Font style:</span>
-              <span class="capitalize font-mono text-slate-700 dark:text-slate-300">{post.data.recommendedFont}</span>
-            </div>
-            <div class="flex items-center justify-between pt-1 border-t border-subtle">
-              <span>License:</span>
-              <span class="font-mono text-slate-500">CC BY-NC 4.0</span>
-            </div>
-          </div>
-        </div>
+        <div id="sticky-sidebar-wrapper" class="sticky top-24 space-y-4">
+          <!-- Reader's Personal Notes Card (Replaces redundant Article Details) -->
+          <ReaderNotes slug={post.slug} title={post.data.title} />
 
-        <!-- Smart Sticky Table of Contents Container (Auto-hides on scroll-down, reveals on scroll-up/hover) -->
-        <div id="sticky-toc-wrapper" class="sticky top-24">
+          <!-- Smart Table of Contents (Auto-hides on scroll-down, reveals on scroll-up/hover) -->
           <TableOfContents headings={headings} />
         </div>
 
@@ -173,7 +152,7 @@ const defaultFontClass = fontClassMap[post.data.recommendedFont || 'sans'];
   </div>
 
   <!-- Mobile Floating Reading Pill HUD -->
-  <ReadingPill headings={headings} title={post.data.title} />
+  <ReadingPill headings={headings} title={post.data.title} slug={post.slug} />
 
   <!-- Client-side Lightweight Mermaid Renderer & Code Block Enhancer -->
   <script is:inline>

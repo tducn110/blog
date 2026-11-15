@@ -1,5 +1,5 @@
 // Minimalist, robust Service Worker for PWA offline shell & static asset caching
-const CACHE_NAME = 'tducn-v1';
+const CACHE_NAME = 'tducn-v2';
 const ASSETS_TO_CACHE = [
   '/',
   '/favicon.svg',
@@ -33,7 +33,25 @@ self.addEventListener('fetch', (event) => {
   // Only handle GET requests
   if (event.request.method !== 'GET') return;
 
-  // Stale-While-Revalidate strategy for HTML & static assets
+  // 1. Navigation requests (HTML pages): Network-First, fallback to cache
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const responseToCache = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseToCache);
+            });
+          }
+          return networkResponse;
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // 2. Static assets: Stale-While-Revalidate
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       const fetchPromise = fetch(event.request)

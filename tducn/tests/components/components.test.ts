@@ -6,6 +6,7 @@ import Breadcrumbs from '../../src/components/Breadcrumbs.astro';
 import PostCard from '../../src/components/PostCard.astro';
 import ReadingPill from '../../src/components/ReadingPill.astro';
 import TableOfContents from '../../src/components/TableOfContents.astro';
+import ReaderNotes from '../../src/components/ReaderNotes.astro';
 
 describe('Component Reusability & Rendering Contracts', () => {
   it('CategoryBadge: should render an accessible clickable link with proper href and label', async () => {
@@ -196,5 +197,24 @@ describe('Component Reusability & Rendering Contracts', () => {
     });
 
     expect(result.trim()).toBe('');
+  });
+
+  it('ReaderNotes: should render personal notes workspace with actions and persistence binding', async () => {
+    const container = await AstroContainer.create();
+    const result = await container.renderToString(ReaderNotes, {
+      props: {
+        slug: 'giao-trinh-hoc-may-toan-dien',
+        title: 'Giáo Trình Học Máy Toàn Diện',
+      },
+    });
+
+    expect(result).toContain('id="reader-notes-card"');
+    expect(result).toContain('data-slug="giao-trinh-hoc-may-toan-dien"');
+    expect(result).toContain('id="reader-notes-textarea"');
+    expect(result).toContain('id="notes-copy-btn"');
+    expect(result).toContain('id="notes-download-btn"');
+    expect(result).toContain('id="notes-clear-btn"');
+    expect(result).toContain('id="notes-toggle-btn"');
+    expect(result).toContain('Reading Notes');
   });
 });

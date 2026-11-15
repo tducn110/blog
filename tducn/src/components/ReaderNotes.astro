@@ -1,0 +1,359 @@
+---
+// ponytail: Accessible, lightweight Reader's Scratchpad with debounced localStorage auto-save, export, and copy
+import { PenLine, Copy, Download, Trash2, ChevronDown, Check } from 'lucide-astro';
+
+interface Props {
+  slug: string;
+  title?: string;
+}
+
+const { slug, title = '' } = Astro.props;
+---
+
+<div
+  id="reader-notes-card"
+  class="card-surface p-4 space-y-2.5 shadow-md border border-subtle rounded-2xl transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] select-none"
+  data-slug={slug}
+  data-title={title}
+  aria-label="Personal Reading Notes"
+>
+  <!-- Header Bar -->
+  <div class="flex items-center justify-between border-b border-subtle pb-2">
+    <div class="flex items-center gap-2">
+      <PenLine class="w-3.5 h-3.5 text-accent-primary dark:text-accent-primaryDark shrink-0" />
+      <span class="text-xs font-bold text-text-main">Reading Notes</span>
+      <span
+        id="notes-count-badge"
+        class="text-[9px] font-mono text-text-muted bg-slate-100 dark:bg-slate-800 px-1.5 py-0.2 rounded-full border border-subtle hidden"
+      >
+        0
+      </span>
+    </div>
+
+    <!-- Right Controls -->
+    <div class="flex items-center gap-1">
+      <!-- Auto-save Status Indicator -->
+      <span
+        id="notes-save-status"
+        class="text-[10px] font-mono text-emerald-500 hidden sm:inline-flex items-center gap-1 mr-1 transition-opacity"
+      >
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span id="notes-status-text">Saved</span>
+      </span>
+
+      <!-- Copy to Clipboard -->
+      <button
+        id="notes-copy-btn"
+        type="button"
+        class="p-1 rounded text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors relative"
+        title="Copy notes to clipboard"
+        aria-label="Copy notes"
+      >
+        <Copy class="w-3.5 h-3.5 notes-copy-default" />
+        <Check class="w-3.5 h-3.5 text-emerald-400 notes-copy-success hidden" />
+      </button>
+
+      <!-- Download as TXT -->
+      <button
+        id="notes-download-btn"
+        type="button"
+        class="p-1 rounded text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+        title="Download notes (.txt)"
+        aria-label="Download notes"
+      >
+        <Download class="w-3.5 h-3.5" />
+      </button>
+
+      <!-- Clear Notes -->
+      <button
+        id="notes-clear-btn"
+        type="button"
+        class="p-1 rounded text-slate-400 hover:text-rose-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+        title="Clear notes"
+        aria-label="Clear notes"
+      >
+        <Trash2 class="w-3.5 h-3.5" />
+      </button>
+
+      <!-- Toggle Collapse -->
+      <button
+        id="notes-toggle-btn"
+        type="button"
+        class="p-1 rounded text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors ml-0.5 cursor-pointer"
+        title="Collapse or expand notes"
+        aria-expanded="true"
+        aria-controls="notes-body"
+        aria-label="Toggle notes panel"
+      >
+        <ChevronDown id="notes-toggle-icon" class="w-3.5 h-3.5 transition-transform duration-200" />
+      </button>
+    </div>
+  </div>
+
+  <!-- Collapsible Notes Body -->
+  <div id="notes-body" class="space-y-2 transition-all duration-300">
+    <textarea
+      id="reader-notes-textarea"
+      class="w-full h-28 text-xs font-sans p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/90 border border-subtle focus:border-accent-primary dark:focus:border-accent-primaryDark focus:ring-1 focus:ring-accent-primary dark:focus:ring-accent-primaryDark outline-none resize-y transition-all text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 leading-relaxed custom-scrollbar"
+      placeholder="Ghi chú cá nhân, công thức cần nhớ hoặc câu hỏi cho bài viết này... (Dữ liệu tự động lưu trên trình duyệt)"
+      aria-label="Personal notes text area"
+    ></textarea>
+
+    <!-- Footer Meta -->
+    <div class="flex items-center justify-between text-[10px] font-mono text-text-muted/70 pt-0.5">
+      <span id="notes-metrics">0 words &bull; 0 chars</span>
+      <span>Browser storage</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Distraction-Free Reading Mode: Hidden on scroll-down unless user is actively focused */
+  #reader-notes-card.notes-reading-hidden {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.97);
+    pointer-events: none;
+  }
+
+  /* Collapsed state */
+  #reader-notes-card.notes-is-collapsed #notes-body {
+    display: none;
+  }
+
+  #reader-notes-card.notes-is-collapsed #notes-toggle-icon {
+    transform: rotate(-90deg);
+  }
+
+  /* Smooth scrollbar in textarea */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(150, 150, 150, 0.2);
+    border-radius: 4px;
+  }
+</style>
+
+<script>
+  const notesCard = document.getElementById('reader-notes-card');
+  const slug = notesCard?.getAttribute('data-slug') || 'default';
+  const postTitle = notesCard?.getAttribute('data-title') || 'Article Notes';
+  const storageKey = `blog_notes_${slug}`;
+
+  const textarea = document.getElementById('reader-notes-textarea') as HTMLTextAreaElement | null;
+  const toggleBtn = document.getElementById('notes-toggle-btn');
+  const copyBtn = document.getElementById('notes-copy-btn');
+  const downloadBtn = document.getElementById('notes-download-btn');
+  const clearBtn = document.getElementById('notes-clear-btn');
+  const statusSpan = document.getElementById('notes-save-status');
+  const statusText = document.getElementById('notes-status-text');
+  const metricsSpan = document.getElementById('notes-char-count') || document.getElementById('notes-metrics');
+  const countBadge = document.getElementById('notes-count-badge');
+
+  let isTextareaFocused = false;
+  let saveTimeout: number | undefined;
+
+  // 1. Load initial notes
+  const savedNotes = localStorage.getItem(storageKey) || '';
+  if (textarea) {
+    textarea.value = savedNotes;
+  }
+
+  function updateMetrics(text: string) {
+    const chars = text.length;
+    const words = text.trim().length > 0 ? text.trim().split(/\s+/).length : 0;
+
+    if (metricsSpan) {
+      metricsSpan.textContent = `${words} ${words === 1 ? 'word' : 'words'} • ${chars} chars`;
+    }
+
+    if (countBadge) {
+      if (chars > 0) {
+        countBadge.textContent = `${words}`;
+        countBadge.classList.remove('hidden');
+      } else {
+        countBadge.classList.add('hidden');
+      }
+    }
+  }
+
+  updateMetrics(savedNotes);
+
+  // 2. Debounced Auto-Save
+  textarea?.addEventListener('input', () => {
+    if (!statusSpan || !statusText) return;
+
+    statusSpan.classList.remove('hidden');
+    statusText.textContent = 'Saving...';
+    statusSpan.classList.remove('text-emerald-500');
+    statusSpan.classList.add('text-amber-500');
+
+    window.clearTimeout(saveTimeout);
+    saveTimeout = window.setTimeout(() => {
+      const val = textarea.value;
+      localStorage.setItem(storageKey, val);
+      updateMetrics(val);
+
+      statusText.textContent = 'Saved';
+      statusSpan.classList.remove('text-amber-500');
+      statusSpan.classList.add('text-emerald-500');
+    }, 300);
+  });
+
+  textarea?.addEventListener('focus', () => {
+    isTextareaFocused = true;
+    notesCard?.classList.remove('notes-reading-hidden');
+  });
+
+  textarea?.addEventListener('blur', () => {
+    isTextareaFocused = false;
+  });
+
+  // 3. Manual Collapse / Expand
+  let isCollapsed = localStorage.getItem('blog_notes_collapsed') === 'true';
+
+  function setNotesCollapsed(collapsed: boolean) {
+    isCollapsed = collapsed;
+    if (!notesCard || !toggleBtn) return;
+
+    if (isCollapsed) {
+      notesCard.classList.add('notes-is-collapsed');
+      toggleBtn.setAttribute('aria-expanded', 'false');
+    } else {
+      notesCard.classList.remove('notes-is-collapsed');
+      toggleBtn.setAttribute('aria-expanded', 'true');
+    }
+    localStorage.setItem('blog_notes_collapsed', String(isCollapsed));
+  }
+
+  if (isCollapsed) {
+    setNotesCollapsed(true);
+  }
+
+  toggleBtn?.addEventListener('click', () => {
+    setNotesCollapsed(!isCollapsed);
+  });
+
+  // 4. Copy Notes to Clipboard
+  copyBtn?.addEventListener('click', async () => {
+    const val = textarea?.value || '';
+    if (!val) return;
+
+    let copied = false;
+    if (navigator.clipboard && window.isSecureContext) {
+      try {
+        await navigator.clipboard.writeText(val);
+        copied = true;
+      } catch {}
+    }
+
+    if (!copied) {
+      const ta = document.createElement('textarea');
+      ta.value = val;
+      ta.style.position = 'fixed';
+      ta.style.left = '-999999px';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        copied = document.execCommand('copy');
+      } catch {}
+      ta.remove();
+    }
+
+    if (copied) {
+      const defaultIcon = copyBtn.querySelector('.notes-copy-default');
+      const successIcon = copyBtn.querySelector('.notes-copy-success');
+      defaultIcon?.classList.add('hidden');
+      successIcon?.classList.remove('hidden');
+
+      setTimeout(() => {
+        defaultIcon?.classList.remove('hidden');
+        successIcon?.classList.add('hidden');
+      }, 2000);
+    }
+  });
+
+  // 5. Download Notes (.txt)
+  downloadBtn?.addEventListener('click', () => {
+    const val = textarea?.value || '';
+    if (!val.trim()) return;
+
+    const fileContent = `=== NOTES: ${postTitle} ===\nExported: ${new Date().toLocaleString()}\n\n${val}\n`;
+    const blob = new Blob([fileContent], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${slug}-notes.txt`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  });
+
+  // 6. Clear Notes
+  clearBtn?.addEventListener('click', () => {
+    const val = textarea?.value || '';
+    if (!val.trim()) return;
+
+    if (window.confirm('Are you sure you want to clear your notes for this article?')) {
+      if (textarea) textarea.value = '';
+      localStorage.removeItem(storageKey);
+      updateMetrics('');
+      if (statusSpan && statusText) {
+        statusText.textContent = 'Cleared';
+        setTimeout(() => {
+          statusSpan.classList.add('hidden');
+        }, 1500);
+      }
+    }
+  });
+
+  // 7. Scroll-Aware Auto-Hide (synchronized with TOC reading flow)
+  let lastScrollY = window.scrollY;
+  let isScrollingTicking = false;
+  let isHovering = false;
+
+  function handleNotesScroll() {
+    const currentScrollY = window.scrollY;
+    const scrollDiff = currentScrollY - lastScrollY;
+
+    // Do not auto-hide if user is actively typing or hovering the notes card
+    if (!isTextareaFocused && !isHovering && notesCard) {
+      if (currentScrollY < 140) {
+        notesCard.classList.remove('notes-reading-hidden');
+      } else if (scrollDiff > 8 && currentScrollY > 180) {
+        // Scrolling DOWN (Reading): Auto-hide to keep focus clean
+        notesCard.classList.add('notes-reading-hidden');
+      } else if (scrollDiff < -8) {
+        // Scrolling UP (Navigating): Reveal smoothly
+        notesCard.classList.remove('notes-reading-hidden');
+      }
+    }
+
+    lastScrollY = currentScrollY;
+    isScrollingTicking = false;
+  }
+
+  window.addEventListener('scroll', () => {
+    if (!isScrollingTicking) {
+      window.requestAnimationFrame(handleNotesScroll);
+      isScrollingTicking = true;
+    }
+  }, { passive: true });
+
+  notesCard?.addEventListener('mouseenter', () => {
+    isHovering = true;
+    notesCard.classList.remove('notes-reading-hidden');
+  });
+
+  notesCard?.addEventListener('mouseleave', () => {
+    isHovering = false;
+    if (!isTextareaFocused && window.scrollY > 200) {
+      notesCard.classList.add('notes-reading-hidden');
+    }
+  });
+</script>
