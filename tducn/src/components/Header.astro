@@ -13,11 +13,11 @@ const navItems = NAV_ITEMS.map(item => ({
 <header class="sticky top-0 z-40 backdrop-blur-md bg-[var(--bg-canvas)]/90 border-b border-subtle transition-colors">
   <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
     
-    <div class="flex items-center space-x-3">
+    <div class="flex items-center space-x-2 sm:space-x-3 shrink-0">
       <!-- Mobile Menu Toggle Button (Accessible & High Touch-Area) -->
       <button
         id="mobile-menu-toggle"
-        class="btn-icon md:hidden text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
+        class="btn-icon md:hidden text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white shrink-0"
         aria-label="Toggle navigation menu"
         aria-expanded="false"
         aria-controls="mobile-drawer"
@@ -27,15 +27,15 @@ const navItems = NAV_ITEMS.map(item => ({
       </button>
 
       <!-- Brand / Author Identity -->
-      <a href="/" class="flex items-center space-x-3 group">
-        <div class="w-8 h-8 rounded-lg bg-accent-primary dark:bg-accent-primaryDark flex items-center justify-center text-white dark:text-slate-950 font-bold text-xs shadow-sm transition-transform group-hover:scale-105">
+      <a href="/" class="flex items-center space-x-2 sm:space-x-3 group shrink-0">
+        <div class="w-8 h-8 rounded-lg bg-accent-primary dark:bg-accent-primaryDark flex items-center justify-center text-white dark:text-slate-950 font-bold text-xs shadow-sm transition-transform group-hover:scale-105 shrink-0">
           <span>DN</span>
         </div>
-        <div>
-          <span class="font-bold text-base tracking-tight text-slate-900 dark:text-white group-hover:text-accent-primary dark:group-hover:text-accent-primaryDark transition-colors">
+        <div class="whitespace-nowrap flex items-center shrink-0">
+          <span class="font-bold text-sm sm:text-base tracking-tight text-slate-900 dark:text-white group-hover:text-accent-primary dark:group-hover:text-accent-primaryDark transition-colors whitespace-nowrap">
             Duc Nguyen
           </span>
-          <span class="hidden sm:inline-block text-xs text-text-muted ml-2 font-mono">/tducn</span>
+          <span class="hidden sm:inline-block text-xs text-text-muted ml-2 font-mono whitespace-nowrap">/tducn</span>
         </div>
       </a>
     </div>
@@ -58,7 +58,7 @@ const navItems = NAV_ITEMS.map(item => ({
     </nav>
 
     <!-- Controls (Search, Font, Theme) -->
-    <div class="flex items-center space-x-2">
+    <div class="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
       <!-- Search Button (Refactored to .btn-control) -->
       <button
         data-open-search

@@ -136,12 +136,12 @@ describe('Component Reusability & Rendering Contracts', () => {
     expect(result).toContain('id="reading-pill-container"');
     expect(result).toContain('aria-label="Reading controls"');
 
-    // Controls
+    // Controls (focused reading navigation; font & theme stay in Header to avoid UI duplication)
     expect(result).toContain('id="pill-toc-btn"');
-    expect(result).toContain('id="pill-font-btn"');
     expect(result).toContain('id="pill-share-btn"');
-    expect(result).toContain('id="pill-theme-btn"');
     expect(result).toContain('id="pill-top-btn"');
+    expect(result).not.toContain('id="pill-font-btn"');
+    expect(result).not.toContain('id="pill-theme-btn"');
 
     // TOC sheet modal
     expect(result).toContain('id="pill-toc-sheet"');
@@ -164,7 +164,8 @@ describe('Component Reusability & Rendering Contracts', () => {
     expect(result).toContain('id="reading-pill-container"');
     expect(result).not.toContain('id="pill-toc-btn"');
     expect(result).not.toContain('id="pill-toc-sheet"');
-    expect(result).toContain('id="pill-font-btn"');
+    expect(result).not.toContain('id="pill-font-btn"');
+    expect(result).not.toContain('id="pill-theme-btn"');
     expect(result).toContain('id="pill-share-btn"');
     expect(result).toContain('id="pill-top-btn"');
   });

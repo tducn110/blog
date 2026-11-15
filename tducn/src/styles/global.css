@@ -412,7 +412,14 @@ mark {
    ======================================================== */
 .prose {
   overflow-wrap: break-word;
-  word-break: break-word;
+  word-break: normal;
+  text-wrap: pretty;
+}
+
+.prose p,
+.prose li {
+  text-wrap: pretty;
+  word-break: normal;
 }
 
 .prose a,
