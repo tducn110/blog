@@ -13,6 +13,8 @@ const postsCollection = defineCollection({
     featured: z.boolean().default(false),
     recommendedFont: z.enum(['sans', 'academic', 'serif']).default('sans'),
     draft: z.boolean().default(false),
+    lang: z.enum(['vi', 'en']).default('vi'),
+    translationSlug: z.string().optional(),
   }),
 });
 

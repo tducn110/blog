@@ -1,7 +1,7 @@
 ---
 // ponytail: Lean header with active category indicator, font-switcher and theme-switcher, 64px fixed 4*x height
 import { NAV_ITEMS } from '../utils/categories';
-import { Sun, Moon, Search, Type, Menu, X } from 'lucide-astro';
+import { Sun, Moon, Search, Type, Menu, X, Languages } from 'lucide-astro';
 
 const currentPath = Astro.url.pathname;
 const navItems = NAV_ITEMS.map(item => ({
@@ -93,6 +93,17 @@ const navItems = NAV_ITEMS.map(item => ({
         <Moon class="w-4 h-4 dark:hidden text-slate-700" />
         <Sun class="w-4 h-4 hidden dark:inline text-amber-400" />
       </button>
+
+      <!-- Language Switcher (EN / VIE) -->
+      <button
+        id="global-lang-btn"
+        class="btn-control font-mono font-bold space-x-1"
+        title="Toggle language (EN / VIE)"
+        aria-label="Toggle language: EN / VIE"
+      >
+        <Languages class="w-3.5 h-3.5 text-slate-500" />
+        <span id="global-lang-label">EN</span>
+      </button>
     </div>
 
   </div>
@@ -132,6 +143,37 @@ const navItems = NAV_ITEMS.map(item => ({
   themeBtn?.addEventListener('click', () => {
     const isDark = document.documentElement.classList.toggle('dark');
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  });
+
+  // Language Switcher Logic (Bilingual EN / VIE)
+  const langBtn = document.getElementById('global-lang-btn');
+  const langLabel = document.getElementById('global-lang-label');
+  let currentLang = localStorage.getItem('blog_lang') || 'en';
+
+  function applyLanguage(lang: string, save = true) {
+    currentLang = lang;
+    if (langLabel) langLabel.textContent = lang === 'en' ? 'EN' : 'VIE';
+    document.documentElement.setAttribute('lang', lang);
+    if (save) {
+      localStorage.setItem('blog_lang', lang);
+      window.dispatchEvent(new CustomEvent('language-change', { detail: { lang } }));
+      
+      // Auto-navigate to translated article if available on current page
+      const translationMeta = document.querySelector('meta[name="translation-url"]');
+      if (translationMeta) {
+        const targetUrl = translationMeta.getAttribute('content');
+        if (targetUrl) {
+          window.location.href = targetUrl;
+        }
+      }
+    }
+  }
+
+  applyLanguage(currentLang, false);
+
+  langBtn?.addEventListener('click', () => {
+    const nextLang = currentLang === 'en' ? 'vi' : 'en';
+    applyLanguage(nextLang, true);
   });
 
   // Reading Font logic with localStorage persistence and proper article targeting

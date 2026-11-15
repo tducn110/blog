@@ -10,7 +10,7 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ReadingPill from '../../components/ReadingPill.astro';
 import { CATEGORIES } from '../../utils/categories';
 import { getReadingTime } from '../../utils/readingTime';
-import { Bookmark } from 'lucide-astro';
+import { Bookmark, Languages } from 'lucide-astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('posts');
@@ -43,6 +43,9 @@ const defaultFontClass = fontClassMap[post.data.recommendedFont || 'sans'];
 ---
 
 <BaseLayout title={post.data.title} description={post.data.description} ogType="article">
+  {post.data.translationSlug && (
+    <meta name="translation-url" content={`/posts/${post.data.translationSlug}/`} slot="head" />
+  )}
   <div class="space-y-6">
     
     <!-- Reusable Breadcrumbs Navigation Map & Back Link -->
@@ -63,12 +66,25 @@ const defaultFontClass = fontClassMap[post.data.recommendedFont || 'sans'];
         
         <!-- Header (F-Pattern Left Anchored with generous spacing) -->
         <header class="space-y-6 border-b border-subtle pb-8">
-          <div class="flex items-center space-x-2 text-xs text-text-muted font-mono">
-            <CategoryBadge category={post.data.category} />
-            <span>&bull;</span>
-            <time datetime={post.data.publishDate.toISOString()}>{post.data.publishDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</time>
-            <span>&bull;</span>
-            <span>{readingTime}</span>
+          <div class="flex flex-wrap items-center justify-between gap-3 text-xs text-text-muted font-mono">
+            <div class="flex items-center space-x-2">
+              <CategoryBadge category={post.data.category} />
+              <span>&bull;</span>
+              <time datetime={post.data.publishDate.toISOString()}>{post.data.publishDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</time>
+              <span>&bull;</span>
+              <span>{readingTime}</span>
+            </div>
+
+            {post.data.translationSlug && (
+              <a
+                href={`/posts/${post.data.translationSlug}/`}
+                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono border border-subtle bg-slate-100 dark:bg-slate-800 hover:border-accent-primary dark:hover:border-accent-primaryDark text-slate-800 dark:text-slate-200 transition-all shadow-sm"
+                title={post.data.lang === 'vi' ? 'Read English translation' : 'Đọc bản Tiếng Việt'}
+              >
+                <Languages class="w-3.5 h-3.5 text-accent-primary dark:text-accent-primaryDark" />
+                <span>{post.data.lang === 'vi' ? 'English Edition →' : 'Bản Tiếng Việt →'}</span>
+              </a>
+            )}
           </div>
 
           <!-- Title with Vietnamese Stacked Diacritics Protection (Clamped 26px - 36px) -->

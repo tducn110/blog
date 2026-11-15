@@ -6,6 +6,8 @@ category: "engineering"
 tags: ["MachineLearning", "DeepLearning", "Mathematics", "Optimization", "NeuralNetworks", "PyTorch", "Rust"]
 featured: true
 recommendedFont: "academic"
+lang: "vi"
+translationSlug: "machine-learning-comprehensive-curriculum"
 ---
 
 > [!IMPORTANT]
