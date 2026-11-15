@@ -166,9 +166,14 @@ THỰC TẾ  Positive(1) [    TP     ]   [  FN (Bỏ sót) ]
 (ACTUAL) Negative(0) [ FP (Nhầm) ]   [      TN      ]
 ```
 
-> > **CẢNH BÁO KHOA HỌC: CẠM BẪY ROC-AUC KHI MẤT CÂN BẰNG DỮ LIỆU**  
-> Khi tập dữ liệu có tỷ lệ dương tính cực thấp (ví dụ chỉ $0.1\%$ mẫu gian lận, số mẫu âm tính $TN$ lên tới hàng triệu), số lượng báo động nhầm $FP$ dù tăng vọt vẫn bị mẫu số $(TN + FP)$ áp đảo. Hậu quả là tỷ lệ $FPR = \frac{FP}{TN+FP} \approx 0$, làm đường cong **ROC-AUC hiển thị giá trị ảo rất cao ($> 0.95$)**.  
-> Trong các bài toán phát hiện gian lận, chẩn đoán y tế hay an ninh mạng, **PR-AUC (Precision-Recall AUC)** là thước đo bắt buộc duy nhất phản ánh trung thực sự sụp đổ của mô hình.
+> **CẢNH BÁO KHOA HỌC: CẠM BẪY ROC-AUC KHI MẤT CÂN BẰNG DỮ LIỆU**  
+> Khi tập dữ liệu có tỷ lệ dương tính cực thấp (ví dụ chỉ $0.1\%$ mẫu gian lận, số mẫu âm tính $TN$ lên tới hàng triệu), số lượng báo động nhầm $FP$ dù tăng vọt vẫn bị mẫu số $(TN + FP)$ áp đảo:
+>
+> $$
+> FPR = \frac{FP}{TN + FP} \approx 0
+> $$
+>
+> Hậu quả là đường cong **ROC-AUC hiển thị giá trị ảo rất cao** ($> 0.95$). Trong các bài toán phát hiện gian lận, chẩn đoán y tế hay an ninh mạng, **PR-AUC (Precision-Recall AUC)** là thước đo bắt buộc duy nhất phản ánh trung thực sự sụp đổ của mô hình.
 
 ---
 

@@ -119,9 +119,14 @@ ACTUAL   Positive(1) [    TP     ]   [  FN (Miss)   ]
          Negative(0) [ FP (Alarm)]   [      TN      ]
 ```
 
-> > **SCIENTIFIC WARNING: THE ROC-AUC DECEPTION ON HIGHLY IMBALANCED DATA**  
-> In extreme class imbalance regimes (e.g., $0.1\%$ fraud rate, negative samples $TN$ in the millions), false alarms $FP$ are drowned out by the enormous denominator $(TN + FP)$. Consequently, $FPR = \frac{FP}{TN+FP} \approx 0$, artificially inflating the **ROC-AUC score ($> 0.95$)**.  
-> In mission-critical applications (fraud detection, medical diagnosis, malware detection), **PR-AUC (Precision-Recall AUC)** is the mandatory metric reflecting model breakdown.
+> **SCIENTIFIC WARNING: THE ROC-AUC DECEPTION ON HIGHLY IMBALANCED DATA**  
+> In extreme class imbalance regimes (e.g., $0.1\%$ fraud rate, negative samples $TN$ in the millions), false alarms $FP$ are drowned out by the enormous denominator $(TN + FP)$:
+>
+> $$
+> FPR = \frac{FP}{TN + FP} \approx 0
+> $$
+>
+> Consequently, the **ROC-AUC score is artificially inflated** ($> 0.95$). In mission-critical applications (fraud detection, medical diagnosis, malware detection), **PR-AUC (Precision-Recall AUC)** is the mandatory metric reflecting model breakdown.
 
 ---
 

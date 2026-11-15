@@ -508,10 +508,9 @@ mark {
 /* Inline KaTeX: ample breathing room, horizontal padding & clear baseline */
 .prose :not(.katex-display) > .katex {
   display: inline-block !important;
-  font-size: 1.06em !important;
-  padding: 0.12em 0.3em !important;
-  margin: 0 0.12em !important;
-  line-height: 1.25 !important;
+  font-size: 1.05em !important;
+  padding: 0 0.25em !important;
+  margin: 0 0.1em !important;
   vertical-align: -0.1em !important;
 }
 
@@ -551,16 +550,6 @@ mark {
   .katex-display > .katex {
     font-size: 1.35rem !important;
   }
-}
-
-/* Mẫu số, tử số và dấu gạch phân số không bị dính */
-.katex .mfrac .vlist-t {
-  margin: 0.15em 0 !important;
-}
-
-/* Đảm bảo cận trên N hoặc dấu Sigma có khoảng đệm phía dưới vạch phân số */
-.katex .mfrac .vlist-t2 .vlist-r .vlist > span:first-child {
-  padding-top: 3px !important;
 }
 
 /* Sơ đồ Mermaid (Responsive & Swipe-friendly trên màn hình nhỏ) */
