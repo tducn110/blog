@@ -20,7 +20,7 @@ import { Search, X } from 'lucide-astro';
         aria-label="Search posts"
       />
       <div class="flex items-center space-x-1.5 shrink-0">
-        <button id="search-clear-btn" class="hidden text-xs w-6 h-6 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400 flex items-center justify-center font-bold" title="Clear input" aria-label="Clear input">&times;</button>
+        <button id="search-clear-btn" class="hidden text-xs w-6 h-6 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400 items-center justify-center font-bold" title="Clear input" aria-label="Clear input">&times;</button>
         <button id="search-close-btn" class="text-xs px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-mono hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" aria-label="Close search">
           <span class="hidden sm:inline text-[11px]">ESC</span>
           <span class="sm:hidden text-sm leading-none font-bold">&times;</span>
@@ -89,12 +89,19 @@ import { Search, X } from 'lucide-astro';
       document.body.style.overflow = 'hidden';
       searchModal.classList.remove('hidden');
       setTimeout(() => searchInput?.focus(), 50);
-      loadSearchData();
+      if (postsData.length > 0 && !searchInput?.value.trim()) {
+        renderDefaultState();
+      } else {
+        loadSearchData();
+      }
     } else {
       document.body.style.overflow = '';
       searchModal.classList.add('hidden');
       if (searchInput) searchInput.value = '';
-      if (searchClear) searchClear.classList.add('hidden');
+      if (searchClear) {
+        searchClear.classList.add('hidden');
+        searchClear.classList.remove('flex');
+      }
       activeItemIndex = -1;
       renderDefaultState();
     }
@@ -168,8 +175,13 @@ import { Search, X } from 'lucide-astro';
   function triggerSearch() {
     const query = searchInput?.value.trim() || '';
     if (searchClear) {
-      if (query) searchClear.classList.remove('hidden');
-      else searchClear.classList.add('hidden');
+      if (query) {
+        searchClear.classList.remove('hidden');
+        searchClear.classList.add('flex');
+      } else {
+        searchClear.classList.add('hidden');
+        searchClear.classList.remove('flex');
+      }
     }
 
     if (!query && activeFilterSlug === 'all') {
@@ -215,7 +227,7 @@ import { Search, X } from 'lucide-astro';
         >
           <div class="flex items-center justify-between text-[11px] mb-1">
             <span class="font-mono uppercase font-semibold text-accent-primary dark:text-accent-primaryDark">${res.item.category}</span>
-            ${res.score >= 100 ? '<span class="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 font-mono">Best match</span>' : ''}
+            ${res.score >= 100 ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 font-mono">Best match</span>' : ''}
           </div>
           <div class="font-medium text-slate-900 dark:text-slate-100 group-hover:text-accent-primary dark:group-hover:text-accent-primaryDark transition-colors leading-snug">
             ${res.highlightedTitle}
@@ -291,10 +303,12 @@ import { Search, X } from 'lucide-astro';
       activeFilterSlug = slug;
 
       // Update button styling
+      const inactiveClass = 'shrink-0 whitespace-nowrap px-2.5 py-1 rounded-full font-medium transition-all text-xs border border-subtle text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800';
+      const activeClass = 'shrink-0 whitespace-nowrap px-2.5 py-1 rounded-full font-semibold transition-all text-xs bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm';
       categoryFilters.querySelectorAll('button[data-category-filter]').forEach(b => {
-        b.className = 'px-2.5 py-1 rounded-full font-medium transition-all text-xs border border-subtle text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800';
+        b.className = inactiveClass;
       });
-      btn.className = 'px-2.5 py-1 rounded-full font-semibold transition-all text-xs bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm';
+      btn.className = activeClass;
 
       triggerSearch();
     });

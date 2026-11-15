@@ -131,6 +131,7 @@ body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    width: auto;
     height: 2.25rem; /* 36px = 4*9 */
     padding: 0 0.625rem; /* 10px */
     border-radius: 0.5rem; /* 8px */
