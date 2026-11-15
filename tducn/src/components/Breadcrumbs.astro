@@ -18,18 +18,18 @@ interface Props {
 const { items, backLink, class: className = '' } = Astro.props;
 ---
 
-<nav aria-label="Breadcrumb" class={`flex items-center justify-between text-xs text-text-muted font-mono ${className}`}>
-  <ol class="flex items-center space-x-2">
+<nav aria-label="Breadcrumb" class={`flex items-center justify-between gap-3 text-xs text-text-muted font-mono ${className}`}>
+  <ol class="flex items-center space-x-1.5 sm:space-x-2 min-w-0 flex-1 overflow-hidden">
     {items.map((item, index) => {
       const isLast = index === items.length - 1;
       return (
-        <li class="flex items-center space-x-2">
+        <li class={`flex items-center space-x-1.5 sm:space-x-2 ${isLast ? "min-w-0 flex-1" : "shrink-0"}`}>
           {item.href && !isLast ? (
             <a href={item.href} class="hover:text-accent-primary dark:hover:text-accent-primaryDark transition-colors">
               {item.label}
             </a>
           ) : (
-            <span class={isLast ? "text-slate-900 dark:text-slate-200 font-medium truncate max-w-[200px] sm:max-w-none" : ""}>
+            <span class={isLast ? "text-slate-900 dark:text-slate-200 font-medium block truncate" : ""}>
               {item.label}
             </span>
           )}
@@ -40,7 +40,7 @@ const { items, backLink, class: className = '' } = Astro.props;
   </ol>
 
   {backLink && (
-    <a href={backLink.href} class="hover:underline flex items-center gap-1">
+    <a href={backLink.href} class="hover:underline flex items-center gap-1 shrink-0">
       &larr; {backLink.label}
     </a>
   )}

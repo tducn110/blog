@@ -8,8 +8,8 @@ export async function GET(context: APIContext) {
   const sortedPosts = posts.sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
 
   return rss({
-    title: 'Chi Nguyen | Multi-discipline Blog',
-    description: 'Kiến trúc hệ thống, toán học ứng dụng và suy tưởng thường nhật.',
+    title: 'Duc Nguyen | Engineering & Tech Blog',
+    description: 'Kiến trúc hệ thống, toán học ứng dụng và kỹ thuật phần mềm.',
     site: context.site || 'https://tducn.dev',
     items: sortedPosts.map(post => ({
       title: post.data.title,

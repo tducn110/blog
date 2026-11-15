@@ -10,7 +10,7 @@ interface Props {
 const { activeSlug = 'all', class: className = '' } = Astro.props;
 ---
 
-<div class={`flex items-center space-x-2 overflow-x-auto pb-1 ${className}`} role="tablist" aria-label="Lọc theo chuyên mục">
+<div class={`flex items-center space-x-2 overflow-x-auto pb-1 no-scrollbar ${className}`} role="tablist" aria-label="Filter by topic">
   {NAV_ITEMS.map(cat => {
     const isActive = cat.slug === activeSlug;
     return (

@@ -18,7 +18,7 @@ const navItems = NAV_ITEMS.map(item => ({
       <button
         id="mobile-menu-toggle"
         class="btn-icon md:hidden text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
-        aria-label="Mở danh mục điều hướng"
+        aria-label="Toggle navigation menu"
         aria-expanded="false"
         aria-controls="mobile-drawer"
       >
@@ -27,13 +27,13 @@ const navItems = NAV_ITEMS.map(item => ({
       </button>
 
       <!-- Brand / Author Identity -->
-      <a href="/" class="flex items-center space-x-3 group" aria-label="Chi Nguyen Blog Trang chủ">
+      <a href="/" class="flex items-center space-x-3 group">
         <div class="w-8 h-8 rounded-lg bg-accent-primary dark:bg-accent-primaryDark flex items-center justify-center text-white dark:text-slate-950 font-bold text-xs shadow-sm transition-transform group-hover:scale-105">
-          <span>CN</span>
+          <span>DN</span>
         </div>
         <div>
           <span class="font-bold text-base tracking-tight text-slate-900 dark:text-white group-hover:text-accent-primary dark:group-hover:text-accent-primaryDark transition-colors">
-            Chi Nguyen
+            Duc Nguyen
           </span>
           <span class="hidden sm:inline-block text-xs text-text-muted ml-2 font-mono">/tducn</span>
         </div>
@@ -61,22 +61,23 @@ const navItems = NAV_ITEMS.map(item => ({
     <div class="flex items-center space-x-2">
       <!-- Search Button (Refactored to .btn-control) -->
       <button
+        data-open-search
         onclick="window.openSearchModal?.()"
         class="btn-control font-mono space-x-1.5"
-        title="Tìm kiếm (Cmd+K hoặc /)"
-        aria-label="Mở tìm kiếm"
+        title="Search (⌘K or /)"
+        aria-label="Search posts"
       >
         <Search class="w-3.5 h-3.5 text-slate-500" />
-        <span class="hidden sm:inline">Tìm</span>
-        <kbd class="px-1.5 py-0.5 text-[10px] bg-slate-200 dark:bg-slate-800 rounded text-slate-500 font-mono">⌘K</kbd>
+        <span class="hidden sm:inline">Search</span>
+        <kbd class="px-1.5 py-0.5 text-[10px] bg-slate-200/90 dark:bg-slate-800 rounded text-slate-700 dark:text-slate-300 font-mono font-semibold">⌘K</kbd>
       </button>
 
       <!-- Font Switcher (Refactored to .btn-control) -->
       <button
         id="global-font-btn"
         class="btn-control font-medium space-x-1"
-        title="Đổi phông chữ đọc: Sans / Times (arXiv) / Serif"
-        aria-label="Đổi phông chữ bài viết"
+        title="Reading font: Sans / Times (arXiv) / Serif"
+        aria-label="Reading font: Sans"
       >
         <Type class="w-3.5 h-3.5 text-slate-500" />
         <span id="global-font-label" class="hidden sm:inline">Sans</span>
@@ -86,8 +87,8 @@ const navItems = NAV_ITEMS.map(item => ({
       <button
         id="global-theme-btn"
         class="btn-icon"
-        title="Đổi giao diện Sáng / Tối"
-        aria-label="Đổi chế độ sáng tối"
+        title="Toggle dark/light theme"
+        aria-label="Toggle theme"
       >
         <Moon class="w-4 h-4 dark:hidden text-slate-700" />
         <Sun class="w-4 h-4 hidden dark:inline text-amber-400" />
@@ -101,10 +102,10 @@ const navItems = NAV_ITEMS.map(item => ({
     id="mobile-drawer"
     class="hidden md:hidden border-t border-subtle bg-[var(--surface-card)] px-4 py-3 space-y-1 shadow-lg transition-all animate-in fade-in"
     role="region"
-    aria-label="Menu danh mục di động"
+    aria-label="Mobile category menu"
   >
     <div class="text-[11px] font-bold text-text-muted uppercase tracking-wider px-2 py-1">
-      Chuyên mục bài viết
+      Topics
     </div>
     <div class="grid grid-cols-2 gap-1.5 pt-1">
       {navItems.map(item => (
@@ -133,7 +134,7 @@ const navItems = NAV_ITEMS.map(item => ({
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
   });
 
-  // Reading Font logic
+  // Reading Font logic with localStorage persistence and proper article targeting
   const fontBtn = document.getElementById('global-font-btn');
   const fontLabel = document.getElementById('global-font-label');
   const fontModes = [
@@ -143,26 +144,37 @@ const navItems = NAV_ITEMS.map(item => ({
   ];
   let currentFontIdx = 0;
 
-  // Initialize font label if article has recommended mode
-  const currentArticle = document.querySelector('article');
-  if (currentArticle?.classList.contains('mode-academic')) {
-    currentFontIdx = 1;
-    if (fontLabel) fontLabel.innerText = 'Times (arXiv)';
-  } else if (currentArticle?.classList.contains('mode-serif')) {
-    currentFontIdx = 2;
-    if (fontLabel) fontLabel.innerText = 'Serif';
+  const postArticle = document.querySelector('article.card-surface.max-w-\\[840px\\]') as HTMLElement | null || document.querySelector('main article') as HTMLElement | null;
+
+  function applyFontMode(idx: number, save = true) {
+    currentFontIdx = idx;
+    const mode = fontModes[currentFontIdx];
+    if (postArticle) {
+      mode.classRemove.forEach(c => postArticle.classList.remove(c));
+      postArticle.classList.add(mode.classAdd);
+    }
+    if (fontLabel) fontLabel.innerText = mode.name;
+    if (fontBtn) fontBtn.setAttribute('aria-label', `Reading font: ${mode.name}`);
+    if (save) localStorage.setItem('font-mode', mode.name);
+  }
+
+  const savedFont = localStorage.getItem('font-mode');
+  if (savedFont) {
+    const idx = fontModes.findIndex(m => m.name === savedFont);
+    if (idx !== -1) {
+      applyFontMode(idx, false);
+    }
+  } else if (postArticle?.classList.contains('mode-academic')) {
+    applyFontMode(1, false);
+  } else if (postArticle?.classList.contains('mode-serif')) {
+    applyFontMode(2, false);
+  } else {
+    applyFontMode(0, false);
   }
 
   fontBtn?.addEventListener('click', () => {
-    currentFontIdx = (currentFontIdx + 1) % fontModes.length;
-    const mode = fontModes[currentFontIdx];
-    const article = document.querySelector('article');
-    if (article) {
-      mode.classRemove.forEach(c => article.classList.remove(c));
-      article.classList.add(mode.classAdd);
-    }
-    if (fontLabel) fontLabel.innerText = mode.name;
-    localStorage.setItem('font-mode', mode.name);
+    const nextIdx = (currentFontIdx + 1) % fontModes.length;
+    applyFontMode(nextIdx, true);
   });
 
   // Mobile Drawer toggle logic

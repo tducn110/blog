@@ -11,10 +11,10 @@ const toc = headings.filter(h => h.depth === 2 || h.depth === 3);
 ---
 
 {toc.length > 0 && (
-  <nav class="card-surface p-6 space-y-3 shadow-sm" aria-label="Mục lục bài viết" id="article-toc">
+  <nav class="card-surface p-6 space-y-3 shadow-sm" aria-label="Table of Contents" id="article-toc">
     <div class="text-xs font-bold text-text-main flex items-center gap-2 border-b border-subtle pb-2.5">
       <Bookmark class="w-3.5 h-3.5 text-accent-primary dark:text-accent-primaryDark" />
-      <span>Mục lục nội dung</span>
+      <span>Table of Contents</span>
     </div>
     <ul class="space-y-1.5 text-xs text-text-muted">
       {toc.map(item => (

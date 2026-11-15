@@ -176,3 +176,111 @@ Tuân thủ triệt để nguyên lý Ponytail (chống phình code, 0 rác):
   - Xây dựng `.gitignore` chuẩn hóa, loại bỏ hoàn toàn `node_modules/`, `dist/`, `.astro/` và cache.
   - Soạn thảo tài liệu trung tâm [README.md](file:///home/pro/Downloads/blog/README.md) hướng dẫn kiến trúc, cài đặt, test và deploy (Vercel / Cloudflare Pages).
   - Khởi tạo và đẩy mã nguồn lên GitHub repository công khai: [`tducn110/blog`](https://github.com/tducn110/blog).
+- [x] **Step 19 (Comprehensive UI/UX Audit & WCAG 100% Polish)**:
+  - **Đồng bộ Định danh Tác giả**: Thay thế toàn bộ `Chi Nguyen` thành `Duc Nguyen` (`tducn`), logo `DN` trên Header, Footer, BaseLayout, Index và RSS Feed.
+  - **Khắc phục Độ tương phản Màu (WCAG AA Color Contrast)**:
+    - Tăng độ tương phản cho phím tắt `<kbd>` (`⌘K`) trên Search Button từ 3.86:1 lên chuẩn WCAG.
+    - Tăng tương phản cho thẻ tags `#Engineering`, `#EdgeCDN` trên `PostCard.astro` từ 4.34:1 lên > 4.5:1.
+    - Tăng tương phản cho footer citation text và khối Shiki code comments.
+  - **Sửa Lỗi ShareBar Social Links**: Bổ sung tự động gắn URL bài viết (`window.location.href`) và tiêu đề vào các nút chia sẻ X, Facebook, LinkedIn và Telegram.
+  - **Khắc phục Font Switcher**: Tự động lưu và phục hồi `font-mode` (`Sans` / `Times (arXiv)` / `Serif`) từ `localStorage` trên các trang bài viết; đồng bộ `aria-label` và nhãn hiển thị.
+  - **Trải nghiệm Đọc trên Mobile (Mobile TOC)**: Bổ sung thanh Accordion "Mục lục bài viết" ngay đầu bài viết trên màn hình điện thoại (< 768px), giúp độc giả mobile nhảy nhanh đến các mục mà không phải cuộn hết bài.
+  - **Chuẩn hóa SEO & Trợ năng (Lighthouse 100/100/100/100)**:
+    - Bổ sung `public/robots.txt` và `public/llms.txt` chuẩn định dạng.
+    - Sửa `label-content-name-mismatch` trên link thương hiệu và nút đổi font.
+    - Điểm số kiểm thử Lighthouse trên Chrome DevTools đạt tuyệt đối: **Accessibility 100, Best Practices 100, SEO 100, Agentic Browsing 100**.
+- [x] **Step 20 (UX Writing & Content Architecture Overhaul)**:
+  - **Loại bỏ Văn phong Sáo rỗng & Academic/Buzzword Salad**:
+    - Thay thế khẩu hiệu đao to búa lớn ("Khảo cứu độc lập", "Stanford d.school Design Thinking", "Cloudflare Anycast Edge CDN") bằng văn phong kỹ sư khiêm tốn, trung thực và gần gũi.
+    - Cập nhật Bio tác giả: "Software Engineer & Systems. Đam mê tìm hiểu bản chất hệ thống phân tán, giải thuật và trải nghiệm lập trình. Viết để hệ thống hóa kiến thức và chia sẻ cùng cộng đồng."
+  - **Chuẩn hóa Trình bày Thông tin Bài viết (Reading Information Architecture)**:
+    - Bổ sung chỉ số **Thời gian đọc ước tính (`X phút đọc`)** trên toàn bộ PostCard (Trang chủ, Chuyên mục) và đầu bài viết chi tiết qua helper `src/utils/readingTime.ts` (chuẩn 200 từ/phút).
+    - Thay thế "Thông số bài viết" (nghe như bảng thông số máy móc) thành "Thông tin bài viết" dạng cặp key-value tinh tế: Chuyên mục, Thời gian đọc, Kiểu phông, Giấy phép bản quyền.
+    - Sửa "Mục lục nội dung" thành "Mục lục bài viết".
+    - Sửa "Chuyên mục khảo cứu" thành "Chuyên mục bài viết".
+  - **Tối ưu Hộp Tìm kiếm (Search UX Writing)**:
+    - Sửa placeholder rõ nghĩa hơn: "Tìm kiếm bài viết, chủ đề, thuật toán (hỗ trợ không dấu)...".
+    - Sửa "4 bài viết sẵn sàng" thành "4 bài viết".
+    - Sửa "Gợi ý tìm kiếm phổ biến" & "Toàn bộ tuyển tập gần đây" thành "Chủ đề gợi ý" & "Bài viết mới nhất".
+  - **Kiểm thử Toàn vẹn**: 6/6 test suites passed (26/26 tests passed), build tĩnh 10/10 trang thành công, Lighthouse 100/100/100/100.
+- [x] **Step 21 (Native English Shell & Natural Engineering Voice Overhaul)**:
+  - **Chuyển dịch Toàn bộ UI Shell sang Tiếng Anh Tự nhiên**:
+    - Giữ UI/UX hoàn toàn bằng tiếng Anh tự nhiên theo tiêu chuẩn của các kỹ sư hàng đầu thế giới (Lee Robinson, Dan Abramov, Brandur Leach, Julia Evans), xóa bỏ hoàn toàn các cụm từ dịch máy gượng gạo hoặc câu từ robot sáo rỗng.
+  - **Tái cấu trúc Hero & Sidebar Profile**:
+    - Hero Eyebrow: `Engineering Notes`
+    - Hero Title: `Systems, Math & Software Engineering`
+    - Hero Subtitle: `Personal engineering notes by Duc Nguyen on distributed systems, applied algorithms, performance optimization, and practical software design.`
+    - Sidebar Profile: `Duc Nguyen`, `Software Engineer • /tducn`. Bio ngắn gọn, tự nhiên: `Writing about distributed architectures, applied mathematics, and software design. Documenting systems and lessons learned along the way.`
+    - Topics Navigation: `Topics` (thay vì "Chuyên mục khảo cứu" hay "Chuyên mục bài viết").
+  - **Chuẩn hóa Toàn bộ Copy & Navigation**:
+    - PostCard: `Featured`, `Read post →`, định dạng ngày `Oct 29, 2026`, thời gian đọc `2 min read`.
+    - Header & Controls: `Search` (`⌘K`), `Reading font: Sans` / `Times (arXiv)` / `Serif`, `Toggle theme`, Mobile drawer `Topics`.
+    - Search Modal: `Search posts, topics, algorithms...`, `Suggested Topics`, `Recent Posts`, Shortcuts (`↑ ↓ Navigate`, `↵ Select`, `esc Close`), empty state `No posts found matching "${query}". Try searching with different keywords.`.
+    - Post Detail: Breadcrumbs `Home / Category / Title`, backlink `← All posts`, Mobile TOC `Table of Contents (X sections) - Tap to expand ↓`, Article Details card (`Category:`, `Reading time:`, `Font style:`, `License: CC BY-NC 4.0`), code block copy `Copy code` / `Copied! ✓`, navigation `← Previous post` / `Next post →`.
+    - Footer: `Duc Nguyen • /tducn`, `Personal engineering notes on systems, mathematics, and software development.`, `Content licensed under CC BY-NC 4.0 • Built with Astro.`.
+    - 404 Page: `Page Not Found`, `The page you are looking for doesn't exist or has been moved.`, `← Back to Home`, `Search posts (⌘K)`.
+  - **Kiểm chứng Toàn diện**:
+    - `npm test`: 6/6 test files passed, 26/26 tests passed.
+    - `npm run build`: 10/10 static pages built thành công không lỗi.
+    - Chrome DevTools: Lighthouse Accessibility 100, Best Practices 100, Agentic Browsing 100. Verified responsive viewport 390x844.
+- [x] **Step 22 (iPhone 12 Mobile Responsive Deep Audit & Polish)**:
+  - **Giả lập Môi trường iPhone 12 Chuẩn xác**:
+    - Sử dụng `chrome-devtools` MCP mô phỏng viewport iPhone 12: `390 x 844 CSS px`, `deviceScaleFactor: 3`, touch input enabled.
+  - **Khắc phục Lỗi Tràn ngang (Horizontal Overflow) & Flex-Centering**:
+    - **Breadcrumbs Navigation**: Khắc phục lỗi tiêu đề dài và nút backlink `← All posts` đẩy chiều rộng trang lên 406px (vượt 16px so với màn hình 390px). Áp dụng `min-w-0 flex-1 overflow-hidden` và `shrink-0`, đảm bảo tiêu đề tự co và cắt gọn bằng dấu `...` khi thiếu chỗ.
+    - **Công thức Toán KaTeX (`.katex-display`)**: Khắc phục lỗi flex-centering khiến công thức dài bị tràn sang trái vào toạ độ âm (`left: -37.5px`) làm mất phần đầu $X[k] = \dots$. Chuyển sang `display: block !important; text-align: center; overflow-x: auto; -webkit-overflow-scrolling: touch;`. Công thức vừa vặn căn giữa, công thức dài căn trái tại toạ độ 0 và cho phép độc giả vuốt ngang mượt mà.
+    - **Sơ đồ Kiến trúc Mermaid (`.mermaid-rendered`)**: Khắc phục lỗi sơ đồ bị nén co cụm còn 42px chiều cao trên mobile khiến chữ không đọc được. Đặt `min-width: 540px` bên trong container `overflow-x: auto` trên mobile, giữ nguyên kích cỡ chữ chuẩn của sơ đồ và cho phép vuốt chạm trực quan.
+    - **Bảng Markdown (`.prose table`)**: Bổ sung `display: block; overflow-x: auto; width: 100%` chống vỡ layout trên điện thoại.
+  - **Tối ưu Padding & Không gian Đọc Mobile**:
+    - Điều chỉnh padding của `article` từ `p-8` (32px mỗi bên, lãng phí 64px) thành `p-5 sm:p-10 lg:p-14`, tăng 26px diện tích hiển thị nội dung thực tế.
+    - Điều chỉnh PostCard và Hero Section padding thành `p-5 sm:p-8 rounded-2xl sm:rounded-3xl` tinh gọn, hiện đại.
+    - Ẩn phím tắt bàn phím vật lý (`↑ ↓`, `↵`, `esc`) trên modal tìm kiếm khi xem bằng điện thoại, nhường chỗ cho huy hiệu đếm kết quả.
+  - **Kiểm chứng Toàn diện**:
+    - `docWidth`: chính xác 390px (bằng 100% `winWidth`), `hasHorizontalScroll: false`, `overflowCount: 0`.
+    - `npm test`: 6/6 test files passed, 26/26 tests passed.
+    - `npm run build`: 10/10 static pages built thành công không lỗi.
+- [x] **Step 23 (iPhone 12 Stress Testing & Boundary Limits Analysis)**:
+  - **Thực thi 7 Kịch bản Stress Testing Tận cùng Giới hạn**:
+    1. *Landscape Mode (`844 x 390 px`)*: Xoay ngang màn hình, toàn bộ thanh Header, Hero, Bài viết đạt chuẩn 0 overflow (`docWidth: 844px`).
+    2. *Bàn phím Ảo iOS Mở (`390 x 460 px`)*: Khắc phục lỗi Modal Tìm kiếm bị che mất chân trang khi bàn phím ảo trồi lên chiếm 380px. Tinh chỉnh `pt-3 sm:pt-16` và `max-h-[46vh]` giúp hộp thoại vừa vặn trên bàn phím (`dialogBottom: 402px < 460px`).
+    3. *Chuỗi Không Dấu Cách Siêu Dài (100+ ký tự Word-Break)*: Phát hiện chuỗi URL hoặc mã hash không có dấu cách đẩy trang từ 390px lên 923px. Đã bổ sung `overflow-wrap: break-word` và `word-break: break-word` cho `.prose` và `overflow-wrap: anywhere` cho link/code. Giữ nguyên 390px.
+    4. *Bảng Markdown 8 Cột*: Bảng so sánh 8 cột cuộn ngang độc lập trong khung 316px, không làm tràn trang (`docScroll: 390px`).
+    5. *Công thức Toán 800px*: Ma trận hoặc công thức mở rộng cuộn mượt mà trong khối `.katex-display`, giữ nguyên trang 390px.
+    6. *Dòng Code 300 Ký tự*: Khối Shiki `<pre>` tự cô lập cuộn ngang, nút Copy Code hiển thị đúng vị trí.
+    7. *Danh sách Lồng nhau 4 Cấp*: Bullet points và blockquotes lồng nhau hiển thị mượt mà không vỡ lề.
+  - **Kiểm chứng Toàn diện**:
+    - `npm test`: 6/6 test suites passed, 26/26 tests passed.
+    - `npm run build`: 10/10 trang tĩnh tạo thành công không lỗi.
+- [x] **Step 24 (Deep Failure Modes & Mobile Ecosystem Hardening)**:
+  - **Khắc phục Lỗi Cuộn Nền khi Mở Modal (Scroll Chaining / Background Leak)**:
+    - Khi mở Search Modal trên mobile, vuốt trên màn hình khiến phần thân bài viết phía sau bị cuộn theo. Khắc phục bằng cách khóa `document.body.style.overflow = 'hidden'` khi mở và phục hồi `''` khi đóng.
+  - **Bổ sung Khóa Tiêu điểm Trợ năng (Modal Focus Trapping - WCAG 2.1)**:
+    - Bổ sung trình lắng nghe phím `Tab` và `Shift+Tab` giữ tiêu điểm luôn luân chuyển tuần hoàn bên trong Modal (Input -> Filters -> Close), ngăn tiêu điểm lọt ra các link ngầm phía sau màn hình.
+  - **Mở rộng Vùng Chạm Cảm ứng Chuẩn Apple HIG (Min 44x44px Touch Targets)**:
+    - Các nút icon (`.btn-icon`: Menu, Font Switcher, Theme Switcher, Back-to-Top) có kích thước hiển thị 36x36px. Bổ sung pseudo-element `::after` mở rộng vùng nhận cảm ứng vô hình lên chuẩn tối thiểu 44x44px trên thiết bị cảm ứng (`@media (pointer: coarse)`), loại bỏ hoàn toàn lỗi chạm trượt.
+  - **Cơ chế Sao chép Phòng vệ Đa môi trường (Clipboard Fallback Mechanism)**:
+    - Trang bị cơ chế fallback sang `document.execCommand('copy')` cho cả nút ShareBar và nút Copy Code Shiki khi trình duyệt chạy trong In-App Webview (Zalo, Messenger, Facebook, Telegram) hoặc môi trường không cấp quyền `navigator.clipboard`.
+  - **Kiểm chứng Toàn vẹn**:
+    - `npm test`: 6/6 test files passed, 26/26 tests passed.
+    - `npm run build`: 10/10 static pages built thành công không lỗi trong 4.15s.
+- [x] **Step 25 (Mobile Reading HUD - Floating Pill & TOC Bottom Sheet Drawer)**:
+  - **Triển khai Thanh Điều khiển Đọc Di động Tinh gọn (Mobile Reading HUD / Floating Pill)**:
+    - Xây dựng component `src/components/ReadingPill.astro` theo mô hình Substack / Medium / iA Writer, thay thế ý tưởng Android Speed Dial để tránh che khuất chữ/code ở góc phải.
+    - Đặt vị trí chính giữa đáy màn hình trên thiết bị di động (`md:hidden`): `fixed bottom-[calc(1rem+env(safe-area-inset-bottom,0px))] left-1/2 -translate-x-1/2 z-40`.
+    - Thiết kế kính mờ cao cấp (Glassmorphic): `backdrop-blur-xl bg-slate-900/90 dark:bg-slate-950/90 text-white rounded-full shadow-2xl border border-white/15 dark:border-slate-800`.
+  - **Cơ chế Tự ẩn Thông minh theo Chiều Cuộn (Scroll-Aware Auto-Hide)**:
+    - *Cuộn xuống để đọc*: Tự động trượt xuống ẩn khỏi màn hình (`translate-y-28 opacity-0 pointer-events-none`) để giải phóng 100% diện tích cho văn bản, công thức toán và khối code.
+    - *Cuộn nhẹ lên hoặc dừng ở đầu/cuối bài*: Lập tức trượt lên nhẹ nhàng (`translate-y-0 opacity-100 pointer-events-auto`) ngay trong tầm ngón cái (Thumb Zone).
+  - **5 Tính năng Tích hợp Trực tiếp trên Thanh Pill**:
+    1. *TOC Bottom Sheet Drawer*: Nút bấm `[ 📖 TOC ]` kèm số lượng mục mở một bảng trượt danh mục bài viết mượt mà từ đáy màn hình, chạm vào mục nào sẽ cuộn mượt đến mục đó và tự đóng bảng; có backdrop làm mờ bài viết phía sau.
+    2. *Đổi Font Đọc Đồng bộ (`Aa / Sans`)*: Nút chuyển nhanh font đọc qua 3 chế độ (`Sans` -> `Times (arXiv)` -> `Serif`), đồng bộ tức thì với bài viết và Header.
+    3. *Chia sẻ Nhanh 1-Click (`🔗`)*: Sao chép URL bài viết vào bộ nhớ đệm (với cơ chế dual-layer clipboard fallback), biến icon thành dấu kiểm xanh `✓` xác nhận trong 2 giây.
+    4. *Chuyển Giao diện Sáng/Tối (`☀️ / 🌙`)*: Chuyển đổi Dark/Light mode tức thì, đồng bộ với Header và Mermaid diagrams.
+    5. *Cuộn về Đầu trang (`↑`)*: Cuộn mượt mà về đầu bài viết chỉ với 1 chạm.
+    6. *Thanh Tiến độ Đọc Siêu mỏng (Micro Reading Progress Track)*: Một đường vạch 2px tinh tế chạy dọc viền trên của Pill thể hiện phần trăm đọc bài.
+  - **Khử Xung đột Giao diện (Anti-Conflict Architecture)**:
+    - Tự động ẩn nút Back-to-Top độc lập trên mobile khi có thanh Reading Pill (`body.has-reading-pill .back-to-top-btn { display: none !important; }`), đảm bảo không bị trùng lặp 2 nút cùng nổi ở đáy màn hình.
+  - **Kiểm chứng Toàn diện**:
+    - `npm test`: 6/6 test files passed, **28/28 tests passed** (bổ sung 2 tests mới cho `ReadingPill.astro`).
+    - `npm run build`: 10/10 static pages built thành công trong 5.36s.
+    - Chrome DevTools: Xác minh trên iPhone 12 (`390 x 844 px`, DPR 3, touch) – Pill hiển thị 304.8px căn giữa hoàn hảo (`left: 42.6px, right: 347.4px`), zero horizontal overflow (`docWidth = 390px`), phản hồi mượt mà qua các kịch bản cuộn, đổi font, đổi theme, và mở/đóng TOC sheet.

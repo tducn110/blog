@@ -1,0 +1,13 @@
+# Duc Nguyen Blog (/tducn)
+
+> Personal engineering blog by Duc Nguyen (/tducn) focusing on systems architecture, applied mathematics, and software craftsmanship. Built with Astro 5 static site generation.
+
+## Main Sections
+- [Tech](https://tducn.dev/category/tech)
+- [Engineering](https://tducn.dev/category/engineering)
+- [Mathematics](https://tducn.dev/category/math)
+- [Thoughts](https://tducn.dev/category/thoughts)
+
+## Feeds & Resources
+- [RSS Feed](https://tducn.dev/rss.xml)
+- [Search Index](https://tducn.dev/search.json)

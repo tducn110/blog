@@ -4,8 +4,8 @@ import { NAV_ITEMS } from '../utils/categories';
 import { Search, X } from 'lucide-astro';
 ---
 
-<div id="search-modal" class="hidden fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-20 bg-black/60 backdrop-blur-sm p-4 transition-opacity">
-  <div class="card-surface rounded-2xl max-w-2xl w-full p-4 sm:p-5 space-y-4 shadow-2xl overflow-hidden" id="search-dialog" role="dialog" aria-modal="true" aria-label="Tìm kiếm bài viết">
+<div id="search-modal" class="hidden fixed inset-0 z-50 flex items-start justify-center pt-3 sm:pt-16 bg-black/60 backdrop-blur-sm p-3 sm:p-4 transition-opacity">
+  <div class="card-surface rounded-2xl max-w-2xl w-full p-4 sm:p-5 space-y-4 shadow-2xl overflow-hidden" id="search-dialog" role="dialog" aria-modal="true" aria-label="Search posts">
     
     <!-- Top Search Input Bar -->
     <div class="flex items-center space-x-3 border-b border-subtle pb-3">
@@ -13,20 +13,20 @@ import { Search, X } from 'lucide-astro';
       <input
         type="text"
         id="search-input"
-        placeholder="Tìm bài viết, thuật toán, công thức (gõ không dấu hoặc có dấu)..."
+        placeholder="Search posts, topics, algorithms..."
         class="w-full bg-transparent text-sm sm:text-base focus:outline-none text-slate-900 dark:text-white placeholder:text-slate-400"
         autocomplete="off"
         spellcheck="false"
-        aria-label="Ô tìm kiếm bài viết"
+        aria-label="Search posts"
       />
       <div class="flex items-center space-x-1.5 shrink-0">
-        <button id="search-clear-btn" class="hidden text-xs w-6 h-6 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400 flex items-center justify-center font-bold" title="Xóa nội dung" aria-label="Xóa nội dung">&times;</button>
-        <button id="search-close-btn" class="text-[11px] px-2 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 font-mono hover:bg-slate-200 dark:hover:bg-slate-700" aria-label="Đóng tìm kiếm">ESC</button>
+        <button id="search-clear-btn" class="hidden text-xs w-6 h-6 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400 flex items-center justify-center font-bold" title="Clear input" aria-label="Clear input">&times;</button>
+        <button id="search-close-btn" class="text-[11px] px-2 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 font-mono hover:bg-slate-200 dark:hover:bg-slate-700" aria-label="Close search">ESC</button>
       </div>
     </div>
 
     <!-- Category Filter Chips -->
-    <div class="flex items-center space-x-1.5 overflow-x-auto pb-1 text-xs" id="search-category-filters">
+    <div class="flex items-center space-x-1.5 overflow-x-auto pb-1 text-xs no-scrollbar" id="search-category-filters">
       {NAV_ITEMS.map(cat => (
         <button
           type="button"
@@ -43,19 +43,19 @@ import { Search, X } from 'lucide-astro';
     </div>
 
     <!-- Results Area -->
-    <div id="search-results-list" class="space-y-1.5 max-h-[55vh] overflow-y-auto text-xs pr-1">
+    <div id="search-results-list" class="space-y-1.5 max-h-[46vh] sm:max-h-[55vh] overflow-y-auto text-xs pr-1">
       <!-- Populated dynamically -->
     </div>
 
     <!-- Modal Keyboard Shortcut Footer -->
     <div class="border-t border-subtle pt-3 flex items-center justify-between text-[11px] text-text-muted font-mono">
-      <div class="flex items-center space-x-3">
-        <span class="flex items-center gap-1"><kbd class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-subtle">↑</kbd><kbd class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-subtle">↓</kbd> Di chuyển</span>
-        <span class="flex items-center gap-1"><kbd class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-subtle">↵</kbd> Chọn</span>
-        <span class="flex items-center gap-1"><kbd class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-subtle">esc</kbd> Thoát</span>
+      <div class="hidden sm:flex items-center space-x-3">
+        <span class="flex items-center gap-1"><kbd class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-subtle">↑</kbd><kbd class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-subtle">↓</kbd> Navigate</span>
+        <span class="flex items-center gap-1"><kbd class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-subtle">↵</kbd> Select</span>
+        <span class="flex items-center gap-1"><kbd class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-subtle">esc</kbd> Close</span>
       </div>
-      <div id="search-count-badge" class="font-medium text-slate-500">
-        4 bài viết sẵn sàng
+      <div id="search-count-badge" class="font-medium text-slate-500 w-full sm:w-auto text-center sm:text-right">
+        4 posts
       </div>
     </div>
 
@@ -79,14 +79,16 @@ import { Search, X } from 'lucide-astro';
   let activeItemIndex = -1;
   let currentResults: ScoredSearchResult[] = [];
 
-  // Open / Close modal
+  // Open / Close modal with background scroll lock
   function toggleSearch(show: boolean) {
     if (!searchModal) return;
     if (show) {
+      document.body.style.overflow = 'hidden';
       searchModal.classList.remove('hidden');
       setTimeout(() => searchInput?.focus(), 50);
       loadSearchData();
     } else {
+      document.body.style.overflow = '';
       searchModal.classList.add('hidden');
       if (searchInput) searchInput.value = '';
       if (searchClear) searchClear.classList.add('hidden');
@@ -102,7 +104,7 @@ import { Search, X } from 'lucide-astro';
     try {
       const res = await fetch('/search.json');
       postsData = await res.json();
-      if (countBadge) countBadge.textContent = `${postsData.length} bài viết sẵn sàng`;
+      if (countBadge) countBadge.textContent = `${postsData.length} posts`;
       if (!searchInput?.value.trim()) renderDefaultState();
     } catch (e) {
       console.warn('Could not load search index', e);
@@ -114,12 +116,12 @@ import { Search, X } from 'lucide-astro';
   // Render initial suggestions when input is empty
   function renderDefaultState() {
     if (!resultsContainer) return;
-    const popularTags = ['Cache Invalidation', 'Zipf', 'Biến đổi Fourier', 'Content Collections', 'Tĩnh lặng'];
+    const popularTags = ['Cache Invalidation', 'Zipf Law', 'Fourier Transform', 'Content Collections', 'Architecture'];
 
     resultsContainer.innerHTML = `
       <div class="p-4 space-y-4">
         <div>
-          <div class="text-[11px] font-bold text-text-muted uppercase tracking-wider mb-2">Gợi ý tìm kiếm phổ biến</div>
+          <div class="text-[11px] font-bold text-text-muted uppercase tracking-wider mb-2">Suggested Topics</div>
           <div class="flex flex-wrap gap-1.5">
             ${popularTags.map(tag => `
               <button type="button" class="quick-tag px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-accent-primary dark:hover:text-accent-primaryDark hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
@@ -130,7 +132,7 @@ import { Search, X } from 'lucide-astro';
         </div>
 
         <div>
-          <div class="text-[11px] font-bold text-text-muted uppercase tracking-wider mb-2">Toàn bộ tuyển tập gần đây</div>
+          <div class="text-[11px] font-bold text-text-muted uppercase tracking-wider mb-2">Recent Posts</div>
           <div class="space-y-1">
             ${postsData.slice(0, 3).map(p => `
               <a href="/posts/${p.slug}" class="block p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group">
@@ -155,7 +157,7 @@ import { Search, X } from 'lucide-astro';
       });
     });
 
-    if (countBadge) countBadge.textContent = `${postsData.length} bài viết sẵn sàng`;
+    if (countBadge) countBadge.textContent = `${postsData.length} posts`;
     activeItemIndex = -1;
   }
 
@@ -184,17 +186,17 @@ import { Search, X } from 'lucide-astro';
       resultsContainer.innerHTML = `
         <div class="p-8 text-center space-y-2">
           <div class="text-2xl">🔍</div>
-          <div class="font-semibold text-slate-900 dark:text-white">Không tìm thấy bài viết phù hợp</div>
+          <div class="font-semibold text-slate-900 dark:text-white">No posts found</div>
           <div class="text-xs text-text-muted max-w-sm mx-auto">
-            Không có kết quả nào cho "${query}". Hãy thử gõ không dấu hoặc chọn chuyên mục khác.
+            No results matching "${query}". Try searching with different keywords.
           </div>
         </div>
       `;
-      if (countBadge) countBadge.textContent = '0 kết quả';
+      if (countBadge) countBadge.textContent = '0 results';
       return;
     }
 
-    if (countBadge) countBadge.textContent = `${results.length} bài viết phù hợp`;
+    if (countBadge) countBadge.textContent = `${results.length} ${results.length === 1 ? 'post' : 'posts'}`;
 
     resultsContainer.innerHTML = results.map((res, index) => {
       const isSelected = index === activeItemIndex;
@@ -210,7 +212,7 @@ import { Search, X } from 'lucide-astro';
         >
           <div class="flex items-center justify-between text-[11px] mb-1">
             <span class="font-mono uppercase font-semibold text-accent-primary dark:text-accent-primaryDark">${res.item.category}</span>
-            ${res.score >= 100 ? '<span class="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 font-mono">Khớp cao</span>' : ''}
+            ${res.score >= 100 ? '<span class="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 font-mono">Best match</span>' : ''}
           </div>
           <div class="font-medium text-slate-900 dark:text-slate-100 group-hover:text-accent-primary dark:group-hover:text-accent-primaryDark transition-colors leading-snug">
             ${res.highlightedTitle}
@@ -313,6 +315,30 @@ import { Search, X } from 'lucide-astro';
   searchClose?.addEventListener('click', () => toggleSearch(false));
   searchModal?.addEventListener('click', (e) => {
     if (e.target === searchModal) toggleSearch(false);
+  });
+
+  // Modal Focus Trap (WCAG 2.1)
+  searchModal?.addEventListener('keydown', (e) => {
+    if (e.key === 'Tab') {
+      const focusables = Array.from(
+        searchModal.querySelectorAll<HTMLElement>('input, button:not([disabled]), a[href]')
+      ).filter(el => el.offsetParent !== null);
+      if (focusables.length === 0) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  });
+
+  // Support both window function and data-open-search attribute
+  document.querySelectorAll('[data-open-search]').forEach(el => {
+    el.addEventListener('click', () => toggleSearch(true));
   });
 
   // Global export

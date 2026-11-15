@@ -12,7 +12,7 @@ const { title } = Astro.props;
 <div class="pt-6 border-t border-subtle flex flex-col sm:flex-row items-center justify-between gap-4">
   <div class="text-xs text-text-muted flex items-center gap-2">
     <Share2 class="w-3.5 h-3.5 text-accent-primary dark:text-accent-primaryDark" />
-    <span>Chia sẻ bài viết này:</span>
+    <span>Share this post:</span>
   </div>
 
   <div class="flex items-center space-x-2">
@@ -20,46 +20,49 @@ const { title } = Astro.props;
     <button
       id="copy-btn"
       class="btn-control space-x-1.5"
-      aria-label="Sao chép liên kết bài viết"
-      title="Sao chép liên kết"
+      aria-label="Copy post link"
+      title="Copy link"
     >
       <Copy class="w-3.5 h-3.5 copy-icon" />
       <Check class="w-3.5 h-3.5 check-icon hidden text-emerald-500" />
-      <span id="copy-text">Sao chép liên kết</span>
+      <span id="copy-text">Copy link</span>
     </button>
 
     <!-- X / Twitter -->
     <a
+      id="twitter-share"
       href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}`}
       target="_blank"
       rel="noopener noreferrer"
       class="btn-icon"
-      title="Chia sẻ lên X"
-      aria-label="Chia sẻ lên X"
+      title="Share on X"
+      aria-label="Share on X"
     >
       <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
     </a>
 
     <!-- Facebook -->
     <a
+      id="facebook-share"
       href="https://www.facebook.com/sharer/sharer.php"
       target="_blank"
       rel="noopener noreferrer"
       class="btn-icon"
-      title="Chia sẻ lên Facebook"
-      aria-label="Chia sẻ lên Facebook"
+      title="Share on Facebook"
+      aria-label="Share on Facebook"
     >
       <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
     </a>
 
     <!-- LinkedIn -->
     <a
+      id="linkedin-share"
       href="https://www.linkedin.com/sharing/share-offsite/"
       target="_blank"
       rel="noopener noreferrer"
       class="btn-icon"
-      title="Chia sẻ lên LinkedIn"
-      aria-label="Chia sẻ lên LinkedIn"
+      title="Share on LinkedIn"
+      aria-label="Share on LinkedIn"
     >
       <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
     </a>
@@ -71,8 +74,8 @@ const { title } = Astro.props;
       target="_blank"
       rel="noopener noreferrer"
       class="btn-icon"
-      title="Chia sẻ lên Telegram"
-      aria-label="Chia sẻ lên Telegram"
+      title="Share on Telegram"
+      aria-label="Share on Telegram"
     >
       <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
     </a>
@@ -84,29 +87,74 @@ const { title } = Astro.props;
   const copyText = document.getElementById('copy-text');
   const copyIcon = copyBtn?.querySelector('.copy-icon');
   const checkIcon = copyBtn?.querySelector('.check-icon');
-  const tgLink = document.getElementById('telegram-share') as HTMLAnchorElement | null;
 
+  const pageUrl = encodeURIComponent(window.location.href);
+  const pageTitle = encodeURIComponent(document.title);
+
+  const twitterLink = document.getElementById('twitter-share') as HTMLAnchorElement | null;
+  if (twitterLink) {
+    twitterLink.href = `https://twitter.com/intent/tweet?text=${pageTitle}&url=${pageUrl}`;
+  }
+
+  const fbLink = document.getElementById('facebook-share') as HTMLAnchorElement | null;
+  if (fbLink) {
+    fbLink.href = `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
+  }
+
+  const linkedinLink = document.getElementById('linkedin-share') as HTMLAnchorElement | null;
+  if (linkedinLink) {
+    linkedinLink.href = `https://www.linkedin.com/sharing/share-offsite/?url=${pageUrl}`;
+  }
+
+  const tgLink = document.getElementById('telegram-share') as HTMLAnchorElement | null;
   if (tgLink) {
-    tgLink.href = `https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(document.title)}`;
+    tgLink.href = `https://t.me/share/url?url=${pageUrl}&text=${pageTitle}`;
+  }
+
+  async function copyTextToClipboard(str: string): Promise<boolean> {
+    if (navigator.clipboard && window.isSecureContext) {
+      try {
+        await navigator.clipboard.writeText(str);
+        return true;
+      } catch (err) {
+        // Fallback
+      }
+    }
+    const textArea = document.createElement('textarea');
+    textArea.value = str;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      const successful = document.execCommand('copy');
+      textArea.remove();
+      return successful;
+    } catch (err) {
+      textArea.remove();
+      return false;
+    }
   }
 
   if (copyBtn && copyText) {
     copyBtn.addEventListener('click', async () => {
-      try {
-        await navigator.clipboard.writeText(window.location.href);
-        copyText.innerText = 'Đã sao chép liên kết!';
+      const success = await copyTextToClipboard(window.location.href);
+      if (success) {
+        copyText.innerText = 'Link copied!';
         copyIcon?.classList.add('hidden');
         checkIcon?.classList.remove('hidden');
         copyBtn.classList.add('border-emerald-500/50', 'text-emerald-600', 'dark:text-emerald-400');
 
         setTimeout(() => {
-          copyText.innerText = 'Sao chép liên kết';
+          copyText.innerText = 'Copy link';
           copyIcon?.classList.remove('hidden');
           checkIcon?.classList.add('hidden');
           copyBtn.classList.remove('border-emerald-500/50', 'text-emerald-600', 'dark:text-emerald-400');
         }, 2200);
-      } catch (e) {
-        copyText.innerText = 'Lỗi sao chép';
+      } else {
+        copyText.innerText = 'Failed to copy';
       }
     });
   }

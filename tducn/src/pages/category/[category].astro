@@ -6,6 +6,7 @@ import PostCard from '../../components/PostCard.astro';
 import CategoryPills from '../../components/CategoryPills.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import { CATEGORIES, CATEGORY_KEYS, type CategoryKey } from '../../utils/categories';
+import { getReadingTime } from '../../utils/readingTime';
 import { Terminal, Workflow, Sigma, Feather } from 'lucide-astro';
 
 export async function getStaticPaths() {
@@ -38,14 +39,14 @@ const sortedPosts = allPosts.sort((a, b) => b.data.publishDate.valueOf() - a.dat
   <div class="space-y-8">
     
     <!-- Header Banner (Refactored to .card-surface) -->
-    <section class="card-surface p-6 sm:p-8 rounded-3xl space-y-4 shadow-sm relative overflow-hidden">
+    <section class="card-surface p-5 sm:p-8 rounded-2xl sm:rounded-3xl space-y-4 shadow-sm relative overflow-hidden">
       <div class="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-accent-primary/5 dark:bg-accent-primaryDark/10 blur-3xl pointer-events-none"></div>
 
       <Breadcrumbs
         items={[
           { label: 'Home', href: '/' },
-          { label: 'Chuyên mục' },
-          { label: currentMeta.label.toUpperCase() }
+          { label: 'Topics' },
+          { label: currentMeta.label }
         ]}
       />
 
@@ -65,7 +66,7 @@ const sortedPosts = allPosts.sort((a, b) => b.data.publishDate.valueOf() - a.dat
 
       <div class="pt-1 text-xs text-text-muted font-mono flex items-center gap-2">
         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span>Tuyển tập {sortedPosts.length} bài viết chuyên sâu</span>
+        <span>{sortedPosts.length} {sortedPosts.length === 1 ? 'post' : 'posts'} in this topic</span>
       </div>
     </section>
 
@@ -84,6 +85,7 @@ const sortedPosts = allPosts.sort((a, b) => b.data.publishDate.valueOf() - a.dat
             slug={post.slug}
             category={post.data.category}
             publishDate={post.data.publishDate}
+            readingTime={getReadingTime(post.body)}
             tags={post.data.tags}
           />
         ))}
@@ -91,9 +93,9 @@ const sortedPosts = allPosts.sort((a, b) => b.data.publishDate.valueOf() - a.dat
 
       <!-- Aside Sidebar (4 cols) with Active Category Highlight (Refactored to .card-surface) -->
       <aside class="md:col-span-4 space-y-6">
-        <div class="card-surface p-6 sm:p-8 space-y-4 text-xs shadow-sm sticky top-24">
+        <div class="card-surface p-5 sm:p-8 rounded-2xl space-y-4 text-xs shadow-sm sticky top-24">
           <div class="font-bold text-sm text-slate-900 dark:text-white border-b border-subtle pb-3">
-            Khám phá các chuyên mục
+            Topics
           </div>
           <div class="space-y-2">
             {Object.entries(CATEGORIES).map(([catKey, meta]) => {

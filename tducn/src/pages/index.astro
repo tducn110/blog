@@ -5,6 +5,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
 import CategoryPills from '../components/CategoryPills.astro';
 import { CATEGORIES } from '../utils/categories';
+import { getReadingTime } from '../utils/readingTime';
 
 const allPosts = await getCollection('posts', ({ data }) => !data.draft);
 const sortedPosts = allPosts.sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
@@ -13,22 +14,22 @@ const featuredPost = sortedPosts.find(p => p.data.featured) || sortedPosts[0];
 const recentPosts = sortedPosts.filter(p => p.slug !== featuredPost?.slug);
 ---
 
-<BaseLayout title="Trang chủ & Bài viết">
+<BaseLayout title="Home">
   <div class="space-y-8">
     
     <!-- Hero Statement Banner (4*x Spacing: p-8 = 32px) -->
-    <section class="card-surface p-6 sm:p-8 rounded-3xl space-y-3 shadow-sm relative overflow-hidden">
+    <section class="card-surface p-5 sm:p-8 rounded-2xl sm:rounded-3xl space-y-3 shadow-sm relative overflow-hidden">
       <div class="absolute -top-16 -right-16 w-56 h-56 rounded-full bg-accent-primary/5 dark:bg-accent-primaryDark/10 blur-3xl pointer-events-none"></div>
 
       <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800/80 border border-subtle text-xs text-text-muted font-medium">
         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span>Ghi chép & Khảo cứu độc lập</span>
+        <span>Engineering Notes</span>
       </div>
       <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white leading-snug">
-        Kiến trúc Hệ thống, Toán học Ứng dụng & Suy tưởng
+        Systems, Math & Software Engineering
       </h1>
       <p class="text-sm text-text-muted max-w-2xl leading-relaxed">
-        Không gian độc lập để chia sẻ những gì tôi quan tâm: từ bài toán tối ưu độ trễ biên mạng, thuật toán xử lý tín hiệu cho tới những bài tản văn chiêm nghiệm cuộc sống.
+        Personal engineering notes by Duc Nguyen on distributed systems, applied algorithms, performance optimization, and practical software design.
       </p>
     </section>
 
@@ -49,6 +50,7 @@ const recentPosts = sortedPosts.filter(p => p.slug !== featuredPost?.slug);
             slug={featuredPost.slug}
             category={featuredPost.data.category}
             publishDate={featuredPost.data.publishDate}
+            readingTime={getReadingTime(featuredPost.body)}
             tags={featuredPost.data.tags}
             featured={true}
           />
@@ -57,7 +59,7 @@ const recentPosts = sortedPosts.filter(p => p.slug !== featuredPost?.slug);
         <!-- Recent Posts List (Refactored to PostCard) -->
         <div class="space-y-4">
           <div class="text-xs font-bold uppercase tracking-wider text-text-muted pt-2">
-            Bài viết gần đây
+            Recent Posts
           </div>
 
           {recentPosts.map(post => (
@@ -67,6 +69,7 @@ const recentPosts = sortedPosts.filter(p => p.slug !== featuredPost?.slug);
               slug={post.slug}
               category={post.data.category}
               publishDate={post.data.publishDate}
+              readingTime={getReadingTime(post.body)}
               tags={post.data.tags}
             />
           ))}
@@ -78,25 +81,25 @@ const recentPosts = sortedPosts.filter(p => p.slug !== featuredPost?.slug);
       <aside class="md:col-span-4 space-y-6">
         
         <!-- Author Profile Card (Refactored to .card-surface) -->
-        <div class="card-surface p-6 sm:p-7 space-y-3 shadow-sm text-xs">
+        <div class="card-surface p-5 sm:p-7 space-y-3 rounded-2xl shadow-sm text-xs">
           <div class="flex items-center space-x-3">
             <div class="w-10 h-10 rounded-full bg-accent-primary flex items-center justify-center text-white font-bold text-sm shadow">
-              CN
+              DN
             </div>
             <div>
-              <div class="font-bold text-sm text-slate-900 dark:text-white">Chi Nguyen</div>
-              <div class="text-text-muted font-mono text-[11px]">Systems & Applied Math</div>
+              <div class="font-bold text-sm text-slate-900 dark:text-white">Duc Nguyen</div>
+              <div class="text-text-muted font-mono text-[11px]">Software Engineer &bull; /tducn</div>
             </div>
           </div>
           <p class="text-text-muted leading-relaxed">
-            Viết về kiến trúc phân tán, biến đổi tín hiệu rời rạc và những bài học rút ra trong quá trình thiết kế hệ thống thực chiến.
+            Writing about distributed architectures, applied mathematics, and software design. Documenting systems and lessons learned along the way.
           </p>
         </div>
 
         <!-- Category Directory Card (Refactored to .card-surface) -->
-        <div class="card-surface p-6 sm:p-7 space-y-3 shadow-sm text-xs">
+        <div class="card-surface p-5 sm:p-7 space-y-3 rounded-2xl shadow-sm text-xs">
           <div class="font-bold text-slate-900 dark:text-white text-sm border-b border-subtle pb-2">
-            Chuyên mục khảo cứu
+            Topics
           </div>
           <div class="space-y-2">
             {Object.entries(CATEGORIES).map(([key, info]) => {

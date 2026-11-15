@@ -25,7 +25,7 @@ describe('Categories Taxonomy & Data API Contract', () => {
 
   it('should have valid navigation items mapping correctly to routes', () => {
     expect(NAV_ITEMS.length).toBe(5); // 'all' + 4 categories
-    expect(NAV_ITEMS[0]).toEqual({ slug: 'all', label: 'Tất cả', href: '/' });
+    expect(NAV_ITEMS[0]).toEqual({ slug: 'all', label: 'All', href: '/' });
 
     for (let i = 1; i < NAV_ITEMS.length; i++) {
       const item = NAV_ITEMS[i];

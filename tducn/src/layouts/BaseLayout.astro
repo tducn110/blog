@@ -14,7 +14,7 @@ interface Props {
 
 const {
   title,
-  description = 'Blog cá nhân chia sẻ kiến trúc hệ thống, toán học ứng dụng và suy tưởng thường nhật.',
+  description = 'Personal engineering notes on systems, mathematics, and software development by Duc Nguyen (/tducn).',
   ogType = 'website'
 } = Astro.props;
 
@@ -22,11 +22,11 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://tducn.de
 ---
 
 <!DOCTYPE html>
-<html lang="vi" class="dark">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{title} | Chi Nguyen</title>
+  <title>{title} | Duc Nguyen</title>
   <meta name="description" content={description}>
   <link rel="canonical" href={canonicalURL}>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -52,11 +52,11 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://tducn.de
   
   <!-- Accessible Skip to Content Link (WCAG 2.4.1) -->
   <a href="#main-content" class="skip-to-content">
-    Nhảy tới nội dung chính
+    Skip to main content
   </a>
 
   <!-- Top Sticky Reading Progress Bar -->
-  <div id="reading-progress-bar" role="progressbar" aria-label="Tiến độ đọc bài viết" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+  <div id="reading-progress-bar" role="progressbar" aria-label="Reading progress" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
 
   <Header />
 
@@ -71,8 +71,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://tducn.de
   <button
     id="back-to-top"
     class="back-to-top-btn btn-icon bg-[var(--surface-card)] shadow-lg hover:border-accent-primary"
-    aria-label="Cuộn lên đầu trang"
-    title="Cuộn lên đầu trang"
+    aria-label="Scroll to top"
+    title="Scroll to top"
   >
     <ArrowUp class="w-4 h-4 text-slate-700 dark:text-slate-300" />
   </button>
