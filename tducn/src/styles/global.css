@@ -1244,3 +1244,17 @@ mark.hl-zoom {
   border-radius: 0 0.5rem 0.5rem 0;
   font-size: 0.88rem;
 }
+
+/* ========================================================
+   OFFSCREEN PERFORMANCE & THERMAL OPTIMIZATION (Mobile FPS)
+   Bỏ qua layout & rendering các khối nặng ngoài viewport
+   ======================================================== */
+.mcq-card,
+.mermaid-interactive-wrapper,
+.prose > div[class*="callout-"],
+.prose > table,
+.prose > pre {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 300px;
+}
+

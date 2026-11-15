@@ -9,7 +9,13 @@ export default defineConfig({
   integrations: [tailwind()],
   markdown: {
     remarkPlugins: [remarkMath],
-    rehypePlugins: [rehypeKatex],
+    rehypePlugins: [
+      [rehypeKatex, {
+        output: 'html',
+        strict: false,
+        throwOnError: false
+      }]
+    ],
     shikiConfig: {
       theme: 'github-dark-dimmed',
       wrap: true
