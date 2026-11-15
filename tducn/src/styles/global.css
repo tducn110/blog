@@ -744,3 +744,509 @@ mark {
     -webkit-tap-highlight-color: transparent;
   }
 }
+
+
+/* ==============================================================================
+   INTERACTIVE MERMAID DIAGRAM VIEWER (Zoom, Pan, Rotate, Reset, Fullscreen)
+   ============================================================================== */
+.mermaid-interactive-wrapper {
+  position: relative;
+  margin: 2.5rem 0;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.dark .mermaid-interactive-wrapper {
+  box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.35);
+}
+
+.mermaid-interactive-wrapper.is-fullscreen {
+  position: fixed !important;
+  inset: 1rem !important;
+  z-index: 9999 !important;
+  margin: 0 !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+  background: var(--surface-card) !important;
+}
+
+.mermaid-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  background: rgba(241, 245, 249, 0.75);
+  border-bottom: 1px solid var(--border-subtle);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+}
+
+.dark .mermaid-toolbar {
+  background: rgba(30, 41, 59, 0.7);
+}
+
+.mermaid-toolbar-title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.mermaid-toolbar-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.mermaid-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.85rem;
+  height: 1.85rem;
+  border-radius: 0.375rem;
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-card);
+  color: var(--text-main);
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.15s ease;
+}
+
+.mermaid-btn:hover {
+  background: var(--accent-color);
+  color: #ffffff;
+  border-color: var(--accent-color);
+  transform: translateY(-1px);
+}
+
+.mermaid-status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  background: rgba(148, 163, 184, 0.2);
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.mermaid-viewport {
+  position: relative;
+  width: 100%;
+  height: 380px;
+  overflow: hidden;
+  cursor: grab;
+  user-select: none;
+  background-image: radial-gradient(rgba(148, 163, 184, 0.12) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+.mermaid-viewport:active {
+  cursor: grabbing;
+}
+
+.mermaid-interactive-wrapper.is-fullscreen .mermaid-viewport {
+  height: calc(100vh - 5rem) !important;
+}
+
+.mermaid-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center center;
+  transition: transform 0.05s linear;
+}
+
+.mermaid-canvas svg {
+  display: block;
+  max-width: 90%;
+  max-height: 90%;
+  height: auto;
+}
+
+/* ==============================================================================
+   FOCUS KEYS & COGNITIVE ANCHOR BADGES
+   ============================================================================== */
+.focus-key-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.75rem;
+  margin: 0.75rem 0 0.5rem 0;
+  border-radius: 9999px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(168, 85, 247, 0.12));
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  color: #4f46e5;
+  box-shadow: 0 1px 3px rgba(99, 102, 241, 0.1);
+}
+
+.dark .focus-key-pill {
+  background: linear-gradient(135deg, rgba(129, 140, 248, 0.18), rgba(192, 132, 252, 0.18));
+  border-color: rgba(129, 140, 248, 0.5);
+  color: #a5b4fc;
+  box-shadow: 0 0 12px rgba(129, 140, 248, 0.15);
+}
+
+/* ==============================================================================
+   READER TEXT SELECTION (::selection)
+   ============================================================================== */
+::selection {
+  background-color: #4f46e5;
+  color: #ffffff;
+  text-shadow: none;
+}
+
+::-moz-selection {
+  background-color: #4f46e5;
+  color: #ffffff;
+  text-shadow: none;
+}
+
+.dark ::selection {
+  background-color: #818cf8;
+  color: #0f172a;
+  text-shadow: none;
+}
+
+.dark ::-moz-selection {
+  background-color: #818cf8;
+  color: #0f172a;
+  text-shadow: none;
+}
+
+/* ==============================================================================
+   RICH ACADEMIC HIGHLIGHTS (Word Color + Bold + Background + Underline + Italic + Zoom)
+   ============================================================================== */
+
+/* 1. Primary Focus Highlight: Vàng hổ phách rực rỡ, chữ sẫm, in đậm, in nghiêng, gạch chân, phóng to nhẹ */
+.hl-focus,
+mark.hl-focus {
+  display: inline-block;
+  background: linear-gradient(120deg, rgba(254, 240, 138, 0.75) 0%, rgba(253, 224, 71, 0.8) 100%);
+  color: #854d0e !important;
+  font-weight: 700 !important;
+  font-style: italic !important;
+  font-size: 1.035em !important;
+  padding: 0.12rem 0.45rem;
+  margin: 0 0.1rem;
+  border-radius: 0.375rem;
+  text-decoration: underline !important;
+  text-decoration-color: #ca8a04 !important;
+  text-underline-offset: 3px !important;
+  text-decoration-thickness: 1.5px !important;
+  box-shadow: 0 1px 3px rgba(234, 179, 8, 0.2);
+  transform-origin: center center;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s ease;
+  cursor: text;
+}
+
+.dark .hl-focus,
+.dark mark.hl-focus {
+  background: rgba(234, 179, 8, 0.28);
+  color: #fef08a !important;
+  text-decoration-color: #facc15 !important;
+  box-shadow: 0 0 10px rgba(234, 179, 8, 0.25);
+}
+
+.hl-focus:hover,
+mark.hl-focus:hover {
+  transform: scale(1.07) translateY(-1px);
+  box-shadow: 0 4px 14px rgba(234, 179, 8, 0.35);
+}
+
+/* 2. Warning / Fallacy Highlight: Đỏ ruby cảnh báo, in đậm, in nghiêng, gạch chân lượn sóng, phóng to nhẹ */
+.hl-warn,
+mark.hl-warn {
+  display: inline-block;
+  background: linear-gradient(120deg, rgba(254, 202, 202, 0.75) 0%, rgba(252, 165, 165, 0.8) 100%);
+  color: #991b1b !important;
+  font-weight: 700 !important;
+  font-style: italic !important;
+  font-size: 1.035em !important;
+  padding: 0.12rem 0.45rem;
+  margin: 0 0.1rem;
+  border-radius: 0.375rem;
+  text-decoration: underline wavy #ef4444 !important;
+  text-underline-offset: 3px !important;
+  box-shadow: 0 1px 3px rgba(239, 68, 68, 0.2);
+  transform-origin: center center;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s ease;
+  cursor: text;
+}
+
+.dark .hl-warn,
+.dark mark.hl-warn {
+  background: rgba(239, 68, 68, 0.28);
+  color: #fca5a5 !important;
+  text-decoration-color: #f87171 !important;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.25);
+}
+
+.hl-warn:hover,
+mark.hl-warn:hover {
+  transform: scale(1.07) translateY(-1px);
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);
+}
+
+/* 3. Key Concept Highlight: Xanh tím indigo học thuật, in đậm, in nghiêng, viền gạch chân nét đứt */
+.hl-key,
+mark.hl-key {
+  display: inline-block;
+  background: linear-gradient(120deg, rgba(224, 231, 255, 0.75) 0%, rgba(199, 210, 254, 0.8) 100%);
+  color: #3730a3 !important;
+  font-weight: 700 !important;
+  font-style: italic !important;
+  font-size: 1.035em !important;
+  padding: 0.12rem 0.45rem;
+  margin: 0 0.1rem;
+  border-radius: 0.375rem;
+  border-bottom: 2px dashed #6366f1;
+  box-shadow: 0 1px 3px rgba(99, 102, 241, 0.2);
+  transform-origin: center center;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s ease;
+  cursor: text;
+}
+
+.dark .hl-key,
+.dark mark.hl-key {
+  background: rgba(99, 102, 241, 0.25);
+  color: #c7d2fe !important;
+  border-bottom-color: #818cf8;
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.25);
+}
+
+.hl-key:hover,
+mark.hl-key:hover {
+  transform: scale(1.07) translateY(-1px);
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+}
+
+/* 4. Extreme Zoom / Pop Highlight: Phóng to kích thước vượt trội, chữ nổi */
+.hl-zoom,
+mark.hl-zoom {
+  display: inline-block;
+  background: linear-gradient(120deg, rgba(224, 242, 254, 0.8) 0%, rgba(186, 230, 253, 0.85) 100%);
+  color: #0369a1 !important;
+  font-weight: 800 !important;
+  font-style: italic !important;
+  font-size: 1.08em !important;
+  padding: 0.15rem 0.55rem;
+  margin: 0 0.15rem;
+  border-radius: 0.4rem;
+  border: 1px solid rgba(2, 132, 199, 0.35);
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.2);
+  transform-origin: center center;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s ease;
+  cursor: text;
+}
+
+.dark .hl-zoom,
+.dark mark.hl-zoom {
+  background: rgba(2, 132, 199, 0.25);
+  color: #7dd3fc !important;
+  border-color: rgba(56, 189, 248, 0.4);
+  box-shadow: 0 0 12px rgba(2, 132, 199, 0.25);
+}
+
+.hl-zoom:hover,
+mark.hl-zoom:hover {
+  transform: scale(1.12) translateY(-2px);
+  box-shadow: 0 6px 18px rgba(2, 132, 199, 0.4);
+}
+
+/* Floating Reader Selection Highlighter Toolbar */
+.reader-highlight-toolbar {
+  position: absolute;
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.3rem 0.45rem;
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.6rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+  transform: translate(-50%, -100%) translateY(-10px);
+  pointer-events: auto;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.reader-highlight-toolbar.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -100%) translateY(-2px);
+}
+
+.hl-tool-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.6rem;
+  min-width: 1.6rem;
+  padding: 0 0.35rem;
+  border-radius: 0.375rem;
+  border: none;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.hl-tool-btn:hover {
+  transform: scale(1.1);
+}
+
+.btn-hl-yellow {
+  background: #fde047;
+  color: #854d0e;
+}
+.btn-hl-red {
+  background: #fca5a5;
+  color: #991b1b;
+}
+.btn-hl-blue {
+  background: #c7d2fe;
+  color: #3730a3;
+}
+.btn-hl-note {
+  background: #334155;
+  color: #f8fafc;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+}
+.btn-hl-note:hover {
+  background: #475569;
+}
+
+/* Callout Cards */
+.callout-anchor {
+  margin: 1.5rem 0;
+  padding: 1.25rem 1.5rem;
+  border-left: 4px solid #6366f1;
+  background: rgba(99, 102, 241, 0.06);
+  border-radius: 0 0.75rem 0.75rem 0;
+}
+.dark .callout-anchor {
+  background: rgba(99, 102, 241, 0.12);
+  border-left-color: #818cf8;
+}
+
+.callout-trap {
+  margin: 1.5rem 0;
+  padding: 1.25rem 1.5rem;
+  border-left: 4px solid #ef4444;
+  background: rgba(239, 68, 68, 0.06);
+  border-radius: 0 0.75rem 0.75rem 0;
+}
+.dark .callout-trap {
+  background: rgba(239, 68, 68, 0.12);
+  border-left-color: #f87171;
+}
+
+.callout-intuition {
+  margin: 1.5rem 0;
+  padding: 1.25rem 1.5rem;
+  border-left: 4px solid #10b981;
+  background: rgba(16, 185, 129, 0.06);
+  border-radius: 0 0.75rem 0.75rem 0;
+}
+.dark .callout-intuition {
+  background: rgba(16, 185, 129, 0.12);
+  border-left-color: #34d399;
+}
+
+.callout-recap {
+  margin: 1.5rem 0;
+  padding: 1.25rem 1.5rem;
+  border-left: 4px solid #f59e0b;
+  background: rgba(245, 158, 11, 0.06);
+  border-radius: 0 0.75rem 0.75rem 0;
+}
+.dark .callout-recap {
+  background: rgba(245, 158, 11, 0.12);
+  border-left-color: #fbbf24;
+}
+
+/* MCQ Interactive Details Styling */
+.mcq-card {
+  margin: 1.75rem 0;
+  padding: 1.25rem;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.85rem;
+  box-shadow: 0 2px 12px -2px rgba(0, 0, 0, 0.05);
+}
+
+.mcq-question {
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 0.85rem;
+}
+
+.mcq-options {
+  list-style-type: none !important;
+  padding-left: 0 !important;
+  margin: 0.5rem 0 !important;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.mcq-options li {
+  padding: 0.5rem 0.75rem;
+  background: rgba(148, 163, 184, 0.08);
+  border-radius: 0.5rem;
+  border: 1px solid transparent;
+  font-size: 0.92rem;
+}
+
+.mcq-details {
+  margin-top: 0.85rem;
+  border-top: 1px dashed var(--border-subtle);
+  padding-top: 0.75rem;
+}
+
+.mcq-summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.82rem;
+  color: #6366f1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  user-select: none;
+}
+.dark .mcq-summary {
+  color: #a5b4fc;
+}
+.mcq-summary:hover {
+  text-decoration: underline;
+}
+
+.mcq-explanation {
+  margin-top: 0.6rem;
+  padding: 0.75rem 1rem;
+  background: rgba(16, 185, 129, 0.08);
+  border-left: 3px solid #10b981;
+  border-radius: 0 0.5rem 0.5rem 0;
+  font-size: 0.88rem;
+}

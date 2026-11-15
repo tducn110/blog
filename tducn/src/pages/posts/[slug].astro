@@ -243,7 +243,7 @@ const defaultFontClass = fontClassMap[post.data.recommendedFont || 'sans'];
         });
       });
 
-      // Mermaid Diagrams with Theme Reactivity
+      // Mermaid Diagrams with Interactive Controls & Theme Reactivity
       let mermaidInstance = null;
       const mermaidContainers = [];
 
@@ -273,22 +273,160 @@ const defaultFontClass = fontClassMap[post.data.recommendedFont || 'sans'];
               try {
                 const id = `mermaid-svg-${Date.now()}-${i}`;
                 const { svg } = await mermaidInstance.render(id, item.rawCode);
-                item.container.innerHTML = svg;
+                item.canvas.innerHTML = svg;
               } catch (err) {
                 console.warn('Mermaid re-render failed:', err);
               }
             }
           }
 
-          // Initial Render
+          // Initial Render & Interactive Workstation Setup
           mermaidBlocks.forEach(async (el, idx) => {
             const rawCode = el.textContent || '';
             const parent = el.closest('pre') || el;
-            const container = document.createElement('div');
-            container.className = 'mermaid-rendered';
-            parent.replaceWith(container);
+            
+            // Build interactive wrapper
+            const wrapper = document.createElement('div');
+            wrapper.className = 'mermaid-interactive-wrapper';
 
-            const record = { container, rawCode };
+            const toolbar = document.createElement('div');
+            toolbar.className = 'mermaid-toolbar';
+            toolbar.innerHTML = `
+              <div class="mermaid-toolbar-title">
+                <span>Diagram View</span>
+                <span class="mermaid-status-badge zoom-badge">100%</span>
+                <span class="mermaid-status-badge rot-badge">0°</span>
+              </div>
+              <div class="mermaid-toolbar-controls">
+                <button type="button" class="mermaid-btn btn-zoom-in" title="Zoom In (+)">+</button>
+                <button type="button" class="mermaid-btn btn-zoom-out" title="Zoom Out (−)">−</button>
+                <button type="button" class="mermaid-btn btn-rot-left" title="Rotate Left 90°">↶</button>
+                <button type="button" class="mermaid-btn btn-rot-right" title="Rotate Right 90°">↷</button>
+                <button type="button" class="mermaid-btn btn-reset" title="Reset View">1:1</button>
+                <button type="button" class="mermaid-btn btn-fullscreen" title="Toggle Fullscreen">Max</button>
+              </div>
+            `;
+
+            const viewport = document.createElement('div');
+            viewport.className = 'mermaid-viewport';
+
+            const canvas = document.createElement('div');
+            canvas.className = 'mermaid-canvas';
+
+            viewport.appendChild(canvas);
+            wrapper.appendChild(toolbar);
+            wrapper.appendChild(viewport);
+            parent.replaceWith(wrapper);
+
+            // Pan, Zoom, Rotate state management
+            let scale = 1.0;
+            let posX = 0;
+            let posY = 0;
+            let rotation = 0;
+            let isDragging = false;
+            let startX = 0;
+            let startY = 0;
+
+            const zoomBadge = toolbar.querySelector('.zoom-badge');
+            const rotBadge = toolbar.querySelector('.rot-badge');
+
+            function updateTransform() {
+              canvas.style.transform = `translate(${posX}px, ${posY}px) rotate(${rotation}deg) scale(${scale})`;
+              if (zoomBadge) zoomBadge.textContent = `${Math.round(scale * 100)}%`;
+              if (rotBadge) rotBadge.textContent = `${rotation}°`;
+            }
+
+            toolbar.querySelector('.btn-zoom-in')?.addEventListener('click', () => {
+              scale = Math.min(scale + 0.2, 3.5);
+              updateTransform();
+            });
+            toolbar.querySelector('.btn-zoom-out')?.addEventListener('click', () => {
+              scale = Math.max(scale - 0.2, 0.4);
+              updateTransform();
+            });
+            toolbar.querySelector('.btn-rot-left')?.addEventListener('click', () => {
+              rotation = (rotation - 90 + 360) % 360;
+              updateTransform();
+            });
+            toolbar.querySelector('.btn-rot-right')?.addEventListener('click', () => {
+              rotation = (rotation + 90) % 360;
+              updateTransform();
+            });
+            toolbar.querySelector('.btn-reset')?.addEventListener('click', () => {
+              scale = 1.0;
+              posX = 0;
+              posY = 0;
+              rotation = 0;
+              updateTransform();
+            });
+            toolbar.querySelector('.btn-fullscreen')?.addEventListener('click', () => {
+              wrapper.classList.toggle('is-fullscreen');
+            });
+
+            // Dragging viewport
+            viewport.addEventListener('mousedown', (e) => {
+              if (e.button !== 0) return;
+              isDragging = true;
+              startX = e.clientX - posX;
+              startY = e.clientY - posY;
+            });
+            window.addEventListener('mousemove', (e) => {
+              if (!isDragging) return;
+              posX = e.clientX - startX;
+              posY = e.clientY - startY;
+              updateTransform();
+            });
+            window.addEventListener('mouseup', () => {
+              isDragging = false;
+            });
+
+            // Wheel zoom
+            viewport.addEventListener('wheel', (e) => {
+              e.preventDefault();
+              const delta = e.deltaY < 0 ? 0.15 : -0.15;
+              scale = Math.min(Math.max(scale + delta, 0.4), 3.5);
+              updateTransform();
+            }, { passive: false });
+
+            // Touch support
+            let initialTouchDist = null;
+            let initialScale = 1.0;
+            viewport.addEventListener('touchstart', (e) => {
+              if (e.touches.length === 1) {
+                isDragging = true;
+                startX = e.touches[0].clientX - posX;
+                startY = e.touches[0].clientY - posY;
+              } else if (e.touches.length === 2) {
+                isDragging = false;
+                initialTouchDist = Math.hypot(
+                  e.touches[0].clientX - e.touches[1].clientX,
+                  e.touches[0].clientY - e.touches[1].clientY
+                );
+                initialScale = scale;
+              }
+            }, { passive: true });
+
+            viewport.addEventListener('touchmove', (e) => {
+              if (e.touches.length === 1 && isDragging) {
+                posX = e.touches[0].clientX - startX;
+                posY = e.touches[0].clientY - startY;
+                updateTransform();
+              } else if (e.touches.length === 2 && initialTouchDist) {
+                const currentDist = Math.hypot(
+                  e.touches[0].clientX - e.touches[1].clientX,
+                  e.touches[0].clientY - e.touches[1].clientY
+                );
+                scale = Math.min(Math.max(initialScale * (currentDist / initialTouchDist), 0.4), 3.5);
+                updateTransform();
+              }
+            }, { passive: true });
+
+            viewport.addEventListener('touchend', () => {
+              isDragging = false;
+              initialTouchDist = null;
+            });
+
+            const record = { canvas, rawCode };
             mermaidContainers.push(record);
 
             try {
@@ -299,7 +437,7 @@ const defaultFontClass = fontClassMap[post.data.recommendedFont || 'sans'];
                 fontFamily: 'Be Vietnam Pro, sans-serif'
               });
               const { svg } = await mermaidInstance.render(`mermaid-svg-${idx}`, rawCode);
-              container.innerHTML = svg;
+              canvas.innerHTML = svg;
             } catch (err) {
               console.warn('Initial Mermaid render error:', err);
             }
@@ -311,6 +449,103 @@ const defaultFontClass = fontClassMap[post.data.recommendedFont || 'sans'];
           });
 
         }).catch(err => console.warn('Could not load Mermaid:', err));
+      }
+
+      // ==============================================================================
+      // Interactive Reader Selection Highlighter Toolbar
+      // ==============================================================================
+      const proseArticle = document.querySelector('article .prose');
+      if (proseArticle) {
+        const hlToolbar = document.createElement('div');
+        hlToolbar.className = 'reader-highlight-toolbar hidden';
+        hlToolbar.innerHTML = `
+          <button type="button" class="hl-tool-btn btn-hl-yellow" data-action="hl-focus" title="Highlight Yellow (Focus, Bold, Italic, Underline, Pop)">Yellow</button>
+          <button type="button" class="hl-tool-btn btn-hl-red" data-action="hl-warn" title="Highlight Red (Warning, Wave Underline, Pop)">Alert</button>
+          <button type="button" class="hl-tool-btn btn-hl-blue" data-action="hl-key" title="Highlight Indigo (Key Concept, Dashed Underline, Pop)">Key</button>
+          <button type="button" class="hl-tool-btn btn-hl-note" data-action="add-note" title="Send to Reading Notes">Note</button>
+        `;
+        document.body.appendChild(hlToolbar);
+
+        let currentRange = null;
+
+        document.addEventListener('selectionchange', () => {
+          const sel = window.getSelection();
+          if (!sel || sel.isCollapsed || !sel.rangeCount) {
+            hlToolbar.classList.add('hidden');
+            currentRange = null;
+            return;
+          }
+
+          const range = sel.getRangeAt(0);
+          if (!proseArticle.contains(range.commonAncestorContainer)) {
+            hlToolbar.classList.add('hidden');
+            currentRange = null;
+            return;
+          }
+
+          const text = sel.toString().trim();
+          if (text.length < 2) {
+            hlToolbar.classList.add('hidden');
+            currentRange = null;
+            return;
+          }
+
+          currentRange = range.cloneRange();
+          const rect = range.getBoundingClientRect();
+          hlToolbar.style.top = `${rect.top + window.scrollY}px`;
+          hlToolbar.style.left = `${rect.left + window.scrollX + rect.width / 2}px`;
+          hlToolbar.classList.remove('hidden');
+        });
+
+        hlToolbar.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+        });
+
+        hlToolbar.addEventListener('click', (e) => {
+          const btn = e.target.closest('.hl-tool-btn');
+          if (!btn || !currentRange) return;
+          const action = btn.getAttribute('data-action');
+
+          if (action === 'add-note') {
+            const selectedText = currentRange.toString().trim();
+            const textarea = document.getElementById('reader-notes-textarea');
+            if (textarea) {
+              const val = textarea.value;
+              const separator = val.length > 0 ? '\n\n' : '';
+              textarea.value = val + separator + `> "${selectedText}"\n`;
+              textarea.dispatchEvent(new Event('input', { bubbles: true }));
+              const notesCard = document.getElementById('reader-notes-card');
+              if (notesCard?.classList.contains('notes-is-collapsed')) {
+                document.getElementById('notes-header')?.click();
+              }
+            }
+            window.getSelection()?.removeAllRanges();
+            hlToolbar.classList.add('hidden');
+            return;
+          }
+
+          if (action === 'hl-focus' || action === 'hl-warn' || action === 'hl-key') {
+            try {
+              const mark = document.createElement('mark');
+              mark.className = action;
+              currentRange.surroundContents(mark);
+            } catch (err) {
+              const mark = document.createElement('mark');
+              mark.className = action;
+              mark.textContent = currentRange.toString();
+              currentRange.deleteContents();
+              currentRange.insertNode(mark);
+            }
+            window.getSelection()?.removeAllRanges();
+            hlToolbar.classList.add('hidden');
+          }
+        });
+
+        document.addEventListener('mousedown', (e) => {
+          if (!hlToolbar.contains(e.target)) {
+            hlToolbar.classList.add('hidden');
+          }
+        });
       }
     });
   </script>

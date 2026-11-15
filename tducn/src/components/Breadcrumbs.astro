@@ -18,7 +18,7 @@ interface Props {
 const { items, backLink, class: className = '' } = Astro.props;
 ---
 
-<nav aria-label="Breadcrumb" class={`flex items-center justify-between gap-3 text-xs text-text-muted font-mono ${className}`}>
+<nav aria-label="Breadcrumb" class={`flex items-center justify-between gap-3 text-xs text-text-muted font-mono py-1.5 px-3 rounded-xl bg-slate-100/70 dark:bg-slate-800/50 border border-subtle shadow-sm ${className}`}>
   <ol class="flex items-center space-x-1.5 sm:space-x-2 min-w-0 flex-1 overflow-hidden">
     {items.map((item, index) => {
       const isLast = index === items.length - 1;
@@ -29,7 +29,7 @@ const { items, backLink, class: className = '' } = Astro.props;
               {item.label}
             </a>
           ) : (
-            <span class={isLast ? "text-slate-900 dark:text-slate-200 font-medium block truncate" : ""}>
+            <span class={isLast ? "text-slate-900 dark:text-slate-200 font-semibold block truncate" : ""}>
               {item.label}
             </span>
           )}
@@ -40,7 +40,7 @@ const { items, backLink, class: className = '' } = Astro.props;
   </ol>
 
   {backLink && (
-    <a href={backLink.href} class="hover:underline flex items-center gap-1 shrink-0">
+    <a href={backLink.href} class="hover:text-accent-primary dark:hover:text-accent-primaryDark flex items-center gap-1 shrink-0 font-medium transition-colors">
       &larr; {backLink.label}
     </a>
   )}
