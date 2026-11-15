@@ -5,6 +5,7 @@ import CategoryPills from '../../src/components/CategoryPills.astro';
 import Breadcrumbs from '../../src/components/Breadcrumbs.astro';
 import PostCard from '../../src/components/PostCard.astro';
 import ReadingPill from '../../src/components/ReadingPill.astro';
+import TableOfContents from '../../src/components/TableOfContents.astro';
 
 describe('Component Reusability & Rendering Contracts', () => {
   it('CategoryBadge: should render an accessible clickable link with proper href and label', async () => {
@@ -165,5 +166,35 @@ describe('Component Reusability & Rendering Contracts', () => {
     expect(result).toContain('id="pill-font-btn"');
     expect(result).toContain('id="pill-share-btn"');
     expect(result).toContain('id="pill-top-btn"');
+  });
+
+  it('TableOfContents: should render collapsible outline with toggle button and headings', async () => {
+    const container = await AstroContainer.create();
+    const result = await container.renderToString(TableOfContents, {
+      props: {
+        headings: [
+          { depth: 2, slug: 'intro-section', text: 'Intro Section' },
+          { depth: 3, slug: 'deep-dive', text: 'Deep Dive' },
+        ],
+      },
+    });
+
+    expect(result).toContain('id="article-toc"');
+    expect(result).toContain('id="toc-toggle-btn"');
+    expect(result).toContain('id="toc-content"');
+    expect(result).toContain('href="#intro-section"');
+    expect(result).toContain('Intro Section');
+    expect(result).toContain('href="#deep-dive"');
+    expect(result).toContain('Deep Dive');
+    expect(result).toContain('Collapse');
+  });
+
+  it('TableOfContents: should render nothing if headings array is empty', async () => {
+    const container = await AstroContainer.create();
+    const result = await container.renderToString(TableOfContents, {
+      props: { headings: [] },
+    });
+
+    expect(result.trim()).toBe('');
   });
 });
