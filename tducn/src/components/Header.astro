@@ -11,13 +11,13 @@ const navItems = NAV_ITEMS.map(item => ({
 ---
 
 <header class="sticky top-0 z-40 backdrop-blur-md bg-[var(--bg-canvas)]/90 border-b border-subtle transition-colors pt-[env(safe-area-inset-top,0px)]">
-  <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+  <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-2 sm:gap-4">
     
     <div class="flex items-center space-x-2 sm:space-x-3 shrink-0">
       <!-- Mobile Menu Toggle Button (Accessible & High Touch-Area) -->
       <button
         id="mobile-menu-toggle"
-        class="btn-icon md:hidden text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white shrink-0"
+        class="btn-icon lg:hidden text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white shrink-0"
         aria-label="Toggle navigation menu"
         aria-expanded="false"
         aria-controls="mobile-drawer"
@@ -27,21 +27,21 @@ const navItems = NAV_ITEMS.map(item => ({
       </button>
 
       <!-- Brand / Author Identity -->
-      <a href="/" class="flex items-center space-x-2 sm:space-x-3 group shrink-0">
-        <div class="w-8 h-8 rounded-lg bg-accent-primary dark:bg-accent-primaryDark flex items-center justify-center text-white dark:text-slate-950 font-bold text-xs shadow-sm transition-transform group-hover:scale-105 shrink-0">
+      <a href="/" class="flex items-center space-x-2 sm:space-x-3 group shrink-0" aria-label="Trang chủ Duc Nguyen">
+        <div class="w-8 h-8 min-w-[2rem] min-h-[2rem] max-w-[2rem] max-h-[2rem] aspect-square rounded-lg bg-accent-primary dark:bg-accent-primaryDark flex items-center justify-center text-white dark:text-slate-950 font-bold text-xs shadow-sm transition-transform group-hover:scale-105 shrink-0 select-none">
           <span>DN</span>
         </div>
         <div class="whitespace-nowrap flex items-center shrink-0">
           <span class="font-bold text-sm sm:text-base tracking-tight text-slate-900 dark:text-white group-hover:text-accent-primary dark:group-hover:text-accent-primaryDark transition-colors whitespace-nowrap">
             Duc Nguyen
           </span>
-          <span class="hidden sm:inline-block text-xs text-text-muted ml-2 font-mono whitespace-nowrap">/tducn</span>
+          <span class="hidden xl:inline-block text-xs text-text-muted ml-2 font-mono whitespace-nowrap">/tducn</span>
         </div>
       </a>
     </div>
 
     <!-- Category Nav Links with Active Indicator (Desktop) -->
-    <nav class="hidden md:flex items-center space-x-1.5 text-xs font-medium" id="header-nav" aria-label="Điều hướng chính">
+    <nav class="hidden lg:flex items-center space-x-1.5 text-xs font-medium shrink-0" id="header-nav" aria-label="Điều hướng chính">
       {navItems.map(item => (
         <a
           href={item.href}
@@ -111,7 +111,7 @@ const navItems = NAV_ITEMS.map(item => ({
   <!-- Mobile Drawer Menu (Category Navigation & Reading Settings for Mobile Viewports) -->
   <div
     id="mobile-drawer"
-    class="hidden md:hidden border-t border-subtle bg-[var(--surface-card)] px-4 py-4 space-y-4 shadow-xl transition-all animate-in fade-in"
+    class="hidden lg:hidden border-t border-subtle bg-[var(--surface-card)] px-4 py-4 space-y-4 shadow-xl transition-all animate-in fade-in"
     role="region"
     aria-label="Mobile category menu and settings"
   >
