@@ -1,0 +1,7 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "astro",
+  "buildCommand": "cd tducn && npm run build",
+  "outputDirectory": "tducn/dist",
+  "installCommand": "cd tducn && npm install"
+}

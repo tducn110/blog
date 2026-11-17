@@ -1,0 +1,12 @@
+{
+  "name": "blog-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Personal Research & Engineering Blog Workspace",
+  "scripts": {
+    "build": "npm --prefix tducn run build",
+    "dev": "npm --prefix tducn run dev",
+    "test": "npm --prefix tducn run test",
+    "preview": "npm --prefix tducn run preview"
+  }
+}
