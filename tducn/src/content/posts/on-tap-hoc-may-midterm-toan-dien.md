@@ -1,7 +1,8 @@
 ---
 title: "Tổng Quan Ôn Tập Học Máy Midterm: Bản Đồ Tri Thức 12 Bài Giảng & 11 Điểm Gãy Đổ Hệ Thống"
 description: "Khung tóm tắt toàn cảnh chương trình Midterm Machine Learning: Bản đồ đối chiếu 12 bài giảng, cấu trúc 6 Phần & 17 Chương, phân loại 4 nhóm mô hình (LL, NL, NN, LN) và phân tích sâu sắc 11 lỗi hệ thống thực chiến (Data Leakage, Masking Effect, Overfitting tách tuyến tính, ma trận hiệp phương sai suy biến)."
-publishDate: 2026-11-15
+publishDate: 2026-11-15T16:00:00+07:00
+order: 4
 category: "engineering"
 tags: ["MachineLearning", "ML-Midterm", "Mathematics", "Optimization", "Classification", "DataLeakage"]
 featured: true

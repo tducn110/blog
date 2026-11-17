@@ -83,9 +83,12 @@ const {
   {tags && tags.length > 0 && !compact && (
     <div class="flex flex-wrap gap-1.5 pt-1">
       {tags.slice(0, 3).map(tag => (
-        <span class="text-[11px] font-mono text-slate-600 dark:text-slate-300 font-medium bg-slate-100 dark:bg-slate-800/80 px-2 py-0.5 rounded-md border border-subtle">
+        <a
+          href={`/tags/${encodeURIComponent(tag.toLowerCase())}`}
+          class="text-[11px] font-mono text-slate-600 dark:text-slate-300 font-medium bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 px-2 py-0.5 rounded-md border border-subtle transition-colors"
+        >
           #{tag}
-        </span>
+        </a>
       ))}
     </div>
   )}

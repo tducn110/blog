@@ -1,7 +1,8 @@
 ---
 title: "Comprehensive Machine Learning Curriculum: From Mathematical Foundations & Optimization to Deep Neural Networks & Verified Implementations"
 description: "Exhaustive technical review of VNUK's 93-page standardized Machine Learning curriculum: ERM theory, Bayes classification, Bias-Variance decomposition, data pipeline hygiene, multi-layer perceptrons, SGD Momentum dynamics, 1D-CNN, and Rust verification."
-publishDate: 2026-11-15
+publishDate: 2026-11-15T10:00:00+07:00
+order: 1
 category: "engineering"
 tags: ["MachineLearning", "DeepLearning", "Mathematics", "Optimization", "NeuralNetworks", "PyTorch", "Rust"]
 featured: true

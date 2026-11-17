@@ -1,10 +1,11 @@
 // ponytail: Enhanced search data endpoint with content snippets & metadata, zero external SaaS dependencies
 import { getCollection } from 'astro:content';
+import { sortPosts } from '../utils/postRanking';
 
 export async function GET() {
   const posts = await getCollection('posts');
-  const searchIndex = posts
-    .filter(post => !post.data.draft)
+  const validPosts = sortPosts(posts.filter(post => !post.data.draft), 'newest');
+  const searchIndex = validPosts
     .map(post => {
       // Strip markdown syntax, code blocks, and math blocks to extract clean searchable content
       const cleanContent = (post.body || '')

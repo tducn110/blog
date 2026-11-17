@@ -1,7 +1,8 @@
 ---
 title: "Sổ Tay Công Thức Cốt Lõi Học Máy Midterm: Bảng Tra Cứu 20+ Phương Trình Hạt Nhân"
 description: "Bản tổng hợp tra cứu toàn bộ 20+ công thức toán học trọng tâm của chương trình Machine Learning Midterm: Từ tích vô hướng không gian hàm, Newton-Raphson, MLE Gaussian, Khoảng cách có dấu r, LDA/QDA, Naive Bayes đến Hessian Cross-Entropy và IRLS."
-publishDate: 2026-11-15
+publishDate: 2026-11-15T12:00:00+07:00
+order: 2
 category: "engineering"
 tags: ["MachineLearning", "ML-Midterm", "Mathematics", "Probability", "Optimization", "Cheatsheet"]
 featured: false

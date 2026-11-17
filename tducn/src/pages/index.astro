@@ -6,11 +6,12 @@ import PostCard from '../components/PostCard.astro';
 import CategoryPills from '../components/CategoryPills.astro';
 import { CATEGORIES } from '../utils/categories';
 import { getReadingTime } from '../utils/readingTime';
+import { sortPosts, selectHeroPost } from '../utils/postRanking';
 
 const allPosts = await getCollection('posts', ({ data }) => !data.draft);
-const sortedPosts = allPosts.sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+const sortedPosts = sortPosts(allPosts, 'newest', { respectPinned: true });
 
-const featuredPost = sortedPosts.find(p => p.data.featured) || sortedPosts[0];
+const featuredPost = selectHeroPost(sortedPosts);
 const recentPosts = sortedPosts.filter(p => p.slug !== featuredPost?.slug);
 ---
 

@@ -1,7 +1,8 @@
 ---
 title: "Giải Mã Trực Giác Các Công Thức Học Máy Midterm: Bản Chất Hình Học, Khi Nào Dùng & Bẫy Đề Thi"
 description: "Giải mã trực giác hình học và bản chất toán học của các công thức cốt lõi Machine Learning Midterm: Tại sao w trực giao với ranh giới? Vì sao LDA triệt tiêu bậc hai? Nguồn gốc Sigmoid từ Bayes? Động học IRLS? Bẫy Masking Effect & Outlier của Least Squares? Chi tiết chứng minh tra cứu tại bản PDF 111 trang."
-publishDate: 2026-11-15
+publishDate: 2026-11-15T14:00:00+07:00
+order: 3
 category: "engineering"
 tags: ["MachineLearning", "ML-Midterm", "Mathematics", "Probability", "Intuition", "Classification"]
 featured: false

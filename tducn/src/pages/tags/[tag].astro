@@ -1,0 +1,136 @@
+---
+// ponytail: Dynamic Tag Archive Page with static paths and tag statistics
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { getReadingTime } from '../../utils/readingTime';
+import { Tag } from 'lucide-astro';
+import { sortPosts } from '../../utils/postRanking';
+
+export async function getStaticPaths() {
+  const allPosts = await getCollection('posts', ({ data }) => !data.draft);
+
+  const tagMap = new Map();
+  for (const post of allPosts) {
+    if (post.data.tags && Array.isArray(post.data.tags)) {
+      for (const t of post.data.tags) {
+        const slug = t.toLowerCase();
+        if (!tagMap.has(slug)) {
+          tagMap.set(slug, {
+            tagName: t,
+            tagSlug: slug,
+            posts: [],
+          });
+        }
+        tagMap.get(slug).posts.push(post);
+      }
+    }
+  }
+
+  const allTagsList = Array.from(tagMap.values()).map(item => ({
+    name: item.tagName,
+    slug: item.tagSlug,
+    count: item.posts.length,
+  })).sort((a, b) => b.count - a.count);
+
+  return Array.from(tagMap.entries()).map(([slug, item]) => ({
+    params: { tag: slug },
+    props: {
+      tagName: item.tagName,
+      tagSlug: slug,
+      posts: sortPosts(item.posts, 'newest'),
+      allTags: allTagsList,
+    },
+  }));
+}
+
+interface Props {
+  tagName: string;
+  tagSlug: string;
+  posts: any[];
+  allTags: { name: string; slug: string; count: number }[];
+}
+
+const { tagName, tagSlug, posts, allTags } = Astro.props;
+---
+
+<BaseLayout title={`#${tagName} - Articles`} description={`Danh sách các bài viết gắn thẻ #${tagName}`}>
+  <div class="space-y-8">
+    <section class="card-surface p-5 sm:p-8 rounded-2xl sm:rounded-3xl space-y-4 shadow-sm relative overflow-hidden">
+      <div class="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-accent-primary/5 dark:bg-accent-primaryDark/10 blur-3xl pointer-events-none"></div>
+
+      <Breadcrumbs
+        items={[
+          { label: 'Home', href: '/' },
+          { label: 'Tags', href: '/tags' },
+          { label: `#${tagName}` }
+        ]}
+      />
+
+      <div class="flex items-start gap-4 pt-1">
+        <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800/90 border border-subtle flex items-center justify-center text-accent-primary dark:text-accent-primaryDark shrink-0 shadow-sm">
+          <Tag class="w-6 h-6 stroke-[1.75]" />
+        </div>
+        <div class="space-y-1.5">
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+            #{tagName}
+          </h1>
+          <p class="text-sm text-text-muted max-w-2xl leading-relaxed">
+            Tuyển tập các chuyên khảo và bài viết học thuật mang nhãn thẻ #{tagName}.
+          </p>
+        </div>
+      </div>
+
+      <div class="pt-1 text-xs text-text-muted font-mono flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span>{posts.length} {posts.length === 1 ? 'chuyên khảo' : 'chuyên khảo'} trong chủ đề này</span>
+      </div>
+    </section>
+
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-10">
+      <div class="md:col-span-8 space-y-6">
+        {posts.map(post => (
+          <PostCard
+            title={post.data.title}
+            description={post.data.description}
+            slug={post.slug}
+            category={post.data.category}
+            publishDate={post.data.publishDate}
+            readingTime={getReadingTime(post.body)}
+            tags={post.data.tags}
+          />
+        ))}
+      </div>
+
+      <aside class="md:col-span-4 space-y-6">
+        <div class="card-surface p-5 sm:p-8 rounded-2xl space-y-4 text-xs shadow-sm sticky top-24">
+          <div class="flex items-center justify-between border-b border-subtle pb-3">
+            <span class="font-bold text-sm text-slate-900 dark:text-white">Tất Cả Thẻ (Tags)</span>
+            <a href="/tags" class="text-accent-primary dark:text-accent-primaryDark hover:underline font-mono text-[11px]">Xem tất cả &rarr;</a>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            {allTags.map(t => {
+              const isCurrent = t.slug === tagSlug;
+              return (
+                <a
+                  href={`/tags/${t.slug}`}
+                  class={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono transition-all ${
+                    isCurrent
+                      ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-bold shadow-sm'
+                      : 'bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-subtle'
+                  }`}
+                >
+                  <span>#{t.name}</span>
+                  <span class={`text-[10px] px-1.5 py-0.2 rounded-full ${isCurrent ? 'bg-slate-800 text-slate-200 dark:bg-slate-200 dark:text-slate-800' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'}`}>
+                    {t.count}
+                  </span>
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</BaseLayout>

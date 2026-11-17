@@ -1,7 +1,8 @@
 ---
 title: "Giáo Trình Học Máy Toàn Diện: Từ Nền Tảng Toán Học, Tối Ưu Hóa Đến Mạng Sâu & Kiểm Chứng Thực Nghiệm"
 description: "Tổng quan chi tiết toàn bộ 93 trang giáo trình học máy chuẩn hóa của VNUK: Lý thuyết ERM, Phân loại Bayes, Phân rã Bias-Variance, Tiền xử lý dữ liệu, Mạng nơ-ron, Tối ưu SGD Momentum, 1D-CNN và Kiểm chứng Rust."
-publishDate: 2026-11-15
+publishDate: 2026-11-15T18:00:00+07:00
+order: 5
 category: "engineering"
 tags: ["MachineLearning", "DeepLearning", "Mathematics", "Optimization", "NeuralNetworks", "PyTorch", "Rust"]
 featured: true

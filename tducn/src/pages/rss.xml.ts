@@ -1,11 +1,12 @@
 // ponytail: Standard RSS 2.0 Feed endpoint, zero extra abstractions
 import rss from '@astrojs/rss';
 import { getCollection } from 'astro:content';
+import { sortPosts } from '../utils/postRanking';
 import type { APIContext } from 'astro';
 
 export async function GET(context: APIContext) {
   const posts = await getCollection('posts', ({ data }) => !data.draft);
-  const sortedPosts = posts.sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+  const sortedPosts = sortPosts(posts, 'newest');
 
   return rss({
     title: 'Duc Nguyen | Engineering & Systems Notes',

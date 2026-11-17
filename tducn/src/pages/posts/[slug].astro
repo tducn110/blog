@@ -10,6 +10,7 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ReadingPill from '../../components/ReadingPill.astro';
 import { CATEGORIES } from '../../utils/categories';
 import { getReadingTime } from '../../utils/readingTime';
+import { getAdjacentPosts } from '../../utils/postRanking';
 import { Bookmark, Languages } from 'lucide-astro';
 
 export async function getStaticPaths() {
@@ -29,10 +30,7 @@ const { Content, headings } = await post.render();
 const readingTime = getReadingTime(post.body);
 
 const allPosts = await getCollection('posts', ({ data }) => !data.draft);
-const sortedPosts = allPosts.sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
-const currentIndex = sortedPosts.findIndex(p => p.slug === post.slug);
-const prevPost = currentIndex < sortedPosts.length - 1 ? sortedPosts[currentIndex + 1] : null;
-const nextPost = currentIndex > 0 ? sortedPosts[currentIndex - 1] : null;
+const { prevPost, nextPost } = getAdjacentPosts(allPosts, post.slug, 'newest');
 
 const fontClassMap = {
   sans: 'mode-sans',
@@ -103,9 +101,12 @@ const defaultFontClass = fontClassMap[post.data.recommendedFont || 'sans'];
           {post.data.tags && post.data.tags.length > 0 && (
             <div class="flex flex-wrap gap-1.5 pt-2">
               {post.data.tags.map(tag => (
-                <span class="text-xs font-mono text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/80 px-2.5 py-0.5 rounded-md border border-subtle">
+                <a
+                  href={`/tags/${encodeURIComponent(tag.toLowerCase())}`}
+                  class="text-xs font-mono text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 px-2.5 py-0.5 rounded-md border border-subtle transition-colors"
+                >
                   #{tag}
-                </span>
+                </a>
               ))}
             </div>
           )}

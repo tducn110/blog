@@ -1,7 +1,8 @@
 ---
 title: "Comprehensive Machine Learning Midterm Monograph: From Function Spaces & Probabilistic Models to Leak-Free Pipelines & 8 Mathematical Derivation Appendices"
 description: "Exhaustive technical review of the 101-page standardized Machine Learning Midterm Monograph at VNUK: 5-tuple paradigm, abstract vector/function spaces, MLE principles, Bayes decision theory, LDA/QDA geometry, Naive Bayes, Logistic Regression & IRLS, 3-sigma sensor anomaly lab, Adult Census data leakage audit, 8 self-contained mathematical proofs, and an exhaustive English MCQ exam bank."
-publishDate: 2026-11-15
+publishDate: 2026-11-15T20:00:00+07:00
+order: 6
 category: "engineering"
 tags: ["MachineLearning", "Mathematics", "Probability", "Optimization", "Classification", "LogisticRegression", "DataLeakage", "LaTeX"]
 featured: true

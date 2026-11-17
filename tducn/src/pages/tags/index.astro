@@ -1,0 +1,81 @@
+---
+// ponytail: All Tags Index Page
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { Tag } from 'lucide-astro';
+
+const allPosts = await getCollection('posts', ({ data }) => !data.draft);
+
+const tagMap = new Map();
+for (const post of allPosts) {
+  if (post.data.tags && Array.isArray(post.data.tags)) {
+    for (const t of post.data.tags) {
+      const slug = t.toLowerCase();
+      if (!tagMap.has(slug)) {
+        tagMap.set(slug, {
+          name: t,
+          slug,
+          count: 0,
+        });
+      }
+      tagMap.get(slug).count++;
+    }
+  }
+}
+
+const allTags = Array.from(tagMap.values()).sort((a, b) => b.count - a.count);
+---
+
+<BaseLayout title="Tất Cả Thẻ Chủ Đề - Tags" description="Chỉ mục toàn bộ các nhãn thẻ chủ đề học thuật và công nghệ trên blog">
+  <div class="space-y-8">
+    <section class="card-surface p-5 sm:p-8 rounded-2xl sm:rounded-3xl space-y-4 shadow-sm relative overflow-hidden">
+      <div class="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-accent-primary/5 dark:bg-accent-primaryDark/10 blur-3xl pointer-events-none"></div>
+
+      <Breadcrumbs
+        items={[
+          { label: 'Home', href: '/' },
+          { label: 'Tags' }
+        ]}
+      />
+
+      <div class="flex items-start gap-4 pt-1">
+        <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800/90 border border-subtle flex items-center justify-center text-accent-primary dark:text-accent-primaryDark shrink-0 shadow-sm">
+          <Tag class="w-6 h-6 stroke-[1.75]" />
+        </div>
+        <div class="space-y-1.5">
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+            Chỉ Mục Thẻ (Tags Index)
+          </h1>
+          <p class="text-sm text-text-muted max-w-2xl leading-relaxed">
+            Duyệt các bài viết và chuyên khảo học thuật theo từng từ khóa chủ đề chuyên sâu.
+          </p>
+        </div>
+      </div>
+
+      <div class="pt-1 text-xs text-text-muted font-mono flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span>{allTags.length} thẻ đang hoạt động</span>
+      </div>
+    </section>
+
+    <div class="card-surface p-6 sm:p-10 rounded-2xl sm:rounded-3xl shadow-sm space-y-4">
+      <h2 class="text-base font-bold text-slate-900 dark:text-white border-b border-subtle pb-3">
+        Danh Sách Từ Khóa Chủ Đề
+      </h2>
+      <div class="flex flex-wrap gap-3">
+        {allTags.map(tag => (
+          <a
+            href={`/tags/${tag.slug}`}
+            class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-mono bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-subtle transition-all duration-150 hover:-translate-y-0.5"
+          >
+            <span class="font-bold">#{tag.name}</span>
+            <span class="text-xs px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700 font-semibold text-slate-600 dark:text-slate-300">
+              {tag.count}
+            </span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</BaseLayout>
