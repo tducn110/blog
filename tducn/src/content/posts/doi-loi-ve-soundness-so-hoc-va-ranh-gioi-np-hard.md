@@ -13,11 +13,11 @@ lang: "vi"
 > **TÀI LIỆU THAM CHIẾU HỆ THỐNG (ECDR VERIFICATION SPECIFICATION)**  
 > Chuyên khảo này phân giải chi tiết khái niệm **Tính Đúng Đắn (Soundness)** cùng chiếc cầu nối số học giữa lý thuyết giải tích và phần cứng máy tính, được trích xuất trực tiếp từ các hồ sơ khoa học của dự án:
 > 
-> - **Định nghĩa Soundness & Completeness:** [07_SUPP03_Certification_Methods.tex#L260-L270](file:///home/pro/Downloads/research/03_MATH/07_SUPP03_Certification_Methods.tex#L260-L270).
-> - **Phân tách 5 đại lượng hạt nhân (Khái niệm C28):** [05_ECDR_Mathematics_Concepts_104_Atlas.tex#L3321-L3339](file:///home/pro/Downloads/research/03_MATH/05_ECDR_Mathematics_Concepts_104_Atlas.tex#L3321-L3339).
-> - **Mô hình sai số IEEE 754 & Làm tròn hướng ra ngoài:** [09_SUPP06_Float_Precision.tex#L87-L122](file:///home/pro/Downloads/research/03_MATH/09_SUPP06_Float_Precision.tex#L87-L122).
-> - **Khế ước nghĩa vụ số học (Numerical Soundness Contract):** [01_04_THEORY.md#L215-L230](file:///home/pro/Downloads/research/03_MATH/01_04_THEORY.md#L215-L230).
-> - **Bộ xác minh CROWN 64-bit thực thi kiểm chứng:** [week3_verifier.py](file:///home/pro/Downloads/research/ecdr/week3_verifier.py).
+> - **Định nghĩa Soundness & Completeness:** [07_SUPP03_Certification_Methods.tex#L260-L270](https://github.com/tducn110/ecdr-sensor-inference/blob/main/03_MATH/07_SUPP03_Certification_Methods.tex#L260-L270).
+> - **Phân tách 5 đại lượng hạt nhân (Khái niệm C28):** [05_ECDR_Mathematics_Concepts_104_Atlas.tex#L3321-L3339](https://github.com/tducn110/ecdr-sensor-inference/blob/main/03_MATH/05_ECDR_Mathematics_Concepts_104_Atlas.tex#L3321-L3339).
+> - **Mô hình sai số IEEE 754 & Làm tròn hướng ra ngoài:** [09_SUPP06_Float_Precision.tex#L87-L122](https://github.com/tducn110/ecdr-sensor-inference/blob/main/03_MATH/09_SUPP06_Float_Precision.tex#L87-L122).
+> - **Khế ước nghĩa vụ số học (Numerical Soundness Contract):** [01_04_THEORY.md#L215-L230](https://github.com/tducn110/ecdr-sensor-inference/blob/main/03_MATH/01_04_THEORY.md#L215-L230).
+> - **Bộ xác minh CROWN 64-bit thực thi kiểm chứng:** [week3_verifier.py](https://github.com/tducn110/ecdr-sensor-inference/blob/main/ecdr/week3_verifier.py).
 
 ---
 
@@ -56,7 +56,7 @@ Nghĩa là: **Bộ xác minh đầy đủ không bao giờ đưa ra âm tính gi
 ### 1.3. Ranh Giới Bất Khả Thi NP-Hard (Định Lý Katz et al., 2017)
 Một câu hỏi hiển nhiên: *Tại sao chúng ta không thiết kế một bộ xác minh vừa Sound vừa Complete?*
 
-Câu trả lời nằm ở định lý nền tảng của Katz et al. (2017) [07_SUPP03_Certification_Methods.tex#L271-L275](file:///home/pro/Downloads/research/03_MATH/07_SUPP03_Certification_Methods.tex#L271-L275):
+Câu trả lời nằm ở định lý nền tảng của Katz et al. (2017) [07_SUPP03_Certification_Methods.tex#L271-L275](https://github.com/tducn110/ecdr-sensor-inference/blob/main/03_MATH/07_SUPP03_Certification_Methods.tex#L271-L275):
 > **Định lý (Độ phức tạp tính toán):** Bài toán xác minh xem một mạng nơ-ron nhiều tầng với hàm kích hoạt ReLU có duy trì tính bền vững trên một quả cầu $\ell_\infty$ hay không là một bài toán **NP-hard**.
 
 Hệ quả toán học trực tiếp: Trừ phi $\text{P} = \text{NP}$, **không thể tồn tại một thuật toán thời gian đa thức nào vừa đúng đắn (Sound) vừa đầy đủ (Complete)** cho mạng nơ-ron tổng quát.
@@ -66,7 +66,7 @@ Vì mục tiêu tối thượng của các hệ thống an toàn biên là khôn
 
 ## 2. Đôi Lời Về : Phân Tách 5 Khái Niệm Thường Bị Đánh Đồng (Concept C28)
 
-Trong tài liệu [05_ECDR_Mathematics_Concepts_104_Atlas.tex#L3321-L3339](file:///home/pro/Downloads/research/03_MATH/05_ECDR_Mathematics_Concepts_104_Atlas.tex#L3321-L3339), Khái niệm **C28** chỉ ra 5 đại lượng thường bị các nhà nghiên cứu nhầm lẫn hoặc đánh tráo:
+Trong tài liệu [05_ECDR_Mathematics_Concepts_104_Atlas.tex#L3321-L3339](https://github.com/tducn110/ecdr-sensor-inference/blob/main/03_MATH/05_ECDR_Mathematics_Concepts_104_Atlas.tex#L3321-L3339), Khái niệm **C28** chỉ ra 5 đại lượng thường bị các nhà nghiên cứu nhầm lẫn hoặc đánh tráo:
 
 ```
 [SOUNDNESS]  ──> Hệ quả logic phổ quát dưới giả thiết tuyên bố (Universal implication).
@@ -117,7 +117,7 @@ Sai Số Tích Lũy: |fl(F_k(x)) - F_k(x)| <= tau_fp
 ```
 
 ### 3.1. Machine Epsilon & Sai Số Lan Truyền Tích Vô Hướng
-Trong chuẩn IEEE 754 [09_SUPP06_Float_Precision.tex#L87-L105](file:///home/pro/Downloads/research/03_MATH/09_SUPP06_Float_Precision.tex#L87-L105):
+Trong chuẩn IEEE 754 [09_SUPP06_Float_Precision.tex#L87-L105](https://github.com/tducn110/ecdr-sensor-inference/blob/main/03_MATH/09_SUPP06_Float_Precision.tex#L87-L105):
 - Kiểu `float32` (đơn) sử dụng 23 bit mantissa, cho machine epsilon:
   $$
   \varepsilon_{\text{mach}} = 2^{-23} \approx 1.192 \times 10^{-7}, \quad u = \frac{\varepsilon_{\text{mach}}}{2} = 2^{-24} \approx 5.960 \times 10^{-8}
@@ -134,7 +134,7 @@ $$
 Với $n = 768$ và $u = 2^{-24}$, hệ số $\gamma_{768} \approx 768 \times 5.96 \times 10^{-8} \approx 4.577 \times 10^{-5}$.
 
 ### 3.2. Khế Ước Sai Số Số Thực $\tau_{\text{fp}}$ Trong ECDR
-Tại tài liệu [01_04_THEORY.md#L215-L230](file:///home/pro/Downloads/research/03_MATH/01_04_THEORY.md#L215-L230) và báo cáo khoa học [02_Dossier_Scientific_Report.tex#L284-L286](file:///home/pro/Downloads/research/04_SYNTHESIS/02_Dossier_Scientific_Report.tex#L284-L286), sai số toàn trình của mạng `SmallCNN1D` trên phần cứng CPU được xác lập nghiêm ngặt:
+Tại tài liệu [01_04_THEORY.md#L215-L230](https://github.com/tducn110/ecdr-sensor-inference/blob/main/03_MATH/01_04_THEORY.md#L215-L230) và báo cáo khoa học [02_Dossier_Scientific_Report.tex#L284-L286](https://github.com/tducn110/ecdr-sensor-inference/blob/main/04_SYNTHESIS/02_Dossier_Scientific_Report.tex#L284-L286), sai số toàn trình của mạng `SmallCNN1D` trên phần cứng CPU được xác lập nghiêm ngặt:
 $$
 \tau_{\text{fp}} \in \left[1.17 \times 10^{-5}, \, 4.63 \times 10^{-5}\right]
 $$
@@ -153,7 +153,7 @@ Mọi trường hợp có cận dưới nằm trong khoảng $(0, 2\tau_{\text{f
 
 ## 4. Đôi Lời Về : Kỹ Thuật Làm Tròn Hướng Ra Ngoài (Directed Outward Rounding)
 
-Để bảo đảm tính đúng đắn trong số học khoảng (Interval Arithmetic) mà không bị phụ thuộc vào sai số làm tròn ngẫu nhiên của bộ xử lý, bộ xác minh trong [week3_verifier.py](file:///home/pro/Downloads/research/ecdr/week3_verifier.py) áp dụng kỹ thuật **Làm tròn hướng ra ngoài (Directed Outward Rounding)**:
+Để bảo đảm tính đúng đắn trong số học khoảng (Interval Arithmetic) mà không bị phụ thuộc vào sai số làm tròn ngẫu nhiên của bộ xử lý, bộ xác minh trong [week3_verifier.py](https://github.com/tducn110/ecdr-sensor-inference/blob/main/ecdr/week3_verifier.py) áp dụng kỹ thuật **Làm tròn hướng ra ngoài (Directed Outward Rounding)**:
 
 ```
 Khoảng Lý Thuyết:               [        l        ,        u        ]
